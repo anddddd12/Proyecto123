@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Panel Profesional de Verificación - Revisión 2</title>
+<meta content="Sistema de verificación de proyectos con ficha técnica, evidencias, resumen y exportación profesional." name="description"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-soft: #f7fbff;
+      --primary: #0f4c81;
+      --primary-2: #0b74de;
+      --primary-3: #073763;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --danger-dark: #b42318;
+      --warning: #f59e0b;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e2f2;
+      --shadow: 0 20px 50px rgba(15, 76, 129, 0.16);
+      --shadow-soft: 0 10px 25px rgba(15, 76, 129, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(11, 116, 222, 0.22), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.18), transparent 30%),
+        linear-gradient(135deg, #eef4ff 0%, #f8fbff 55%, #e8f5ff 100%);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 37, 68, 0.94);
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .topbar {
+      max-width: 1220px;
+      margin: auto;
+      padding: 14px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary-2), #22c55e);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      font-size: 22px;
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .brand small {
+      color: #c9ddf7;
+      display: block;
+      margin-top: 4px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button,
+    .nav-btn {
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 800;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .nav-btn {
+      color: white;
+      background: rgba(255, 255, 255, 0.10);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .nav-btn:hover,
+    button:hover { transform: translateY(-1px); }
+
+    .nav-btn:hover { background: rgba(255, 255, 255, 0.18); }
+
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 28px 22px 60px;
+    }
+
+    .view,
+    .module { animation: fadeIn 0.32s ease both; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden { display: none !important; }
+
+    .hero {
+      min-height: calc(100vh - 105px);
+      display: grid;
+      place-items: center;
+    }
+
+    .panel,
+    .module {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(217, 226, 242, 0.92);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 24px; }
+    .module { padding: 24px; }
+
+    .login-card {
+      width: min(680px, 100%);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #e8f2ff;
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    h2,
+    h3,
+    h4 { margin: 0; letter-spacing: -0.02em; }
+
+    h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+      color: #102a43;
+    }
+
+    h3 { color: #102a43; font-size: 24px; }
+    h4 { color: #102a43; font-size: 18px; }
+
+    p { color: var(--muted); line-height: 1.6; }
+
+    label {
+      display: block;
+      color: #344054;
+      font-weight: 850;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font: inherit;
+      color: var(--text);
+      background: #fbfdff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary-2);
+      box-shadow: 0 0 0 4px rgba(11, 116, 222, 0.12);
+      background: white;
+    }
+
+    input.invalid,
+    select.invalid,
+    textarea.invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.10);
+      background: #fffafa;
+    }
+
+    .field-error {
+      color: var(--danger-dark);
+      font-size: 12px;
+      font-weight: 800;
+      min-height: 18px;
+      margin-top: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+
+    .col-12 { grid-column: span 12; }
+    .col-8 { grid-column: span 8; }
+    .col-6 { grid-column: span 6; }
+    .col-5 { grid-column: span 5; }
+    .col-4 { grid-column: span 4; }
+    .col-3 { grid-column: span 3; }
+    .col-2 { grid-column: span 2; }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 22px;
+    }
+
+    .btn-primary,
+    .btn-success,
+    .btn-outline,
+    .btn-danger,
+    .btn-soft,
+    .btn-warning {
+      padding: 13px 16px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: 0 12px 24px rgba(11, 116, 222, 0.22);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a, var(--accent));
+      color: white;
+      box-shadow: 0 12px 24px rgba(34, 197, 94, 0.22);
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-soft { background: #edf6ff; color: var(--primary); }
+    .btn-warning { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+    .btn-danger { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+    .btn-full { width: 100%; }
+
+    .dashboard-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-head p { margin: 8px 0 0; }
+
+    .progress-card { min-width: min(340px, 100%); }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e5eaf3;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary-2), var(--accent));
+      transition: width 0.35s ease;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #f2f4f7;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .status-pill.ok { background: #ecfdf3; color: #087443; }
+    .status-pill.warn { background: #fffaeb; color: #b54708; }
+    .status-pill.error { background: #fff1f3; color: #b42318; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      min-height: 185px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(15, 76, 129, 0.18);
+    }
+
+    .card-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: #eef6ff;
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 { font-size: 19px; margin-bottom: 6px; }
+    .card p { margin: 0; font-size: 14px; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 20px;
+      color: #102a43;
+      word-break: break-word;
+    }
+
+    .module-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .module-head p { margin: 6px 0 0; }
+    .form-group { margin-bottom: 16px; }
+    .helper { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    .table-wrap { overflow-x: auto; border-radius: 16px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    th,
+    td {
+      padding: 11px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #17446d;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td input, td textarea, td select { margin: 0; }
+    td textarea { min-height: 64px; }
+
+    .money { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .photo-guidance {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #eff6ff, #f8fbff);
+      color: #17446d;
+    }
+
+    .photo-guidance strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #102a43;
+    }
+
+    .photo-guidance p {
+      margin: 0;
+      font-size: 13px;
+      color: #53657f;
+    }
+
+    .photo-counter {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 88px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-weight: 900;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .camera-upload-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+
+    .camera-panel {
+      background: rgba(255,255,255,0.74);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .camera-panel h4 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      color: #102a43;
+    }
+
+    .camera-panel > p {
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .camera-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .camera-card {
+      position: relative;
+      min-height: 178px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 22px;
+      border: 2px dashed #b8cce8;
+      background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      outline: none;
+    }
+
+    .camera-card:hover,
+    .camera-card:focus-within {
+      transform: translateY(-3px);
+      border-color: var(--primary-2);
+      box-shadow: 0 18px 38px rgba(15, 76, 129, 0.16);
+      background: linear-gradient(180deg, #ffffff 0%, #edf6ff 100%);
+    }
+
+    .camera-card.capture {
+      border-style: solid;
+      background: radial-gradient(circle at top right, rgba(34,197,94,0.16), transparent 34%), #ffffff;
+    }
+
+    .camera-card.upload {
+      background: radial-gradient(circle at top right, rgba(11,116,222,0.14), transparent 34%), #ffffff;
+    }
+
+    .camera-card strong {
+      display: block;
+      color: #102a43;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .camera-card small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .camera-badge {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #edf6ff;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .camera-icon-wrap {
+      width: 92px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #0f4c81, #0b74de);
+      box-shadow: 0 14px 26px rgba(11,116,222,0.24);
+    }
+
+    .camera-device {
+      position: relative;
+      width: 58px;
+      height: 40px;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: inset 0 -5px 0 rgba(15,76,129,0.12);
+    }
+
+    .camera-device::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: -8px;
+      width: 22px;
+      height: 10px;
+      border-radius: 8px 8px 0 0;
+      background: #ffffff;
+    }
+
+    .camera-lens {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 22px;
+      height: 22px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 5px solid #0b74de;
+      background: #e8f2ff;
+    }
+
+    .camera-dot {
+      position: absolute;
+      right: 9px;
+      top: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .upload-icon-wrap {
+      width: 92px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #eef6ff, #ffffff);
+      border: 1px solid #cfe0f6;
+      color: var(--primary);
+      font-size: 36px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .file-input-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+
+
+    .camera-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(7, 37, 68, 0.72);
+      backdrop-filter: blur(10px);
+    }
+
+    .camera-modal.hidden {
+      display: none !important;
+    }
+
+    .camera-modal-card {
+      width: min(760px, 100%);
+      background: #ffffff;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 26px;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+
+    .camera-modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+    }
+
+    .camera-modal-head h3 {
+      margin: 0;
+      color: #102a43;
+      font-size: 21px;
+    }
+
+    .camera-modal-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .camera-close-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .camera-view-box {
+      position: relative;
+      background: #0b1726;
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+    }
+
+    #cameraVideo {
+      width: 100%;
+      max-height: 58vh;
+      min-height: 320px;
+      object-fit: cover;
+      background: #0b1726;
+      display: block;
+    }
+
+    .camera-status {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      padding: 11px 13px;
+      border-radius: 16px;
+      color: #ffffff;
+      background: rgba(0,0,0,0.48);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .camera-modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 18px 20px 20px;
+      background: #ffffff;
+    }
+
+    .camera-capture-main {
+      min-width: 190px;
+      min-height: 52px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #ffffff;
+      box-shadow: 0 14px 28px rgba(34,197,94,0.22);
+    }
+
+    .camera-fallback-note {
+      width: 100%;
+      margin: -2px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .camera-modal {
+        padding: 0;
+      }
+
+      .camera-modal-card {
+        min-height: 100vh;
+        border-radius: 0;
+      }
+
+      .camera-view-box,
+      #cameraVideo {
+        min-height: 58vh;
+      }
+    }
+
+    .photo-divider-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 18px 0 6px;
+      color: #344054;
+      font-weight: 900;
+    }
+
+    .photo-divider-title span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .photo-card {
+      position: relative;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 108px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #eef2f7;
+      display: block;
+    }
+
+    .photo-card strong {
+      display: block;
+      font-size: 12px;
+      margin-top: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .photo-card span { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .photo-card button { position: absolute; top: 8px; right: 8px; padding: 7px 9px; border-radius: 999px; background: rgba(255,255,255,0.92); border: 1px solid var(--border); color: #b42318; }
+
+    .alert {
+      display: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 0 0 18px;
+      font-weight: 850;
+      border: 1px solid transparent;
+    }
+
+    .alert.show { display: block; }
+    .alert.ok { background: #ecfdf3; color: #087443; border-color: #abefc6; }
+    .alert.error { background: #fff1f3; color: #b42318; border-color: #fecdd6; }
+    .alert.warn { background: #fffaeb; color: #b54708; border-color: #fedf89; }
+
+    .required::after { content: " *"; color: var(--danger); }
+
+    .footer-note {
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      margin-top: 22px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border: 1px solid var(--border);
+      background: white;
+      padding: 13px 14px;
+      border-radius: 15px;
+    }
+
+    .check-item strong { color: #102a43; }
+
+    .summary-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .summary-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .summary-list div {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fbfdff;
+    }
+
+    .summary-list span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .summary-list strong,
+    .summary-list p { margin: 0; color: #102a43; word-break: break-word; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: 360px;
+      z-index: 99;
+      background: #102a43;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+      display: none;
+      font-weight: 850;
+    }
+
+    .toast.show { display: block; animation: fadeIn 0.25s ease both; }
+
+    @media (max-width: 1040px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .dashboard-head,
+      .module-head,
+      .topbar { flex-direction: column; }
+      nav { justify-content: flex-start; }
+      .col-8, .col-6, .col-5, .col-4, .col-3, .col-2 { grid-column: span 12; }
+    }
+
+    @media (max-width: 640px) {
+      main { padding: 18px 14px 42px; }
+      .panel, .module { padding: 18px; }
+      .cards, .stats, .summary-list { grid-template-columns: 1fr; }
+      nav .nav-btn, .actions button { width: 100%; }
+      .brand { min-width: 0; }
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tr { border-bottom: 1px solid var(--border); padding: 12px; }
+      td { border: 0; padding: 8px 0; }
+      td::before {
+        content: attr(data-label);
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+        margin-bottom: 6px;
+      }
+      .camera-upload-grid, .camera-options { grid-template-columns: 1fr; }
+      .photo-guidance { flex-direction: column; }
+      .photo-counter { align-self: flex-start; }
+    }
+
+
+    .print-gallery {
+      margin-top: 18px;
+    }
+
+    .photo-card .photo-category {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef6ff;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .photo-placeholder {
+      min-height: 105px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #eef2f7;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      padding: 8px;
+    }
+
+    @media print {
+      header, .actions, .nav-btn, .btn-primary, .btn-success, .btn-outline, .btn-soft, .btn-danger, .btn-warning, input[type="file"], .toast, .photo-card button { display: none !important; }
+      body { background: white; }
+      main { padding: 0; }
+      .hidden { display: none !important; }
+      .panel, .module, .stat, .card, .summary-box { box-shadow: none; border: 1px solid #bbb; }
+      .module { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<header>
+<div class="topbar">
+<div class="brand">
+<div aria-hidden="true" class="brand-icon">✓</div>
+<div>
+<h1>Panel de Verificación</h1>
+<small>Revisión 2 · Registro claro, rápido y profesional</small>
+</div>
+</div>
+<nav aria-label="Navegación principal" class="hidden" id="mainNav">
+<button class="nav-btn" onclick="volverMenu()" type="button">Inicio</button>
+<button class="nav-btn" onclick="mostrarModulo('verificacion')" type="button">Verificación</button>
+<button class="nav-btn" onclick="mostrarModulo('ficha')" type="button">Ficha Técnica</button>
+<button class="nav-btn" onclick="mostrarModulo('fotos')" type="button">Evidencia</button>
+<button class="nav-btn" onclick="mostrarModulo('antesDespues')" type="button">Antes / Después</button>
+<button class="nav-btn" onclick="mostrarModulo('resumen')" type="button">Resumen</button>
+<button class="nav-btn" onclick="descargarExcel()" type="button">Excel</button>
+</nav>
+</div>
+</header>
+<main>
+<section class="view hero" id="inicio">
+<div class="panel login-card">
+<div class="badge">🧾 Sistema de control de proyecto</div>
+<h2>Bienvenido al panel de verificación</h2>
+<p>Complete el registro paso a paso. El sistema guarda automáticamente los datos y le indica qué información falta antes de exportar.</p>
+<div class="alert" id="loginAlert" role="alert"></div>
+<div class="grid" style="text-align:left; margin-top: 24px;">
+<div class="form-group col-6">
+<label class="required" for="ejecutor">Nombre del ejecutor</label>
+<input autocomplete="name" data-required="true" id="ejecutor" placeholder="Ejemplo: Juan Pérez" type="text"/>
+<div class="field-error" id="error-ejecutor"></div>
+</div>
+<div class="form-group col-6">
+<label class="required" for="nombreProyecto">Nombre del proyecto</label>
+<input data-required="true" id="nombreProyecto" placeholder="Ejemplo: Mejoramiento de área comunitaria" type="text"/>
+<div class="field-error" id="error-nombreProyecto"></div>
+</div>
+</div>
+<button class="btn-primary btn-full" onclick="continuar()" type="button">Continuar al panel</button>
+<p class="footer-note">Consejo: para la revisión puede mostrar primero el resumen, luego la ficha técnica y finalmente la exportación.</p>
+</div>
+</section>
+<section class="view hidden" id="menu">
+<div class="dashboard-head">
+<div>
+<div class="badge">Panel principal</div>
+<h2>Gestión de verificación</h2>
+<p>Use los módulos por orden. El avance se actualiza automáticamente según los campos obligatorios y la evidencia registrada.</p>
+</div>
+<div class="panel progress-card">
+<div class="progress-row">
+<span>Avance del registro</span>
+<strong id="progressText">0%</strong>
+</div>
+<div aria-label="Avance del registro" class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+<p class="helper" id="missingText">Complete los campos obligatorios para finalizar.</p>
+</div>
+</div>
+<div class="stats">
+<div class="stat"><span>Ejecutor</span><strong id="statEjecutor">—</strong></div>
+<div class="stat"><span>Proyecto</span><strong id="statProyecto">—</strong></div>
+<div class="stat"><span>Fecha</span><strong id="statFecha">—</strong></div>
+<div class="stat"><span>Materiales</span><strong id="statMateriales">0</strong></div>
+
+</div>
+<div class="alert" id="globalAlert" role="alert"></div>
+<div class="cards">
+<article class="card" onclick="mostrarModulo('verificacion')" onkeydown="activarConEnter(event, 'verificacion')" role="button" tabindex="0">
+<div>
+<div class="card-icon">📋</div>
+<h3>1. Verificación</h3>
+<p>Datos generales: responsable, solicitante, lugar, prioridad, estado y descripción.</p>
+</div>
+<span class="status-pill" id="pillVerificacion">Pendiente</span>
+</article>
+<article class="card" onclick="mostrarModulo('ficha')" onkeydown="activarConEnter(event, 'ficha')" role="button" tabindex="0">
+<div>
+<div class="card-icon">🛠️</div>
+<h3>2. Ficha Técnica</h3>
+<p>Materiales con cantidades, unidad, descripción y observaciones.</p>
+</div>
+<span class="status-pill" id="pillFicha">Pendiente</span>
+</article>
+<article class="card" onclick="mostrarModulo('fotos')" onkeydown="activarConEnter(event, 'fotos')" role="button" tabindex="0">
+<div>
+<div class="card-icon">📸</div>
+<h3>3. Evidencia</h3>
+<p>Fotografías de la visita o verificación con vista previa y conteo.</p>
+</div>
+<span class="status-pill" id="pillFotos">Pendiente</span>
+</article>
+<article class="card" onclick="mostrarModulo('resumen')" onkeydown="activarConEnter(event, 'resumen')" role="button" tabindex="0">
+<div>
+<div class="card-icon">✅</div>
+<h3>4. Resumen final</h3>
+<p>Revise qué falta, vea el resumen y exporte el reporte a Excel o PDF.</p>
+</div>
+<span class="status-pill" id="pillResumen">Revisar</span>
+</article>
+</div>
+<div class="actions">
+<button class="btn-success" onclick="descargarExcel()" type="button">⬇ Descargar Excel</button>
+<button class="btn-outline" onclick="mostrarModulo('resumen')" type="button">👁️ Ver resumen</button>
+<button class="btn-outline" onclick="imprimirReporte()" type="button">🖨️ Imprimir / Guardar PDF</button>
+
+
+<button class="btn-danger" onclick="limpiarTodo()" type="button">🗑️ Limpiar formulario</button>
+</div>
+<p class="footer-note">El formulario se guarda automáticamente en este navegador. Las fotografías tomadas o subidas se incluyen en el Excel y en el PDF mientras permanezca abierta la sesión.</p>
+</section>
+<section class="module hidden" id="verificacion">
+<div class="module-head">
+<div>
+<h3>📋 Verificación del proyecto</h3>
+<p>Complete la información principal. Los campos con asterisco son obligatorios.</p>
+</div>
+<button class="btn-outline" onclick="volverMenu()" type="button">⬅ Regresar</button>
+</div>
+<div class="alert" id="verificacionAlert" role="alert"></div>
+<div class="grid">
+<div class="form-group col-4">
+<label class="required" for="fecha">Fecha de verificación</label>
+<input data-required="true" id="fecha" type="date"/>
+<div class="field-error" id="error-fecha"></div>
+</div>
+<div class="form-group col-4">
+<label class="required" for="responsable">Responsable</label>
+<input data-required="true" id="responsable" placeholder="Nombre del responsable" type="text"/>
+<div class="field-error" id="error-responsable"></div>
+</div>
+<div class="form-group col-4">
+<label class="required" for="solicitante">Nombre del solicitante</label>
+<input data-required="true" id="solicitante" placeholder="Nombre del solicitante" type="text"/>
+<div class="field-error" id="error-solicitante"></div>
+</div>
+<div class="form-group col-4">
+<label for="tipoProyecto">Tipo de proyecto</label>
+<select id="tipoProyecto">
+<option value="Municipal">Municipal</option>
+<option value="Social">Social</option>
+<option value="Comunitario">Comunitario</option>
+<option value="Infraestructura">Infraestructura</option>
+<option value="Educativo">Educativo</option>
+<option value="Ambiental">Ambiental</option>
+<option value="Otro">Otro</option>
+</select>
+</div>
+<div class="form-group col-4">
+<label for="estadoProyecto">Estado del proyecto</label>
+<select id="estadoProyecto">
+<option value="En planificación">En planificación</option>
+<option value="En revisión">En revisión</option>
+<option value="En ejecución">En ejecución</option>
+<option value="Finalizado">Finalizado</option>
+<option value="Con pendientes">Con pendientes</option>
+</select>
+</div>
+<div class="form-group col-4">
+<label for="prioridad">Prioridad</label>
+<select id="prioridad">
+<option value="Media">Media</option>
+<option value="Alta">Alta</option>
+<option value="Baja">Baja</option>
+<option value="Urgente">Urgente</option>
+</select>
+</div>
+<div class="form-group col-8">
+<label class="required" for="lugar">Lugar</label>
+<input data-required="true" id="lugar" placeholder="Aldea, zona, municipio o ubicación" type="text"/>
+<div class="field-error" id="error-lugar"></div>
+</div>
+<div class="form-group col-4">
+<label for="personal">¿Requiere personal operativo?</label>
+<select id="personal">
+<option value="Sí">Sí</option>
+<option value="No">No</option>
+<option value="Por confirmar">Por confirmar</option>
+</select>
+</div>
+<div class="form-group col-12">
+<label class="required" for="descripcion">Descripción del proyecto</label>
+<textarea data-required="true" id="descripcion" placeholder="Explique brevemente el proyecto, objetivo y necesidad detectada"></textarea>
+<div class="field-error" id="error-descripcion"></div>
+</div>
+<div class="form-group col-6">
+<label for="beneficiarios">Beneficiarios estimados</label>
+<input id="beneficiarios" placeholder="Ejemplo: 35 familias / comunidad educativa / vecinos" type="text"/>
+</div>
+<div class="form-group col-6">
+<label for="tiempoEstimado">Tiempo estimado de ejecución</label>
+<input id="tiempoEstimado" placeholder="Ejemplo: 2 semanas / 5 días / 1 mes" type="text"/>
+</div>
+<div class="form-group col-8">
+<label for="materialesHerramientas">Materiales y herramientas generales</label>
+<textarea id="materialesHerramientas" placeholder="Ejemplo: cemento, arena, pintura, brochas, palas, carretilla..."></textarea>
+</div>
+<div class="form-group col-4">
+<label for="riesgo">Nivel de riesgo</label>
+<select id="riesgo">
+<option value="Bajo">Bajo</option>
+<option value="Medio">Medio</option>
+<option value="Alto">Alto</option>
+</select>
+</div>
+<div class="form-group col-12">
+<label for="observaciones">Observaciones y pendientes</label>
+<textarea id="observaciones" placeholder="Agregue notas importantes, riesgos, pendientes o acuerdos de revisión"></textarea>
+</div>
+</div>
+<div class="actions">
+<button class="btn-success" onclick="guardarYVolver('verificacion')" type="button">Guardar y volver</button>
+<button class="btn-outline" onclick="mostrarModulo('ficha')" type="button">Siguiente: ficha técnica ➜</button>
+<button class="btn-outline" onclick="volverMenu()" type="button">Cancelar</button>
+</div>
+</section>
+<section class="module hidden" id="ficha">
+<div class="module-head">
+<div>
+<h3>🛠️ Ficha técnica</h3>
+<p>Agregue los materiales o recursos necesarios para dejar clara la ficha técnica del proyecto.</p>
+</div>
+<button class="btn-outline" onclick="volverMenu()" type="button">⬅ Regresar</button>
+</div>
+<div class="actions" style="margin-top:0; margin-bottom:16px;">
+<button class="btn-soft" onclick="agregarMaterial()" type="button">➕ Agregar material</button>
+<button class="btn-outline" onclick="duplicarUltimoMaterial()" type="button">📄 Duplicar último</button>
+<button class="btn-warning" onclick="limpiarMateriales()" type="button">🧹 Limpiar materiales</button>
+</div>
+<div class="table-wrap">
+<table aria-label="Ficha técnica de materiales">
+<thead>
+<tr>
+<th style="width: 105px;">Cantidad</th>
+<th style="width: 140px;">Unidad</th>
+<th>Descripción</th>
+
+
+<th>Observación</th>
+<th style="width: 95px;">Acción</th>
+</tr>
+</thead>
+<tbody id="materialesBody"></tbody>
+
+</table>
+</div>
+<div class="actions">
+<button class="btn-success" onclick="guardarYVolver('ficha')" type="button">Guardar y volver</button>
+<button class="btn-outline" onclick="mostrarModulo('fotos')" type="button">Siguiente: evidencia ➜</button>
+<button class="btn-outline" onclick="volverMenu()" type="button">Cancelar</button>
+</div>
+</section>
+<section class="module hidden" id="fotos">
+<div class="module-head">
+<div>
+<h3>📸 Evidencia fotográfica</h3>
+<p>Agregue fotos de la visita de forma sencilla: puede abrir la cámara del dispositivo o subir imágenes guardadas.</p>
+</div>
+<button class="btn-outline" onclick="volverMenu()" type="button">⬅ Regresar</button>
+</div>
+<div class="photo-guidance">
+<div>
+<strong>Consejo para la revisión</strong>
+<p>Tome fotos claras del lugar, materiales o avance. Las imágenes que agregue aparecerán en la vista previa, en el Excel y al imprimir o guardar como PDF. Para cámara directa use GitHub Pages, HTTPS o localhost.</p>
+</div>
+<span class="photo-counter" id="evidenciaCounter">0 fotos</span>
+</div>
+<div class="camera-upload-grid">
+<label class="camera-card capture" for="camaraEvidencia" tabindex="0">
+<span class="camera-icon-wrap" aria-hidden="true"><span class="camera-device"><span class="camera-lens"></span><span class="camera-dot"></span></span></span>
+<span>
+<strong>Abrir cámara</strong>
+<small>Presione aquí para abrir la cámara directa. Si el navegador no lo permite, use la galería como respaldo.</small>
+</span>
+<span class="camera-badge">📷 Tomar foto</span>
+</label>
+<input accept="image/*" capture="environment" class="file-input-hidden" id="camaraEvidencia" type="file"/>
+<label class="camera-card upload" for="fotosEvidencia" tabindex="0">
+<span class="upload-icon-wrap" aria-hidden="true">⬆</span>
+<span>
+<strong>Subir desde galería</strong>
+<small>Seleccione una o varias fotografías guardadas en el dispositivo.</small>
+</span>
+<span class="camera-badge">🖼️ Elegir archivos</span>
+</label>
+<input accept="image/*" class="file-input-hidden" id="fotosEvidencia" multiple="" type="file"/>
+</div>
+<div class="photo-divider-title">Vista previa de evidencia <span>Puede eliminar cualquier foto antes de exportar.</span></div>
+<div aria-live="polite" class="preview-grid" id="previewEvidencia"></div>
+<div class="actions">
+<button class="btn-success" onclick="guardarYVolver('fotos')" type="button">Guardar y volver</button>
+<button class="btn-outline" onclick="mostrarModulo('antesDespues')" type="button">Siguiente: antes/después ➜</button>
+<button class="btn-outline" onclick="volverMenu()" type="button">Cancelar</button>
+</div>
+</section>
+<section class="module hidden" id="antesDespues">
+<div class="module-head">
+<div>
+<h3>🔄 Registro antes y después</h3>
+<p>Capture o suba imágenes del estado inicial y del proyecto finalizado para mostrar el avance visual.</p>
+</div>
+<button class="btn-outline" onclick="volverMenu()" type="button">⬅ Regresar</button>
+</div>
+<div class="camera-upload-grid">
+<div class="camera-panel">
+<h4>Estado inicial</h4>
+<p>Use esta sección para documentar cómo estaba el lugar antes de iniciar.</p>
+<div class="camera-options">
+<label class="camera-card capture" for="camaraAntes" tabindex="0">
+<span class="camera-icon-wrap" aria-hidden="true"><span class="camera-device"><span class="camera-lens"></span><span class="camera-dot"></span></span></span>
+<span><strong>Tomar foto</strong><small>Abrir cámara para registrar el antes.</small></span>
+<span class="camera-badge">📷 Antes</span>
+</label>
+<input accept="image/*" capture="environment" class="file-input-hidden" id="camaraAntes" type="file"/>
+<label class="camera-card upload" for="fotoAntes" tabindex="0">
+<span class="upload-icon-wrap" aria-hidden="true">⬆</span>
+<span><strong>Subir fotos</strong><small>Agregar imágenes guardadas del antes.</small></span>
+<span class="camera-badge">🖼️ Galería</span>
+</label>
+<input accept="image/*" class="file-input-hidden" id="fotoAntes" multiple="" type="file"/>
+</div>
+<div class="photo-divider-title">Fotos del antes <span id="antesCounter">0 fotos</span></div>
+<div aria-live="polite" class="preview-grid" id="previewAntes"></div>
+</div>
+<div class="camera-panel">
+<h4>Proyecto finalizado</h4>
+<p>Use esta sección para mostrar el resultado o avance después de la intervención.</p>
+<div class="camera-options">
+<label class="camera-card capture" for="camaraDespues" tabindex="0">
+<span class="camera-icon-wrap" aria-hidden="true"><span class="camera-device"><span class="camera-lens"></span><span class="camera-dot"></span></span></span>
+<span><strong>Tomar foto</strong><small>Abrir cámara para registrar el después.</small></span>
+<span class="camera-badge">📷 Después</span>
+</label>
+<input accept="image/*" capture="environment" class="file-input-hidden" id="camaraDespues" type="file"/>
+<label class="camera-card upload" for="fotoDespues" tabindex="0">
+<span class="upload-icon-wrap" aria-hidden="true">⬆</span>
+<span><strong>Subir fotos</strong><small>Agregar imágenes guardadas del después.</small></span>
+<span class="camera-badge">🖼️ Galería</span>
+</label>
+<input accept="image/*" class="file-input-hidden" id="fotoDespues" multiple="" type="file"/>
+</div>
+<div class="photo-divider-title">Fotos del después <span id="despuesCounter">0 fotos</span></div>
+<div aria-live="polite" class="preview-grid" id="previewDespues"></div>
+</div>
+</div>
+<div class="actions">
+<button class="btn-success" onclick="guardarYVolver('antesDespues')" type="button">Guardar y volver</button>
+<button class="btn-outline" onclick="mostrarModulo('resumen')" type="button">Siguiente: resumen final ➜</button>
+<button class="btn-outline" onclick="volverMenu()" type="button">Cancelar</button>
+</div>
+</section>
+<section class="module hidden" id="resumen">
+<div class="module-head">
+<div>
+<h3>✅ Resumen final para revisión</h3>
+<p>Antes de entregar, revise el checklist y genere el archivo Excel o PDF.</p>
+</div>
+<button class="btn-outline" onclick="volverMenu()" type="button">⬅ Regresar</button>
+</div>
+<div class="alert" id="resumenAlert" role="alert"></div>
+<div class="grid">
+<div class="col-5">
+<div class="summary-box">
+<h4>Checklist de entrega</h4>
+<div class="checklist" id="checklist"></div>
+</div>
+</div>
+<div class="col-7">
+<div class="summary-box">
+<h4>Resumen del proyecto</h4>
+<div class="summary-list" id="resumenContenido"></div>
+</div>
+</div>
+</div>
+<div class="summary-box print-gallery">
+<h4>Evidencia fotográfica para impresión</h4>
+<div aria-live="polite" class="preview-grid" id="resumenFotos"></div>
+</div>
+<div class="actions">
+<button class="btn-success" onclick="descargarExcel()" type="button">⬇ Descargar Excel</button>
+<button class="btn-outline" onclick="imprimirReporte()" type="button">🖨️ Imprimir / Guardar PDF</button>
+<button class="btn-primary" onclick="mostrarModulo('verificacion')" type="button">Editar datos</button>
+</div>
+</section>
+</main>
+
+<div aria-modal="true" class="camera-modal hidden" id="cameraModal" role="dialog" aria-labelledby="cameraModalTitle">
+  <div class="camera-modal-card">
+    <div class="camera-modal-head">
+      <div>
+        <h3 id="cameraModalTitle">📷 Cámara del dispositivo</h3>
+        <p>Autorice el permiso de cámara y presione “Capturar foto”.</p>
+      </div>
+      <button class="camera-close-btn" onclick="cerrarCamaraDirecta()" type="button" aria-label="Cerrar cámara">×</button>
+    </div>
+    <div class="camera-view-box">
+      <video id="cameraVideo" autoplay muted playsinline></video>
+      <canvas class="hidden" id="cameraCanvas"></canvas>
+      <div class="camera-status" id="cameraStatus">Preparando cámara...</div>
+    </div>
+    <div class="camera-modal-actions">
+      <button class="camera-capture-main" onclick="capturarFotoDirecta()" type="button">📸 Capturar foto</button>
+      <button class="btn-outline" onclick="usarSelectorComoRespaldo()" type="button">🖼️ Usar galería / archivo</button>
+      <button class="btn-danger" onclick="cerrarCamaraDirecta()" type="button">Cancelar</button>
+      <p class="camera-fallback-note">Nota: la cámara directa funciona mejor en GitHub Pages, HTTPS o localhost. Si abre el archivo como file:/// puede que el navegador use la galería como respaldo.</p>
+    </div>
+  </div>
+</div>
+
+<div aria-live="polite" class="toast" id="toast" role="status"></div>
+<script>
+    const STORAGE_KEY = "panel_verificacion_revision2_v3_limpio";
+    const vistas = ["inicio", "menu"];
+    const modulos = ["verificacion", "ficha", "fotos", "antesDespues", "resumen"];
+
+    let estado = {
+      fotos: { evidencia: [], antes: [], despues: [] }
+    };
+
+    let camaraDirecta = {
+      stream: null,
+      tipo: "",
+      previewId: "",
+      inputId: ""
+    };
+
+    const camposFormulario = [
+      "ejecutor", "nombreProyecto", "fecha", "responsable", "solicitante", "tipoProyecto",
+      "estadoProyecto", "prioridad", "lugar", "descripcion", "beneficiarios", "tiempoEstimado",
+      "materialesHerramientas", "personal", "riesgo", "observaciones"
+    ];
+
+    const camposObligatorios = [
+      ["ejecutor", "nombre del ejecutor"],
+      ["nombreProyecto", "nombre del proyecto"],
+      ["fecha", "fecha"],
+      ["responsable", "responsable"],
+      ["solicitante", "solicitante"],
+      ["lugar", "lugar"],
+      ["descripcion", "descripción"]
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarGuardado();
+      configurarEventos();
+      configurarFechaActual();
+      if (document.querySelectorAll("#materialesBody tr").length === 0) agregarMaterial();
+      renderizarTodo();
+      // Siempre se muestra primero la pantalla inicial para que el usuario ingrese
+      // o confirme el ejecutor y el nombre del proyecto antes de ver el panel.
+      mostrarVista("inicio");
+    });
+
+    function configurarEventos() {
+      camposFormulario.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (!elemento) return;
+        ["input", "change"].forEach(evento => {
+          elemento.addEventListener(evento, () => {
+            limpiarErrorCampo(id);
+            guardarLocal();
+            renderizarTodo();
+          });
+        });
+      });
+
+      conectarInputFoto("camaraEvidencia", "evidencia", "previewEvidencia");
+      conectarInputFoto("fotosEvidencia", "evidencia", "previewEvidencia");
+      conectarInputFoto("camaraAntes", "antes", "previewAntes");
+      conectarInputFoto("fotoAntes", "antes", "previewAntes");
+      conectarInputFoto("camaraDespues", "despues", "previewDespues");
+      conectarInputFoto("fotoDespues", "despues", "previewDespues");
+      configurarBotonesCamaraDirecta();
+    }
+
+    function configurarFechaActual() {
+      const fecha = document.getElementById("fecha");
+      if (!fecha.value) {
+        fecha.value = new Date().toISOString().split("T")[0];
+        guardarLocal();
+      }
+    }
+
+    function usuarioLogueado() {
+      const ejecutor = String(document.getElementById("ejecutor")?.value || "").trim();
+      const proyecto = String(document.getElementById("nombreProyecto")?.value || "").trim();
+      return Boolean(ejecutor && proyecto);
+    }
+
+    function actualizarNavegacion() {
+      const nav = document.getElementById("mainNav");
+      if (!nav) return;
+      const inicioVisible = !document.getElementById("inicio").classList.contains("hidden");
+      nav.classList.toggle("hidden", inicioVisible || !usuarioLogueado());
+    }
+
+
+    function configurarBotonesCamaraDirecta() {
+      const botones = [
+        { labelFor: "camaraEvidencia", tipo: "evidencia", previewId: "previewEvidencia" },
+        { labelFor: "camaraAntes", tipo: "antes", previewId: "previewAntes" },
+        { labelFor: "camaraDespues", tipo: "despues", previewId: "previewDespues" }
+      ];
+
+      botones.forEach(config => {
+        const boton = document.querySelector(`[for="${config.labelFor}"]`);
+        if (!boton || boton.dataset.cameraReady === "true") return;
+        boton.dataset.cameraReady = "true";
+        boton.setAttribute("role", "button");
+        boton.addEventListener("click", event => {
+          event.preventDefault();
+          abrirCamaraDirecta(config.tipo, config.previewId, config.labelFor);
+        });
+        boton.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            abrirCamaraDirecta(config.tipo, config.previewId, config.labelFor);
+          }
+        });
+      });
+    }
+
+    async function abrirCamaraDirecta(tipo, previewId, inputId) {
+      camaraDirecta.tipo = tipo;
+      camaraDirecta.previewId = previewId;
+      camaraDirecta.inputId = inputId;
+
+      const modal = document.getElementById("cameraModal");
+      const video = document.getElementById("cameraVideo");
+      const status = document.getElementById("cameraStatus");
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast("Este navegador no permite abrir la cámara directa. Use la galería como respaldo.");
+        const input = document.getElementById(inputId);
+        if (input) input.click();
+        return;
+      }
+
+      modal.classList.remove("hidden");
+      status.textContent = "Solicitando permiso de cámara... Si el navegador pregunta, presione Permitir.";
+
+      try {
+        cerrarStreamCamara();
+        const restricciones = {
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+        camaraDirecta.stream = await navigator.mediaDevices.getUserMedia(restricciones);
+        video.srcObject = camaraDirecta.stream;
+        await video.play();
+        status.textContent = "Cámara lista. Enfoque la evidencia y presione Capturar foto.";
+      } catch (error) {
+        console.error("No se pudo abrir la cámara", error);
+        status.textContent = "No se pudo abrir la cámara directa. Puede deberse a permisos, navegador o porque la página no está en HTTPS. Use el botón de galería/archivo como respaldo.";
+        toast("No se pudo abrir la cámara directa. Revise permisos o use galería.");
+      }
+    }
+
+    function capturarFotoDirecta() {
+      const video = document.getElementById("cameraVideo");
+      const canvas = document.getElementById("cameraCanvas");
+      const status = document.getElementById("cameraStatus");
+
+      if (!camaraDirecta.stream || !video.videoWidth || !video.videoHeight) {
+        status.textContent = "La cámara todavía no está lista. Espere un momento o use la galería como respaldo.";
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+      const nombre = "foto_camara_" + obtenerMarcaTiempo() + ".jpg";
+      const tamano = calcularTamanoDataUrl(dataUrl);
+
+      estado.fotos[camaraDirecta.tipo].push({
+        nombre,
+        tipo: "image/jpeg",
+        tamano,
+        dataUrl,
+        url: dataUrl,
+        origen: "Cámara"
+      });
+
+      renderizarPreview(camaraDirecta.previewId, estado.fotos[camaraDirecta.tipo], camaraDirecta.tipo);
+      guardarLocal();
+      renderizarTodo();
+      cerrarCamaraDirecta();
+      toast("Fotografía capturada correctamente.");
+    }
+
+    function usarSelectorComoRespaldo() {
+      const inputId = camaraDirecta.inputId;
+      cerrarCamaraDirecta();
+      const input = document.getElementById(inputId);
+      if (input) input.click();
+    }
+
+    function cerrarCamaraDirecta() {
+      cerrarStreamCamara();
+      const modal = document.getElementById("cameraModal");
+      const video = document.getElementById("cameraVideo");
+      if (video) video.srcObject = null;
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function cerrarStreamCamara() {
+      if (camaraDirecta.stream) {
+        camaraDirecta.stream.getTracks().forEach(track => track.stop());
+        camaraDirecta.stream = null;
+      }
+    }
+
+    function obtenerMarcaTiempo() {
+      const fecha = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return fecha.getFullYear() + "-" + pad(fecha.getMonth() + 1) + "-" + pad(fecha.getDate()) + "_" + pad(fecha.getHours()) + pad(fecha.getMinutes()) + pad(fecha.getSeconds());
+    }
+
+    function calcularTamanoDataUrl(dataUrl) {
+      const base64 = String(dataUrl || "").split(",")[1] || "";
+      return Math.round((base64.length * 3) / 4);
+    }
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") cerrarCamaraDirecta();
+    });
+
+    function conectarInputFoto(id, tipo, previewId) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.addEventListener("change", event => manejarFotos(event, tipo, previewId));
+    }
+
+    function continuar() {
+      const faltantesIniciales = validarCampos(["ejecutor", "nombreProyecto"]);
+      if (faltantesIniciales.length) {
+        mostrarAlerta("loginAlert", "Complete los datos iniciales para continuar.", "error");
+        enfocarPrimerFaltante(faltantesIniciales);
+        return;
+      }
+      guardarLocal();
+      mostrarVista("menu");
+      renderizarTodo();
+      toast("Datos iniciales guardados correctamente.");
+    }
+
+    function mostrarVista(id) {
+      vistas.forEach(vista => document.getElementById(vista).classList.add("hidden"));
+      modulos.forEach(modulo => document.getElementById(modulo).classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      actualizarNavegacion();
+      if (id === "resumen") renderizarResumen();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function mostrarModulo(id) {
+      const faltantesIniciales = validarCampos(["ejecutor", "nombreProyecto"], false);
+      if (faltantesIniciales.length) {
+        mostrarVista("inicio");
+        mostrarAlerta("loginAlert", "Primero ingrese el ejecutor y el nombre del proyecto.", "error");
+        document.getElementById(faltantesIniciales[0]).focus();
+        return;
+      }
+      guardarLocal();
+      mostrarVista(id);
+      renderizarTodo();
+    }
+
+    function volverMenu() {
+      guardarLocal();
+      renderizarTodo();
+      const datos = recopilarDatos();
+      if (datos.ejecutor && datos.nombreProyecto) mostrarVista("menu");
+      else mostrarVista("inicio");
+    }
+
+    function guardarYVolver(modulo) {
+      guardarLocal();
+      renderizarTodo();
+      if (modulo === "verificacion") {
+        const faltantes = validarCampos(["fecha", "responsable", "solicitante", "lugar", "descripcion"]);
+        if (faltantes.length) {
+          mostrarAlerta("verificacionAlert", "Faltan datos importantes. Revise los campos marcados en rojo.", "error");
+          enfocarPrimerFaltante(faltantes);
+          return;
+        }
+      }
+      mostrarVista("menu");
+      mostrarAlerta("globalAlert", "Datos guardados correctamente.", "ok");
+      toast("Cambios guardados.");
+    }
+
+    function validarCampos(ids, mostrarErrores = true) {
+      const faltantes = [];
+      ids.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (!elemento) return;
+        const vacio = !String(elemento.value || "").trim();
+        if (vacio) faltantes.push(id);
+        if (mostrarErrores) {
+          elemento.classList.toggle("invalid", vacio);
+          elemento.setAttribute("aria-invalid", vacio ? "true" : "false");
+          const error = document.getElementById("error-" + id);
+          if (error) error.textContent = vacio ? "Este campo es obligatorio." : "";
+        }
+      });
+      return faltantes;
+    }
+
+    function limpiarErrorCampo(id) {
+      const elemento = document.getElementById(id);
+      if (elemento) {
+        elemento.classList.remove("invalid");
+        elemento.removeAttribute("aria-invalid");
+      }
+      const error = document.getElementById("error-" + id);
+      if (error) error.textContent = "";
+    }
+
+    function enfocarPrimerFaltante(faltantes) {
+      const primero = document.getElementById(faltantes[0]);
+      if (primero) primero.focus();
+    }
+
+    function agregarMaterial(material = {}) {
+      const tbody = document.getElementById("materialesBody");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td data-label="Cantidad"><input type="number" min="0" step="0.01" class="mat-cantidad" placeholder="0"></td>
+        <td data-label="Unidad"><select class="mat-unidad"></select></td>
+        <td data-label="Descripción"><textarea class="mat-descripcion" placeholder="Descripción del material o recurso"></textarea></td>
+        <td data-label="Observación"><textarea class="mat-observacion" placeholder="Observación opcional"></textarea></td>
+        <td data-label="Acción"><button class="btn-danger" type="button" onclick="eliminarMaterial(this)">Eliminar</button></td>
+      `;
+      tbody.appendChild(tr);
+
+      const unidad = tr.querySelector(".mat-unidad");
+      crearOpcionesUnidad(material.unidad || "Unidad").forEach(opcion => unidad.appendChild(opcion));
+      tr.querySelector(".mat-cantidad").value = material.cantidad || "";
+      tr.querySelector(".mat-descripcion").value = material.descripcion || "";
+      tr.querySelector(".mat-observacion").value = material.observacion || "";
+
+      tr.querySelectorAll("input, textarea, select").forEach(elemento => {
+        ["input", "change"].forEach(evento => {
+          elemento.addEventListener(evento, () => {
+            guardarLocal();
+            renderizarTodo();
+          });
+        });
+      });
+      guardarLocal();
+      renderizarTodo();
+    }
+
+    function crearOpcionesUnidad(seleccion = "Unidad") {
+      const unidades = ["Unidad", "Metro", "Metro cuadrado", "Metro cúbico", "Libra", "Quintal", "Galón", "Litro", "Bolsa", "Caja", "Servicio", "Hora", "Día", "Otro"];
+      return unidades.map(unidad => {
+        const option = document.createElement("option");
+        option.value = unidad;
+        option.textContent = unidad;
+        option.selected = unidad === seleccion;
+        return option;
+      });
+    }
+
+    function eliminarMaterial(boton) {
+      const filas = document.querySelectorAll("#materialesBody tr");
+      if (filas.length === 1) {
+        const fila = filas[0];
+        fila.querySelectorAll("input, textarea").forEach(elemento => elemento.value = "");
+        fila.querySelector("select").value = "Unidad";
+      } else {
+        boton.closest("tr").remove();
+      }
+      recalcularMateriales();
+      guardarLocal();
+      renderizarTodo();
+    }
+
+    function duplicarUltimoMaterial() {
+      const materiales = obtenerMateriales(false);
+      if (!materiales.length) {
+        agregarMaterial();
+        return;
+      }
+      agregarMaterial(materiales[materiales.length - 1]);
+      toast("Último material duplicado.");
+    }
+
+    function limpiarMateriales() {
+      if (!confirm("¿Desea borrar todos los materiales registrados?")) return;
+      document.getElementById("materialesBody").innerHTML = "";
+      agregarMaterial();
+      toast("Ficha técnica limpiada.");
+    }
+
+    function obtenerMateriales(filtrarVacios = true) {
+      const materiales = Array.from(document.querySelectorAll("#materialesBody tr")).map(fila => ({
+        cantidad: fila.querySelector(".mat-cantidad")?.value || "",
+        unidad: fila.querySelector(".mat-unidad")?.value || "",
+        descripcion: fila.querySelector(".mat-descripcion")?.value.trim() || "",
+        observacion: fila.querySelector(".mat-observacion")?.value.trim() || ""
+      }));
+      if (!filtrarVacios) return materiales;
+      return materiales.filter(material => material.cantidad || material.descripcion || material.observacion);
+    }
+
+    function recalcularMateriales() {
+      // La revisión solicitada no incluye costos ni subtotales en dinero.
+    }
+
+    async function manejarFotos(event, tipo, previewId) {
+      const archivos = Array.from(event.target.files || []).filter(file => String(file.type || "").startsWith("image/"));
+      if (!archivos.length) return;
+
+      toast("Procesando fotografía(s)...");
+      const nuevos = [];
+      for (const file of archivos) {
+        const imagen = await archivoAImagenComprimida(file);
+        nuevos.push({
+          nombre: file.name || "foto_" + Date.now() + ".jpg",
+          tipo: imagen.tipo || file.type || "image/jpeg",
+          tamano: file.size || 0,
+          dataUrl: imagen.dataUrl,
+          url: imagen.dataUrl,
+          origen: event.target.id.toLowerCase().includes("camara") ? "Cámara" : "Archivo"
+        });
+      }
+
+      estado.fotos[tipo] = [...estado.fotos[tipo], ...nuevos];
+      renderizarPreview(previewId, estado.fotos[tipo], tipo);
+      guardarLocal();
+      renderizarTodo();
+      event.target.value = "";
+      toast(nuevos.length === 1 ? "Fotografía agregada." : nuevos.length + " fotografías agregadas.");
+    }
+
+    function archivoAImagenComprimida(file) {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onerror = () => resolve({ dataUrl: "", tipo: file.type || "" });
+        reader.onload = () => {
+          const original = String(reader.result || "");
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const max = 1400;
+              const ratio = Math.min(1, max / img.width, max / img.height);
+              const canvas = document.createElement("canvas");
+              canvas.width = Math.max(1, Math.round(img.width * ratio));
+              canvas.height = Math.max(1, Math.round(img.height * ratio));
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve({ dataUrl: canvas.toDataURL("image/jpeg", 0.86), tipo: "image/jpeg" });
+            } catch (error) {
+              resolve({ dataUrl: original, tipo: file.type || "" });
+            }
+          };
+          img.onerror = () => resolve({ dataUrl: original, tipo: file.type || "" });
+          img.src = original;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderizarPreview(previewId, archivos, tipo, soloLectura = false) {
+      const contenedor = document.getElementById(previewId);
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
+      if (!archivos.length) {
+        const mensaje = document.createElement("p");
+        mensaje.className = "helper";
+        mensaje.textContent = "Aún no hay fotografías seleccionadas. Use el botón de cámara o suba imágenes desde la galería.";
+        contenedor.appendChild(mensaje);
+        return;
+      }
+      archivos.forEach((file, index) => {
+        const card = document.createElement("div");
+        card.className = "photo-card";
+        const src = file.dataUrl || file.url || "";
+        if (src) {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = file.nombre;
+          card.appendChild(img);
+        } else {
+          const placeholder = document.createElement("div");
+          placeholder.className = "photo-placeholder";
+          placeholder.textContent = "Vista previa no disponible. Vuelva a subir la imagen si desea imprimirla o exportarla.";
+          card.appendChild(placeholder);
+        }
+        if (!soloLectura) {
+          const eliminar = document.createElement("button");
+          eliminar.type = "button";
+          eliminar.textContent = "✕";
+          eliminar.title = "Eliminar fotografía";
+          eliminar.onclick = () => eliminarFoto(tipo, index);
+          card.appendChild(eliminar);
+        }
+        const nombre = document.createElement("strong");
+        nombre.title = file.nombre;
+        nombre.textContent = file.nombre;
+        const tamano = document.createElement("span");
+        tamano.textContent = Math.round((file.tamano || 0) / 1024) + " KB" + (file.origen ? " · " + file.origen : "");
+        card.appendChild(nombre);
+        card.appendChild(tamano);
+        contenedor.appendChild(card);
+      });
+    }
+
+    function eliminarFoto(tipo, index) {
+      estado.fotos[tipo].splice(index, 1);
+      renderizarFotografias();
+      guardarLocal();
+      renderizarTodo();
+      toast("Fotografía eliminada.");
+    }
+
+    function renderizarFotografias() {
+      renderizarPreview("previewEvidencia", estado.fotos.evidencia, "evidencia");
+      renderizarPreview("previewAntes", estado.fotos.antes, "antes");
+      renderizarPreview("previewDespues", estado.fotos.despues, "despues");
+      actualizarContadoresFotos();
+    }
+
+    function actualizarContadoresFotos() {
+      const contadores = [
+        ["evidenciaCounter", estado.fotos.evidencia.length],
+        ["antesCounter", estado.fotos.antes.length],
+        ["despuesCounter", estado.fotos.despues.length]
+      ];
+      contadores.forEach(([id, cantidad]) => {
+        const elemento = document.getElementById(id);
+        if (elemento) elemento.textContent = cantidad + (cantidad === 1 ? " foto" : " fotos");
+      });
+    }
+
+    function obtenerFotosParaReporte() {
+      return [
+        ...estado.fotos.evidencia.map((f, i) => ({ ...f, categoria: "Evidencia", no: i + 1 })),
+        ...estado.fotos.antes.map((f, i) => ({ ...f, categoria: "Antes", no: i + 1 })),
+        ...estado.fotos.despues.map((f, i) => ({ ...f, categoria: "Después", no: i + 1 }))
+      ];
+    }
+
+    function renderizarGaleriaResumen() {
+      const contenedor = document.getElementById("resumenFotos");
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
+      const fotos = obtenerFotosParaReporte();
+      if (!fotos.length) {
+        const mensaje = document.createElement("p");
+        mensaje.className = "helper";
+        mensaje.textContent = "Aún no hay fotografías para mostrar en la impresión o PDF.";
+        contenedor.appendChild(mensaje);
+        return;
+      }
+      fotos.forEach(file => {
+        const card = document.createElement("div");
+        card.className = "photo-card";
+        const src = file.dataUrl || file.url || "";
+        if (src) {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = file.categoria + " - " + file.nombre;
+          card.appendChild(img);
+        } else {
+          const placeholder = document.createElement("div");
+          placeholder.className = "photo-placeholder";
+          placeholder.textContent = "Imagen no disponible";
+          card.appendChild(placeholder);
+        }
+        const categoria = document.createElement("span");
+        categoria.className = "photo-category";
+        categoria.textContent = file.categoria + " #" + file.no;
+        const nombre = document.createElement("strong");
+        nombre.textContent = file.nombre;
+        card.appendChild(categoria);
+        card.appendChild(nombre);
+        contenedor.appendChild(card);
+      });
+    }
+
+    function recopilarDatos() {
+      const datos = {};
+      camposFormulario.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (elemento) datos[id] = elemento.value.trim();
+      });
+      datos.materiales = obtenerMateriales();
+      datos.fotos = estado.fotos;
+      return datos;
+    }
+
+    function guardarLocal() {
+      const datos = recopilarDatos();
+      const copiaSegura = {
+        ...datos,
+        fotos: {
+          evidencia: estado.fotos.evidencia.map(f => ({ nombre: f.nombre, tipo: f.tipo, tamano: f.tamano })),
+          antes: estado.fotos.antes.map(f => ({ nombre: f.nombre, tipo: f.tipo, tamano: f.tamano })),
+          despues: estado.fotos.despues.map(f => ({ nombre: f.nombre, tipo: f.tipo, tamano: f.tamano }))
+        }
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(copiaSegura));
+    }
+
+    function cargarGuardado() {
+      const guardado = localStorage.getItem(STORAGE_KEY);
+      if (!guardado) return;
+      try {
+        const datos = JSON.parse(guardado);
+        camposFormulario.forEach(id => {
+          const elemento = document.getElementById(id);
+          if (elemento && datos[id] !== undefined) elemento.value = datos[id];
+        });
+        if (Array.isArray(datos.materiales) && datos.materiales.length) {
+          document.getElementById("materialesBody").innerHTML = "";
+          datos.materiales.forEach(material => agregarMaterial(material));
+        }
+        if (datos.fotos) {
+          estado.fotos = {
+            evidencia: (datos.fotos.evidencia || []).map(f => ({ ...f, url: "" })),
+            antes: (datos.fotos.antes || []).map(f => ({ ...f, url: "" })),
+            despues: (datos.fotos.despues || []).map(f => ({ ...f, url: "" }))
+          };
+        }
+      } catch (error) {
+        console.error("No se pudo cargar el guardado local", error);
+      }
+    }
+
+    function renderizarTodo() {
+      recalcularMateriales();
+      actualizarNavegacion();
+      renderizarDashboard();
+      renderizarFotografias();
+      if (!document.getElementById("resumen").classList.contains("hidden")) renderizarResumen();
+    }
+
+    function renderizarDashboard() {
+      const datos = recopilarDatos();
+      const totalFotos = contarFotos();
+      document.getElementById("statEjecutor").textContent = datos.ejecutor || "—";
+      document.getElementById("statProyecto").textContent = datos.nombreProyecto || "—";
+      document.getElementById("statFecha").textContent = datos.fecha || "—";
+      document.getElementById("statMateriales").textContent = datos.materiales.length;
+
+      const checklist = obtenerChecklist();
+      const completados = checklist.filter(item => item.ok).length;
+      const porcentaje = Math.round((completados / checklist.length) * 100);
+      document.getElementById("progressText").textContent = porcentaje + "%";
+      document.getElementById("progressBar").style.width = porcentaje + "%";
+
+      const faltantes = checklist.filter(item => !item.ok).map(item => item.nombre);
+      document.getElementById("missingText").textContent = faltantes.length
+        ? "Falta: " + faltantes.slice(0, 3).join(", ") + (faltantes.length > 3 ? "..." : "")
+        : "Listo para revisar y exportar.";
+
+      actualizarPill("pillVerificacion", validarCampos(["fecha", "responsable", "solicitante", "lugar", "descripcion"], false).length === 0, "Completo", "Pendiente");
+      actualizarPill("pillFicha", datos.materiales.length > 0, "Con materiales", "Pendiente");
+      actualizarPill("pillFotos", totalFotos > 0, totalFotos + " fotos", "Sin fotos");
+      actualizarPill("pillResumen", porcentaje === 100, "Listo", "Revisar");
+    }
+
+    function actualizarPill(id, ok, textoOk, textoNo) {
+      const pill = document.getElementById(id);
+      pill.className = "status-pill " + (ok ? "ok" : "warn");
+      pill.textContent = ok ? textoOk : textoNo;
+    }
+
+    function obtenerChecklist() {
+      const datos = recopilarDatos();
+      return [
+        { nombre: "Ejecutor registrado", ok: Boolean(datos.ejecutor) },
+        { nombre: "Nombre del proyecto", ok: Boolean(datos.nombreProyecto) },
+        { nombre: "Fecha de verificación", ok: Boolean(datos.fecha) },
+        { nombre: "Responsable y solicitante", ok: Boolean(datos.responsable && datos.solicitante) },
+        { nombre: "Lugar del proyecto", ok: Boolean(datos.lugar) },
+        { nombre: "Descripción del proyecto", ok: Boolean(datos.descripcion) },
+        { nombre: "Ficha técnica con materiales", ok: datos.materiales.length > 0 },
+        { nombre: "Evidencia fotográfica", ok: contarFotos() > 0 }
+      ];
+    }
+
+    function renderizarResumen() {
+      const datos = recopilarDatos();
+      const checklist = obtenerChecklist();
+      const contenedorChecklist = document.getElementById("checklist");
+      contenedorChecklist.innerHTML = "";
+      checklist.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "check-item";
+        const strong = document.createElement("strong");
+        strong.textContent = item.nombre;
+        const pill = document.createElement("span");
+        pill.className = "status-pill " + (item.ok ? "ok" : "error");
+        pill.textContent = item.ok ? "Completo" : "Falta";
+        div.appendChild(strong);
+        div.appendChild(pill);
+        contenedorChecklist.appendChild(div);
+      });
+
+      const resumen = document.getElementById("resumenContenido");
+      resumen.innerHTML = "";
+      const campos = [
+        ["Ejecutor", datos.ejecutor || "—"],
+        ["Proyecto", datos.nombreProyecto || "—"],
+        ["Fecha", datos.fecha || "—"],
+        ["Responsable", datos.responsable || "—"],
+        ["Solicitante", datos.solicitante || "—"],
+        ["Tipo", datos.tipoProyecto || "—"],
+        ["Estado", datos.estadoProyecto || "—"],
+        ["Prioridad", datos.prioridad || "—"],
+        ["Lugar", datos.lugar || "—"],
+        ["Beneficiarios", datos.beneficiarios || "—"],
+        ["Tiempo estimado", datos.tiempoEstimado || "—"],
+        ["Riesgo", datos.riesgo || "—"],
+        ["Materiales", String(datos.materiales.length)],
+        ["Fotografías", String(contarFotos())],
+        ["Descripción", datos.descripcion || "—"]
+      ];
+      campos.forEach(([titulo, valor]) => {
+        const div = document.createElement("div");
+        const span = document.createElement("span");
+        span.textContent = titulo;
+        const p = document.createElement("p");
+        p.textContent = valor;
+        div.appendChild(span);
+        div.appendChild(p);
+        resumen.appendChild(div);
+      });
+
+      renderizarGaleriaResumen();
+
+      const faltantes = checklist.filter(item => !item.ok);
+      mostrarAlerta("resumenAlert", faltantes.length ? "Aún hay puntos pendientes antes de la entrega." : "El registro está completo y listo para exportar.", faltantes.length ? "warn" : "ok");
+    }
+
+    async function descargarExcel() {
+      const datos = recopilarDatos();
+      const faltantes = validarCampos(camposObligatorios.map(([id]) => id), true);
+      const checklist = obtenerChecklist();
+      const faltaMateriales = !datos.materiales.length;
+
+      if (faltantes.length || faltaMateriales) {
+        const mensaje = faltaMateriales
+          ? "Faltan campos obligatorios o materiales en la ficha técnica. Revise el resumen antes de descargar."
+          : "Faltan campos obligatorios. Revise los campos marcados en rojo.";
+        if (document.getElementById("resumen").classList.contains("hidden")) mostrarModulo("resumen");
+        mostrarAlerta("resumenAlert", mensaje, "error");
+        toast("No se generó el Excel porque faltan datos importantes.");
+        return;
+      }
+
+      if (typeof ExcelJS === "undefined") {
+        descargarCSVFallback(datos);
+        mostrarAlerta("globalAlert", "No se cargó la librería para Excel con imágenes. Se descargó un CSV básico.", "warn");
+        return;
+      }
+
+      toast("Generando Excel con imágenes...");
+
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = "Panel de Verificación";
+      workbook.created = new Date();
+
+      const hojaResumen = workbook.addWorksheet("Resumen");
+      hojaResumen.columns = [
+        { header: "Campo", key: "campo", width: 30 },
+        { header: "Valor", key: "valor", width: 70 }
+      ];
+      [
+        ["Ejecutor", datos.ejecutor],
+        ["Nombre del proyecto", datos.nombreProyecto],
+        ["Fecha de verificación", datos.fecha],
+        ["Responsable", datos.responsable],
+        ["Solicitante", datos.solicitante],
+        ["Tipo de proyecto", datos.tipoProyecto],
+        ["Estado", datos.estadoProyecto],
+        ["Prioridad", datos.prioridad],
+        ["Lugar", datos.lugar],
+        ["Beneficiarios estimados", datos.beneficiarios],
+        ["Tiempo estimado", datos.tiempoEstimado],
+        ["Personal operativo", datos.personal],
+        ["Riesgo", datos.riesgo],
+        ["Total de materiales", datos.materiales.length],
+        ["Fotos de evidencia", estado.fotos.evidencia.length],
+        ["Fotos antes", estado.fotos.antes.length],
+        ["Fotos después", estado.fotos.despues.length]
+      ].forEach(([campo, valor]) => hojaResumen.addRow({ campo, valor }));
+      formatearHojaBasica(hojaResumen);
+
+      const hojaVerificacion = workbook.addWorksheet("Verificacion");
+      hojaVerificacion.columns = [
+        { header: "Campo", key: "campo", width: 38 },
+        { header: "Detalle", key: "detalle", width: 95 }
+      ];
+      [
+        ["Descripción del proyecto", datos.descripcion],
+        ["Materiales y herramientas generales", datos.materialesHerramientas],
+        ["Observaciones y pendientes", datos.observaciones]
+      ].forEach(([campo, detalle]) => hojaVerificacion.addRow({ campo, detalle }));
+      formatearHojaBasica(hojaVerificacion);
+
+      const hojaMateriales = workbook.addWorksheet("Ficha Tecnica");
+      hojaMateriales.columns = [
+        { header: "No", key: "no", width: 8 },
+        { header: "Cantidad", key: "cantidad", width: 14 },
+        { header: "Unidad", key: "unidad", width: 20 },
+        { header: "Descripción", key: "descripcion", width: 60 },
+        { header: "Observación", key: "observacion", width: 60 }
+      ];
+      datos.materiales.forEach((m, index) => hojaMateriales.addRow({
+        no: index + 1,
+        cantidad: m.cantidad,
+        unidad: m.unidad,
+        descripcion: m.descripcion,
+        observacion: m.observacion
+      }));
+      formatearHojaBasica(hojaMateriales);
+
+      const hojaFotos = workbook.addWorksheet("Fotografias");
+      hojaFotos.columns = [
+        { header: "Categoría", key: "categoria", width: 18 },
+        { header: "No", key: "no", width: 8 },
+        { header: "Archivo", key: "archivo", width: 45 },
+        { header: "Tamaño KB", key: "tamano", width: 14 },
+        { header: "Imagen", key: "imagen", width: 36 }
+      ];
+      formatearEncabezado(hojaFotos);
+      const fotos = obtenerFotosParaReporte();
+      if (!fotos.length) {
+        hojaFotos.addRow({ categoria: "", no: "", archivo: "Sin fotografías seleccionadas", tamano: "" });
+      } else {
+        fotos.forEach(file => {
+          const row = hojaFotos.addRow({
+            categoria: file.categoria,
+            no: file.no,
+            archivo: file.nombre,
+            tamano: Math.round((file.tamano || 0) / 1024)
+          });
+          row.height = 122;
+          row.alignment = { vertical: "middle", wrapText: true };
+          if (file.dataUrl || file.url) {
+            try {
+              const imageId = workbook.addImage({ base64: file.dataUrl || file.url, extension: "jpeg" });
+              hojaFotos.addImage(imageId, {
+                tl: { col: 4.1, row: row.number - 0.9 },
+                ext: { width: 210, height: 145 }
+              });
+            } catch (error) {
+              row.getCell(5).value = "No se pudo incrustar esta imagen";
+            }
+          } else {
+            row.getCell(5).value = "Imagen no disponible; vuelva a subirla antes de exportar.";
+          }
+        });
+      }
+      aplicarBordes(hojaFotos);
+
+      const hojaChecklist = workbook.addWorksheet("Checklist");
+      hojaChecklist.columns = [
+        { header: "Punto", key: "punto", width: 45 },
+        { header: "Estado", key: "estado", width: 18 }
+      ];
+      checklist.forEach(item => hojaChecklist.addRow({ punto: item.nombre, estado: item.ok ? "Completo" : "Pendiente" }));
+      formatearHojaBasica(hojaChecklist);
+
+      const nombreArchivo = "Reporte_Verificacion_" + limpiarNombreArchivo(datos.nombreProyecto || datos.ejecutor) + "_" + (datos.fecha || new Date().toISOString().split("T")[0]) + ".xlsx";
+      const buffer = await workbook.xlsx.writeBuffer();
+      descargarBlob(buffer, nombreArchivo, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      mostrarAlerta("globalAlert", "Excel generado correctamente con las imágenes disponibles.", "ok");
+      toast("Excel generado correctamente.");
+    }
+
+    function formatearEncabezado(hoja) {
+      const header = hoja.getRow(1);
+      header.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      header.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0F4C81" } };
+      header.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+      header.height = 22;
+    }
+
+    function aplicarBordes(hoja) {
+      hoja.eachRow(row => {
+        row.eachCell(cell => {
+          cell.border = {
+            top: { style: "thin", color: { argb: "FFD9E2F2" } },
+            left: { style: "thin", color: { argb: "FFD9E2F2" } },
+            bottom: { style: "thin", color: { argb: "FFD9E2F2" } },
+            right: { style: "thin", color: { argb: "FFD9E2F2" } }
+          };
+          cell.alignment = { vertical: "middle", wrapText: true };
+        });
+      });
+    }
+
+    function formatearHojaBasica(hoja) {
+      formatearEncabezado(hoja);
+      aplicarBordes(hoja);
+    }
+
+    function descargarBlob(contenido, nombre, tipo) {
+      const blob = new Blob([contenido], { type: tipo });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nombre;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function imprimirReporte() {
+      mostrarModulo("resumen");
+      renderizarResumen();
+      toast("Preparando impresión con imágenes...");
+      setTimeout(() => window.print(), 350);
+    }
+
+    function descargarCSVFallback(datos) {
+      const filas = [
+        ["Campo", "Valor"],
+        ["Ejecutor", datos.ejecutor],
+        ["Proyecto", datos.nombreProyecto],
+        ["Fecha", datos.fecha],
+        ["Responsable", datos.responsable],
+        ["Solicitante", datos.solicitante],
+        ["Lugar", datos.lugar],
+        ["Descripcion", datos.descripcion]
+      ];
+      const csv = filas.map(fila => fila.map(valor => `"${String(valor || "").replace(/"/g, '""')}"`).join(",")).join("\n");
+      descargarArchivo(csv, "respaldo_verificacion.csv", "text/csv;charset=utf-8");
+    }
+
+    function descargarArchivo(contenido, nombre, tipo) {
+      const blob = new Blob([contenido], { type: tipo });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nombre;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function limpiarNombreArchivo(texto) {
+      return String(texto || "reporte")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9_-]/g, "_")
+        .replace(/_+/g, "_")
+        .slice(0, 45);
+    }
+
+    function limpiarTodo() {
+      if (!confirm("¿Desea borrar todos los datos guardados del formulario?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      camposFormulario.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (!elemento) return;
+        if (elemento.tagName === "SELECT") elemento.selectedIndex = 0;
+        else elemento.value = "";
+        limpiarErrorCampo(id);
+      });
+      estado.fotos = { evidencia: [], antes: [], despues: [] };
+      document.getElementById("materialesBody").innerHTML = "";
+      agregarMaterial();
+      configurarFechaActual();
+      renderizarTodo();
+      mostrarVista("inicio");
+      toast("Formulario limpiado.");
+    }
+
+    function mostrarAlerta(id, mensaje, tipo = "ok") {
+      const alerta = document.getElementById(id);
+      if (!alerta) return;
+      alerta.className = "alert show " + tipo;
+      alerta.textContent = mensaje;
+      clearTimeout(alerta.dataset.timer);
+      alerta.dataset.timer = setTimeout(() => alerta.classList.remove("show"), 4200);
+    }
+
+    function toast(mensaje) {
+      const t = document.getElementById("toast");
+      t.textContent = mensaje;
+      t.classList.add("show");
+      clearTimeout(t.dataset.timer);
+      t.dataset.timer = setTimeout(() => t.classList.remove("show"), 2600);
+    }
+
+    function contarFotos() {
+      return estado.fotos.evidencia.length + estado.fotos.antes.length + estado.fotos.despues.length;
+    }
+
+
+    function activarConEnter(event, modulo) {
+      if (event.key === "Enter" || event.key === " ") mostrarModulo(modulo);
+    }
+
+  </script>
+</body>
+</html>
