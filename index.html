@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Proyecto Final - Panel de Verificación</title>
   <meta name="description" content="Proyecto final de verificación de proyectos con usuarios locales, registros separados, evidencia fotográfica, ficha técnica, respaldo, exportación e impresión." />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -713,6 +713,796 @@
       page-break-after: avoid;
     }
 
+
+    /* =========================================================
+       MEJORA VISUAL: INICIO LIMPIO Y PANEL PRINCIPAL MÁS CLARO
+       ========================================================= */
+
+    .auth-landing {
+      align-items: start;
+    }
+
+    .welcome-card {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .welcome-card::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -70px;
+      top: -70px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(11,116,222,0.16), transparent 70%);
+      pointer-events: none;
+    }
+
+    .landing-kicker {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #087443;
+      border: 1px solid #abefc6;
+      font-weight: 900;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .landing-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 18px 0 18px;
+    }
+
+    .landing-actions .button-like {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .feature-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .feature-item strong {
+      display: block;
+      color: #102a43;
+      margin-bottom: 3px;
+    }
+
+    .feature-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .landing-preview {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 32%),
+        linear-gradient(135deg, #0f4c81, #102a43);
+      color: white;
+      box-shadow: 0 18px 42px rgba(15, 76, 129, 0.22);
+      position: relative;
+      z-index: 1;
+    }
+
+    .preview-topline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #dbeafe;
+      font-size: 13px;
+      font-weight: 850;
+      margin-bottom: 14px;
+    }
+
+    .preview-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.55);
+      display: inline-block;
+    }
+
+    .preview-topline strong {
+      margin-left: 4px;
+      color: white;
+    }
+
+    .preview-content {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .preview-main-card,
+    .preview-side-list div {
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.12);
+      border-radius: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .preview-main-card {
+      padding: 18px;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .preview-label {
+      width: fit-content;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      color: #dbeafe;
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .preview-main-card h3 {
+      margin: 0 0 8px;
+      color: white;
+      font-size: clamp(19px, 2.4vw, 26px);
+      line-height: 1.12;
+    }
+
+    .preview-main-card p {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .preview-progress {
+      height: 9px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .preview-progress span {
+      display: block;
+      width: 78%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22c55e, #93c5fd);
+    }
+
+    .preview-side-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .preview-side-list div {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .preview-side-list b {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.18);
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .preview-side-list span {
+      color: #ffffff;
+      font-weight: 850;
+      font-size: 13px;
+    }
+
+    .preview-benefits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .preview-benefits span {
+      flex: 1 1 150px;
+      text-align: center;
+      padding: 9px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 850;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+
+
+    .simple-start {
+      max-width: 680px;
+      margin-top: 16px;
+    }
+
+    .simple-start .feature-item {
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 8px 20px rgba(15, 76, 129, 0.08);
+    }
+
+    .clean-start-note {
+      max-width: 620px;
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .auth-options {
+      align-items: stretch;
+    }
+
+    .auth-options .auth-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .dashboard-hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      margin-bottom: 18px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(15,76,129,0.98), rgba(11,116,222,0.92));
+      color: #ffffff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dashboard-hero::after {
+      content: "";
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      right: -75px;
+      bottom: -95px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      pointer-events: none;
+    }
+
+    .dashboard-hero h2 {
+      margin: 0 0 6px;
+      color: #ffffff;
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.1;
+    }
+
+    .dashboard-hero p {
+      margin: 0;
+      color: #dbeafe;
+      line-height: 1.5;
+    }
+
+    .dashboard-actions {
+      display: grid;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-actions button {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 16px;
+    }
+
+    .dashboard-stats {
+      margin-bottom: 18px;
+    }
+
+    .backup-box {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+    }
+
+    .backup-box h3 {
+      margin-top: 0;
+      color: #102a43;
+    }
+
+
+
+    /* =========================================================
+       AJUSTES EXTRA PARA CELULAR Y TABLET
+       Estos estilos se colocan al final para que tengan prioridad.
+       ========================================================= */
+
+    img, video, canvas {
+      max-width: 100%;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    .button-like,
+    input,
+    select,
+    textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        position: static;
+      }
+
+      .topbar {
+        width: 100%;
+        padding: 12px;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .brand {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 13px;
+        flex: 0 0 auto;
+      }
+
+      .brand h1 {
+        font-size: 16px;
+      }
+
+      .brand small {
+        font-size: 12px;
+      }
+
+      nav {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      nav button {
+        width: 100%;
+        min-height: 42px;
+        padding: 10px 8px;
+        font-size: 12px;
+        white-space: normal;
+        text-align: center;
+      }
+
+      main {
+        width: 100%;
+        padding: 14px 10px 44px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+      }
+
+      .auth-grid,
+      .summary-list,
+      .mini-help {
+        grid-template-columns: 1fr !important;
+      }
+
+      .stats,
+      .step-guide,
+      .checklist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .panel,
+      .module,
+      .auth-card {
+        padding: 16px;
+        border-radius: 18px;
+      }
+
+      .app-head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .user-chip {
+        width: 100%;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr !important;
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .tab-btn {
+        width: 100%;
+        min-height: 42px;
+        padding: 10px 8px;
+        font-size: 12px;
+        white-space: normal;
+      }
+
+      .actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .actions button,
+      .actions .button-like {
+        width: 100%;
+      }
+
+      .record-card {
+        flex-direction: column;
+      }
+
+      .record-card .actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .photo-section {
+        padding: 14px;
+      }
+
+      .photo-section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .photo-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .photo-buttons button,
+      .photo-buttons .button-like {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .preview-grid {
+        grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+        gap: 10px;
+      }
+
+      .photo-card img {
+        height: 120px;
+      }
+
+      .toast {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        max-width: none;
+      }
+
+      .export-report {
+        width: 100%;
+        max-width: 100%;
+        padding: 18px;
+      }
+
+      .dashboard-hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body {
+        min-height: 100svh;
+        background:
+          radial-gradient(circle at top left, rgba(11, 116, 222, 0.16), transparent 30%),
+          linear-gradient(135deg, #eef4ff 0%, #f8fbff 100%);
+      }
+
+      .topbar {
+        padding: 10px;
+      }
+
+      nav {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 26px !important;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
+      }
+
+      .stat {
+        padding: 12px;
+        border-radius: 15px;
+      }
+
+      .stat span {
+        font-size: 10px;
+      }
+
+      .stat strong {
+        font-size: 22px;
+      }
+
+      .tabs,
+      .actions,
+      .record-card .actions,
+      .photo-buttons,
+      .step-guide,
+      .checklist {
+        grid-template-columns: 1fr !important;
+      }
+
+      .panel,
+      .module,
+      .auth-card {
+        padding: 14px;
+        border-radius: 16px;
+      }
+
+      .grid {
+        gap: 10px;
+      }
+
+      .col-12,
+      .col-8,
+      .col-6,
+      .col-4,
+      .col-3,
+      .col-2 {
+        grid-column: 1 / -1 !important;
+      }
+
+      label {
+        font-size: 12px;
+      }
+
+      input,
+      select,
+      textarea {
+        min-height: 46px;
+        font-size: 16px;
+        border-radius: 12px;
+      }
+
+      textarea {
+        min-height: 96px;
+      }
+
+      button,
+      .button-like {
+        min-height: 44px;
+        border-radius: 14px;
+        padding: 12px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-small {
+        min-height: 40px;
+        padding: 9px 10px;
+      }
+
+      .record-card {
+        padding: 14px;
+        border-radius: 16px;
+      }
+
+      .record-meta {
+        gap: 6px;
+      }
+
+      .pill {
+        font-size: 11px;
+        padding: 6px 9px;
+      }
+
+      .summary-list div,
+      .mini-help-card,
+      .step-card,
+      .check-item {
+        border-radius: 14px;
+      }
+
+      .table-wrap {
+        overflow-x: visible;
+      }
+
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        width: 100%;
+      }
+
+      tr {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        margin-bottom: 10px;
+      }
+
+      td::before {
+        min-height: 14px;
+      }
+
+      .camera-modal {
+        padding: 0;
+      }
+
+      .camera-modal-card {
+        min-height: 100svh;
+        border-radius: 0;
+      }
+
+      .camera-modal-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .landing-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .feature-item {
+        grid-template-columns: 34px 1fr;
+        padding: 10px;
+      }
+
+      .feature-icon {
+        width: 34px;
+        height: 34px;
+      }
+
+      .landing-preview {
+        padding: 13px;
+        border-radius: 20px;
+      }
+
+      .preview-content {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-main-card {
+        min-height: auto;
+        padding: 15px;
+      }
+
+      .preview-side-list div {
+        grid-template-columns: 36px 1fr;
+        padding: 10px;
+      }
+
+      .preview-side-list b {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+      }
+
+      .preview-benefits {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-hero {
+        padding: 15px;
+        border-radius: 18px;
+      }
+
+      .dashboard-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 380px) {
+      main {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .brand h1 {
+        font-size: 15px;
+      }
+
+      .brand small {
+        display: none;
+      }
+
+      .stats {
+        grid-template-columns: 1fr !important;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media print {
       header, .tabs, .actions, .auth-card, .records-list, .no-print, button { display: none !important; }
       body { background: white; }
@@ -743,28 +1533,50 @@
   </header>
 
   <main>
-    <section id="authScreen" class="hero">
-      <div class="panel">
-        <span class="project-badge">✨ Panel interactivo de verificación</span>
-        <h1 class="hero-title">Sistema de control de proyectos</h1>
-        <p class="lead">Administre verificaciones de proyectos de forma ordenada: registre datos, agregue evidencia fotográfica, revise el avance, descargue Excel y genere reportes PDF listos para entregar.</p>
-        <div class="stats">
+    <section id="authScreen" class="hero auth-landing">
+      <div class="panel welcome-card">
+        <span class="landing-kicker">✨ Panel interactivo de verificación</span>
+        <h1 class="hero-title">Panel de Verificación de Proyectos</h1>
+        <p class="lead">Registra proyectos, agrega evidencia fotográfica y genera reportes en Excel o PDF de forma ordenada y fácil de usar.</p>
+        <div class="landing-actions no-print">
+          <a class="button-like btn-primary" href="#loginForm">Ya tengo cuenta</a>
+          <a class="button-like btn-success" href="#registerForm">Crear cuenta</a>
+        </div>
+        <div class="feature-list simple-start no-print" aria-label="Beneficios principales del sistema">
+          <div class="feature-item">
+            <div class="feature-icon">📋</div>
+            <div>
+              <strong>Registros ordenados</strong>
+              <span>Guarde la información del proyecto en un solo lugar.</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📷</div>
+            <div>
+              <strong>Evidencia fotográfica</strong>
+              <span>Agregue fotos desde la cámara o desde la galería.</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📄</div>
+            <div>
+              <strong>Reportes listos</strong>
+              <span>Exporte la información en Excel o genere PDF para entregar.</span>
+            </div>
+          </div>
+        </div>
+        <div class="stats landing-stats hidden" aria-hidden="true">
           <div class="stat"><span>Usuarios</span><strong id="statUsers">0</strong></div>
           <div class="stat"><span>Registros</span><strong id="statGlobalRecords">0</strong></div>
           <div class="stat"><span>Fotos</span><strong id="statGlobalPhotos">0</strong></div>
           <div class="stat"><span>Reportes</span><strong>PDF</strong></div>
         </div>
-        <div class="mini-help no-print">
-          <div class="mini-help-card"><strong>1. Cree usuario</strong><span>El panel separa los registros por persona.</span></div>
-          <div class="mini-help-card"><strong>2. Agregue evidencia</strong><span>Puede usar cámara o subir fotos desde galería.</span></div>
-          <div class="mini-help-card"><strong>3. Exporte</strong><span>Descargue Excel vertical y PDF con fotos.</span></div>
-        </div>
       </div>
 
-      <div class="auth-grid">
+      <div class="auth-grid auth-options">
         <form id="loginForm" class="auth-card">
           <h2>Iniciar sesión</h2>
-          <p>Ingrese con su usuario para ver únicamente sus registros.</p>
+          <p>Entre para revisar sus registros guardados y crear nuevos reportes.</p>
           <div id="loginAlert" class="alert"></div>
           <div class="form-group">
             <label for="loginUsername" class="required">Usuario</label>
@@ -774,12 +1586,12 @@
             <label for="loginPassword" class="required">Contraseña</label>
             <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Contraseña" />
           </div>
-          <button class="btn-primary" type="submit">Entrar</button>
+          <button class="btn-primary" type="submit">Entrar al panel</button>
         </form>
 
         <form id="registerForm" class="auth-card">
-          <h2>Crear usuario</h2>
-          <p>El nombre de usuario no puede repetirse.</p>
+          <h2>Crear cuenta</h2>
+          <p>Use una cuenta local para separar sus registros de otros usuarios.</p>
           <div id="registerAlert" class="alert"></div>
           <div class="form-group">
             <label for="registerFullName" class="required">Nombre completo</label>
@@ -808,8 +1620,8 @@
     <section id="appScreen" class="hidden">
       <div class="app-head">
         <div>
-          <h1 class="hero-title" style="font-size:clamp(28px,4vw,40px);">Gestión de verificación</h1>
-          <p class="lead">Complete el registro paso a paso, revise el avance y genere reportes listos para entregar.</p>
+          <h1 class="hero-title" style="font-size:clamp(28px,4vw,40px);">Panel principal</h1>
+          <p class="lead">Cree registros, revise avances y descargue reportes listos para entregar.</p>
         </div>
         <div class="user-chip">
           <div class="avatar" id="userAvatar">U</div>
@@ -822,7 +1634,18 @@
 
       <div id="appAlert" class="alert"></div>
 
-      <div class="stats">
+      <div class="dashboard-hero no-print">
+        <div>
+          <h2>Comience aquí</h2>
+          <p>Use el botón principal para crear un registro. Después podrá agregar ficha técnica, evidencia fotográfica, Excel y PDF.</p>
+        </div>
+        <div class="dashboard-actions">
+          <button class="btn-success" type="button" data-open-tab="form">➕ Crear nuevo registro</button>
+          <button class="btn-ghost" type="button" data-open-tab="records">Ver mis registros</button>
+        </div>
+      </div>
+
+      <div class="stats dashboard-stats">
         <div class="stat"><span>Mis registros</span><strong id="statMyRecords">0</strong></div>
         <div class="stat"><span>Finalizados</span><strong id="statFinished">0</strong></div>
         <div class="stat"><span>Pendientes</span><strong id="statPending">0</strong></div>
@@ -831,15 +1654,15 @@
 
       <div class="tabs no-print">
         <button class="tab-btn active" type="button" data-open-tab="records">Mis registros</button>
-        <button class="tab-btn" type="button" data-open-tab="form">Nuevo / editar</button>
-        <button class="tab-btn" type="button" data-open-tab="summary">Resumen actual</button>
+        <button class="tab-btn" type="button" data-open-tab="form">Nuevo registro</button>
+        <button class="tab-btn" type="button" data-open-tab="summary">Resumen</button>
       </div>
 
       <section id="recordsTab" class="module">
         <div class="app-head">
           <div>
-            <h2>Mis registros guardados</h2>
-            <p>Busque, filtre, edite, duplique o exporte sus registros guardados.</p>
+            <h2>Mis registros</h2>
+            <p>Busque, filtre, edite, duplique o exporte los registros guardados.</p>
           </div>
           <div class="actions">
             <button class="btn-primary" type="button" id="newRecordBtn">➕ Nuevo registro</button>
@@ -879,8 +1702,8 @@
         <div id="recordsList" class="records-list"></div>
 
         <div class="backup-box no-print">
-          <h3>Respaldo local del proyecto</h3>
-          <p class="helper">Como esta versión no usa base de datos, puede descargar un respaldo JSON de sus registros o restaurarlo después en el mismo navegador.</p>
+          <h3>Configuración y respaldo</h3>
+          <p class="helper">Descargue un respaldo JSON de sus registros o restaure una copia anterior en este navegador.</p>
           <div class="actions">
             <button class="btn-primary" type="button" id="backupBtn">⬇ Descargar respaldo</button>
             <label class="button-like btn-success" for="restoreBackupInput">⬆ Restaurar respaldo</label>
@@ -1837,10 +2660,10 @@
             <tbody>
               ${record.materials.map(item => `
                 <tr>
-                  <td>${escapeHTML(item.cantidad || "—")}</td>
-                  <td>${escapeHTML(item.unidad || "—")}</td>
-                  <td>${escapeHTML(item.descripcion || "—")}</td>
-                  <td>${escapeHTML(item.observacion || "—")}</td>
+                  <td data-label="Cantidad">${escapeHTML(item.cantidad || "—")}</td>
+                  <td data-label="Unidad">${escapeHTML(item.unidad || "—")}</td>
+                  <td data-label="Descripción">${escapeHTML(item.descripcion || "—")}</td>
+                  <td data-label="Observación">${escapeHTML(item.observacion || "—")}</td>
                 </tr>
               `).join("")}
             </tbody>
@@ -2720,10 +3543,10 @@
           <tbody>
             ${(record.materials || []).map(item => `
               <tr>
-                <td>${escapeHTML(item.cantidad || "—")}</td>
-                <td>${escapeHTML(item.unidad || "—")}</td>
-                <td>${escapeHTML(item.descripcion || "—")}</td>
-                <td>${escapeHTML(item.observacion || "—")}</td>
+                <td data-label="Cantidad">${escapeHTML(item.cantidad || "—")}</td>
+                <td data-label="Unidad">${escapeHTML(item.unidad || "—")}</td>
+                <td data-label="Descripción">${escapeHTML(item.descripcion || "—")}</td>
+                <td data-label="Observación">${escapeHTML(item.observacion || "—")}</td>
               </tr>
             `).join("")}
           </tbody>
