@@ -1,0 +1,2860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyecto Final - Panel de Verificación</title>
+  <meta name="description" content="Proyecto final de verificación de proyectos con usuarios locales, registros separados, evidencia fotográfica, ficha técnica, respaldo, exportación e impresión." />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --primary: #0f4c81;
+      --primary-2: #0b74de;
+      --primary-3: #073763;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e2f2;
+      --shadow: 0 20px 50px rgba(15, 76, 129, 0.16);
+      --shadow-soft: 0 10px 25px rgba(15, 76, 129, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(11, 116, 222, 0.22), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.18), transparent 30%),
+        linear-gradient(135deg, #eef4ff 0%, #f8fbff 55%, #e8f5ff 100%);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      color: white;
+      background: rgba(7, 37, 68, 0.94);
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar {
+      max-width: 1220px;
+      margin: auto;
+      padding: 14px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary-2), #22c55e);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      font-weight: 900;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    .brand small {
+      display: block;
+      margin-top: 3px;
+      color: #c8e0ff;
+      font-weight: 600;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button, .button-like {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 850;
+      cursor: pointer;
+      color: var(--primary);
+      background: white;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: var(--shadow-soft);
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    button:hover, .button-like:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .btn-primary { background: linear-gradient(135deg, var(--primary-2), var(--primary)); color: white; }
+    .btn-success { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; }
+    .btn-danger { background: #fff1f3; color: #b42318; border: 1px solid #fecdd6; }
+    .btn-warning { background: #fffaeb; color: #b54708; border: 1px solid #fedf89; }
+    .btn-ghost { background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.24); box-shadow: none; }
+    .btn-small { padding: 8px 11px; font-size: 12px; }
+
+    main {
+      width: min(1220px, calc(100% - 28px));
+      margin: auto;
+      padding: 28px 0 60px;
+    }
+
+    .hidden { display: none !important; }
+
+    .panel, .module, .auth-card {
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(217,226,242,0.85);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 5vw, 48px);
+      line-height: 1.02;
+      margin: 0 0 12px;
+      color: #102a43;
+      letter-spacing: -0.03em;
+    }
+
+    .lead {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .auth-card h2, .module h2, .panel h2 { margin: 0 0 8px; color: #102a43; }
+    .auth-card p, .module p, .panel p { color: var(--muted); line-height: 1.5; }
+
+    label {
+      display: block;
+      font-weight: 850;
+      color: #344054;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }
+
+    .required::after { content: " *"; color: var(--danger); }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 13px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea { min-height: 108px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(11,116,222,0.65);
+      box-shadow: 0 0 0 4px rgba(11,116,222,0.12);
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .col-12 { grid-column: span 12; }
+    .col-8 { grid-column: span 8; }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-3 { grid-column: span 3; }
+    .col-2 { grid-column: span 2; }
+
+    .app-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .user-chip {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stat span { display: block; color: var(--muted); font-size: 12px; font-weight: 900; text-transform: uppercase; }
+    .stat strong { display: block; margin-top: 6px; font-size: 28px; color: #102a43; }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--primary);
+    }
+
+    .tab-btn.active { background: var(--primary); color: white; }
+
+    .records-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .record-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .record-card h3 { margin: 0 0 8px; color: #102a43; }
+    .record-meta { display: flex; flex-wrap: wrap; gap: 8px; color: var(--muted); font-size: 13px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      background: #eff6ff;
+      color: var(--primary);
+      border: 1px solid #bfdbfe;
+    }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    .table-wrap { overflow-x: auto; border-radius: 16px; }
+    table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    th, td { padding: 11px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: #eff6ff; color: #17446d; font-size: 13px; white-space: nowrap; }
+    tr:last-child td { border-bottom: 0; }
+    td input, td select, td textarea { margin: 0; }
+    td textarea { min-height: 62px; }
+
+    .photo-section {
+      border: 1px solid var(--border);
+      background: #fbfdff;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .photo-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .photo-section-head h3 { margin: 0; color: #102a43; }
+    .photo-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+    .photo-input { display: none; }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .photo-card {
+      position: relative;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #eef2f7;
+      display: block;
+    }
+
+    .photo-card strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .photo-card span { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .photo-card button { position: absolute; top: 8px; right: 8px; padding: 7px 9px; border-radius: 999px; background: rgba(255,255,255,0.92); border: 1px solid var(--border); color: #b42318; box-shadow: none; }
+
+    .summary-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .summary-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .summary-list div {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fbfdff;
+    }
+
+    .summary-list span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .summary-list strong, .summary-list p { margin: 0; color: #102a43; word-break: break-word; }
+
+    .alert {
+      display: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 0 0 18px;
+      font-weight: 850;
+      border: 1px solid transparent;
+    }
+    .alert.show { display: block; }
+    .alert.ok { background: #ecfdf3; color: #087443; border-color: #abefc6; }
+    .alert.error { background: #fff1f3; color: #b42318; border-color: #fecdd6; }
+    .alert.warn { background: #fffaeb; color: #b54708; border-color: #fedf89; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: 380px;
+      z-index: 99;
+      background: #102a43;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+      display: none;
+      font-weight: 850;
+    }
+    .toast.show { display: block; animation: fadeIn 0.25s ease both; }
+
+    .camera-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(7,37,68,0.72);
+      backdrop-filter: blur(10px);
+    }
+
+    .camera-modal-card {
+      width: min(760px, 100%);
+      background: white;
+      border-radius: 26px;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+
+    .camera-modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+    }
+    .camera-modal-head h3 { margin: 0; color: #102a43; }
+    .camera-close-btn { width: 42px; height: 42px; border-radius: 14px; border: 1px solid var(--border); background: white; color: var(--primary); font-size: 22px; box-shadow: none; }
+
+    .camera-view-box { position: relative; background: #0b1726; min-height: 320px; display: grid; place-items: center; }
+    #cameraVideo { width: 100%; max-height: 58vh; min-height: 320px; object-fit: cover; background: #0b1726; display: block; }
+    .camera-status { position: absolute; left: 16px; right: 16px; bottom: 16px; padding: 11px 13px; border-radius: 16px; color: white; background: rgba(0,0,0,0.48); font-size: 13px; line-height: 1.45; }
+    .camera-modal-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 18px 20px 20px; background: white; }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px;
+      color: var(--muted);
+      background: white;
+      border: 1px dashed #b8cce8;
+      border-radius: 18px;
+    }
+
+    .helper { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+
+    .project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #087443;
+      border: 1px solid #abefc6;
+      font-weight: 900;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr auto;
+      gap: 14px;
+      align-items: end;
+      margin-bottom: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+    }
+
+    .progress-wrap {
+      width: min(440px, 100%);
+      height: 12px;
+      background: #e4ebf7;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #d4e0f3;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary-2), var(--accent));
+      transition: width 0.25s ease;
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+
+    .check-item {
+      padding: 11px 12px;
+      border-radius: 15px;
+      background: #ffffff;
+      color: #667085;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .check-item.done {
+      background: #ecfdf3;
+      color: #087443;
+      border-color: #abefc6;
+    }
+
+    .live-tip {
+      margin-top: 10px;
+      padding: 11px 13px;
+      border-radius: 15px;
+      background: #eff6ff;
+      color: #17446d;
+      border: 1px solid #bfdbfe;
+      font-size: 13px;
+      font-weight: 800;
+      max-width: 620px;
+    }
+
+    .field-counter {
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 800;
+    }
+
+    .mini-help {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .mini-help-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .mini-help-card strong {
+      display: block;
+      color: #102a43;
+      margin-bottom: 5px;
+    }
+
+    .mini-help-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 1040px) {
+      .hero { grid-template-columns: 1fr; }
+      .auth-grid, .stats { grid-template-columns: 1fr 1fr; }
+      .app-head, .topbar { flex-direction: column; }
+      .col-8, .col-6, .col-4, .col-3, .col-2 { grid-column: span 12; }
+    }
+
+    @media (max-width: 680px) {
+      main { width: min(100% - 22px, 1220px); padding-top: 18px; }
+      .panel, .module, .auth-card { padding: 18px; }
+      .auth-grid, .stats, .summary-list { grid-template-columns: 1fr; }
+      .record-card { flex-direction: column; }
+      nav button, .actions button, .photo-buttons button, .photo-buttons .button-like { width: 100%; justify-content: center; text-align: center; }
+      .brand { min-width: 0; }
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tr { border-bottom: 1px solid var(--border); padding: 12px; }
+      td { border: 0; padding: 8px 0; }
+      td::before { content: attr(data-label); display: block; color: var(--muted); font-size: 12px; font-weight: 900; margin-bottom: 6px; }
+      .camera-modal { padding: 0; }
+      .camera-modal-card { min-height: 100vh; border-radius: 0; }
+      .camera-view-box, #cameraVideo { min-height: 58vh; }
+      .toolbar { grid-template-columns: 1fr; }
+      .checklist { grid-template-columns: 1fr; }
+      .step-guide { grid-template-columns: 1fr; }
+      .mini-help { grid-template-columns: 1fr; }
+    }
+
+
+    .step-guide {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .step-card {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .step-card strong { display: block; color: var(--primary); margin-bottom: 6px; }
+    .step-card span { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .helper.good { color: #087443; font-weight: 800; }
+    .helper.bad { color: #b42318; font-weight: 800; }
+
+    .export-report {
+      width: 794px;
+      max-width: 794px;
+      padding: 34px;
+      background: #ffffff;
+      color: #172033;
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .export-report h1, .export-report h2, .export-report h3 { color: #102a43; margin-bottom: 8px; }
+    .export-report .report-head {
+      border-bottom: 4px solid #0b74de;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+    .export-report .report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .export-report .report-item {
+      border: 1px solid #d9e2f2;
+      border-radius: 10px;
+      padding: 9px;
+      background: #f8fbff;
+      min-height: 52px;
+    }
+    .export-report .report-item span { display: block; font-size: 11px; color: #667085; font-weight: 800; text-transform: uppercase; }
+    .export-report .report-item strong { display: block; font-size: 14px; margin-top: 3px; }
+    .export-report table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+    .export-report th, .export-report td { border: 1px solid #d9e2f2; padding: 7px; vertical-align: top; }
+    .export-report th { background: #eef4ff; text-align: left; }
+    .export-report .report-photos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .export-report .report-photo {
+      border: 1px solid #d9e2f2;
+      border-radius: 12px;
+      padding: 8px;
+      background: #f8fbff;
+      break-inside: avoid;
+    }
+    .export-report .report-photo img { width: 100%; max-height: 230px; object-fit: cover; border-radius: 8px; display: block; }
+    .export-report .report-photo small { display: block; margin-top: 5px; color: #667085; }
+    .export-report .report-section,
+    .export-report .report-photo,
+    .export-report table,
+    .export-report tr {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .export-report h2,
+    .export-report h3 {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    @media print {
+      header, .tabs, .actions, .auth-card, .records-list, .no-print, button { display: none !important; }
+      body { background: white; }
+      main { width: 100%; padding: 0; }
+      .panel, .module, .summary-box { box-shadow: none; border: 1px solid #ddd; }
+      .hidden { display: block !important; }
+      #appScreen { display: block !important; }
+      #summaryTab { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-icon">✓</div>
+        <div>
+          <h1>Panel de Verificación</h1>
+          <small>Control de proyectos · evidencia · reportes</small>
+        </div>
+      </div>
+      <nav id="topNav" class="hidden">
+        <button class="btn-ghost" type="button" data-open-tab="records">Mis registros</button>
+        <button class="btn-ghost" type="button" data-open-tab="form">Nuevo registro</button>
+        <button class="btn-ghost" type="button" id="logoutBtn">Cerrar sesión</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="authScreen" class="hero">
+      <div class="panel">
+        <span class="project-badge">✨ Panel interactivo de verificación</span>
+        <h1 class="hero-title">Sistema de control de proyectos</h1>
+        <p class="lead">Administre verificaciones de proyectos de forma ordenada: registre datos, agregue evidencia fotográfica, revise el avance, descargue Excel y genere reportes PDF listos para entregar.</p>
+        <div class="stats">
+          <div class="stat"><span>Usuarios</span><strong id="statUsers">0</strong></div>
+          <div class="stat"><span>Registros</span><strong id="statGlobalRecords">0</strong></div>
+          <div class="stat"><span>Fotos</span><strong id="statGlobalPhotos">0</strong></div>
+          <div class="stat"><span>Reportes</span><strong>PDF</strong></div>
+        </div>
+        <div class="mini-help no-print">
+          <div class="mini-help-card"><strong>1. Cree usuario</strong><span>El panel separa los registros por persona.</span></div>
+          <div class="mini-help-card"><strong>2. Agregue evidencia</strong><span>Puede usar cámara o subir fotos desde galería.</span></div>
+          <div class="mini-help-card"><strong>3. Exporte</strong><span>Descargue Excel vertical y PDF con fotos.</span></div>
+        </div>
+      </div>
+
+      <div class="auth-grid">
+        <form id="loginForm" class="auth-card">
+          <h2>Iniciar sesión</h2>
+          <p>Ingrese con su usuario para ver únicamente sus registros.</p>
+          <div id="loginAlert" class="alert"></div>
+          <div class="form-group">
+            <label for="loginUsername" class="required">Usuario</label>
+            <input id="loginUsername" autocomplete="username" required placeholder="Ej. fcardona" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword" class="required">Contraseña</label>
+            <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Contraseña" />
+          </div>
+          <button class="btn-primary" type="submit">Entrar</button>
+        </form>
+
+        <form id="registerForm" class="auth-card">
+          <h2>Crear usuario</h2>
+          <p>El nombre de usuario no puede repetirse.</p>
+          <div id="registerAlert" class="alert"></div>
+          <div class="form-group">
+            <label for="registerFullName" class="required">Nombre completo</label>
+            <input id="registerFullName" autocomplete="name" required placeholder="Ej. Fredy Cardona" />
+          </div>
+          <div class="form-group">
+            <label for="registerUsername" class="required">Usuario único</label>
+            <input id="registerUsername" autocomplete="username" required placeholder="Ej. fcardona" />
+            <div class="helper">Use letras, números, puntos, guiones o guion bajo. Mínimo 3 caracteres.</div>
+          </div>
+          <div class="form-group">
+            <label for="registerPassword" class="required">Contraseña</label>
+            <input id="registerPassword" type="password" autocomplete="new-password" required placeholder="Mínimo 4 caracteres" />
+            <div class="helper">Consejo: use una contraseña fácil de recordar para la demostración.</div>
+          </div>
+          <div class="form-group">
+            <label for="registerPasswordConfirm" class="required">Confirmar contraseña</label>
+            <input id="registerPasswordConfirm" type="password" autocomplete="new-password" required placeholder="Repita la contraseña" />
+            <div id="registerGuidance" class="helper">Al crear la cuenta ingresará automáticamente al panel principal.</div>
+          </div>
+          <button class="btn-success" type="submit">Crear cuenta e ingresar</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="appScreen" class="hidden">
+      <div class="app-head">
+        <div>
+          <h1 class="hero-title" style="font-size:clamp(28px,4vw,40px);">Gestión de verificación</h1>
+          <p class="lead">Complete el registro paso a paso, revise el avance y genere reportes listos para entregar.</p>
+        </div>
+        <div class="user-chip">
+          <div class="avatar" id="userAvatar">U</div>
+          <div>
+            <strong id="userNameLabel">Usuario</strong><br />
+            <small id="userUsernameLabel" style="color:var(--muted);">@usuario</small>
+          </div>
+        </div>
+      </div>
+
+      <div id="appAlert" class="alert"></div>
+
+      <div class="stats">
+        <div class="stat"><span>Mis registros</span><strong id="statMyRecords">0</strong></div>
+        <div class="stat"><span>Finalizados</span><strong id="statFinished">0</strong></div>
+        <div class="stat"><span>Pendientes</span><strong id="statPending">0</strong></div>
+        <div class="stat"><span>Fotos</span><strong id="statMyPhotos">0</strong></div>
+      </div>
+
+      <div class="tabs no-print">
+        <button class="tab-btn active" type="button" data-open-tab="records">Mis registros</button>
+        <button class="tab-btn" type="button" data-open-tab="form">Nuevo / editar</button>
+        <button class="tab-btn" type="button" data-open-tab="summary">Resumen actual</button>
+      </div>
+
+      <section id="recordsTab" class="module">
+        <div class="app-head">
+          <div>
+            <h2>Mis registros guardados</h2>
+            <p>Busque, filtre, edite, duplique o exporte sus registros guardados.</p>
+          </div>
+          <div class="actions">
+            <button class="btn-primary" type="button" id="newRecordBtn">➕ Nuevo registro</button>
+            <button class="btn-success" type="button" id="exportAllBtn">⬇ Exportar mis registros</button>
+          </div>
+        </div>
+        <div class="toolbar no-print">
+          <div class="form-group">
+            <label for="recordSearch">Buscar registro</label>
+            <input id="recordSearch" placeholder="Buscar por proyecto, lugar, responsable o solicitante" />
+          </div>
+          <div class="form-group">
+            <label for="recordStatusFilter">Filtrar por estado</label>
+            <select id="recordStatusFilter">
+              <option value="">Todos los estados</option>
+              <option>En planificación</option>
+              <option>En revisión</option>
+              <option>En ejecución</option>
+              <option>Finalizado</option>
+              <option>Con pendientes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="recordSort">Ordenar</label>
+            <select id="recordSort">
+              <option value="updated_desc">Más recientes</option>
+              <option value="fecha_desc">Fecha reciente</option>
+              <option value="fecha_asc">Fecha antigua</option>
+              <option value="nombre_asc">Nombre A-Z</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button class="btn-warning" type="button" id="clearFiltersBtn">Limpiar filtros</button>
+          </div>
+        </div>
+        <div id="recordsList" class="records-list"></div>
+
+        <div class="backup-box no-print">
+          <h3>Respaldo local del proyecto</h3>
+          <p class="helper">Como esta versión no usa base de datos, puede descargar un respaldo JSON de sus registros o restaurarlo después en el mismo navegador.</p>
+          <div class="actions">
+            <button class="btn-primary" type="button" id="backupBtn">⬇ Descargar respaldo</button>
+            <label class="button-like btn-success" for="restoreBackupInput">⬆ Restaurar respaldo</label>
+            <input id="restoreBackupInput" class="backup-file" type="file" accept="application/json,.json" />
+          </div>
+        </div>
+      </section>
+
+      <section id="formTab" class="module hidden">
+        <div class="app-head">
+          <div>
+            <h2 id="formTitle">Nuevo registro</h2>
+            <p>Complete la información paso a paso. Al guardar, el sistema volverá automáticamente a la página principal de registros.</p>
+            <div class="progress-wrap" aria-label="Avance del registro"><div id="formProgressBar" class="progress-bar"></div></div>
+            <p class="helper" id="formProgressText">Avance: 0%</p>
+            <div id="smartTip" class="live-tip">Complete los datos obligatorios para iniciar el registro.</div>
+          </div>
+          <div class="actions">
+            <button class="btn-warning" type="button" id="clearFormBtn">Limpiar</button>
+            <button class="btn-primary" type="button" id="saveRecordBtn">Guardar y volver al inicio</button>
+          </div>
+        </div>
+
+        <input type="hidden" id="recordId" />
+
+        <div class="step-guide no-print">
+          <div class="step-card"><strong>1. Datos generales</strong><span>Fecha, responsable, nombre del proyecto y estado.</span></div>
+          <div class="step-card"><strong>2. Descripción</strong><span>Explique qué se verificó y dónde se realizó.</span></div>
+          <div class="step-card"><strong>3. Ficha y fotos</strong><span>Agregue materiales, evidencia, antes y después.</span></div>
+          <div class="step-card"><strong>4. Guardar / exportar</strong><span>Guarde y descargue Excel o PDF con toda la información.</span></div>
+        </div>
+
+        <div id="formChecklist" class="checklist no-print"></div>
+
+        <div class="grid">
+          <div class="form-group col-4">
+            <label for="fecha" class="required">Fecha de verificación</label>
+            <input id="fecha" type="date" data-field="fecha" />
+          </div>
+          <div class="form-group col-4">
+            <label for="responsable" class="required">Responsable</label>
+            <input id="responsable" data-field="responsable" placeholder="Nombre del responsable" />
+          </div>
+          <div class="form-group col-4">
+            <label for="solicitante">Nombre del solicitante</label>
+            <input id="solicitante" data-field="solicitante" placeholder="Solicitante" />
+          </div>
+          <div class="form-group col-6">
+            <label for="nombreProyecto" class="required">Nombre del proyecto</label>
+            <input id="nombreProyecto" data-field="nombreProyecto" placeholder="Nombre del proyecto" />
+          </div>
+          <div class="form-group col-3">
+            <label for="tipoProyecto">Tipo de proyecto</label>
+            <select id="tipoProyecto" data-field="tipoProyecto">
+              <option>Municipal</option>
+              <option>Social</option>
+              <option>Comunitario</option>
+              <option>Infraestructura</option>
+              <option>Educativo</option>
+              <option>Ambiental</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="form-group col-3">
+            <label for="estadoProyecto">Estado</label>
+            <select id="estadoProyecto" data-field="estadoProyecto">
+              <option>En planificación</option>
+              <option>En revisión</option>
+              <option>En ejecución</option>
+              <option>Finalizado</option>
+              <option>Con pendientes</option>
+            </select>
+          </div>
+          <div class="form-group col-4">
+            <label for="prioridad">Prioridad</label>
+            <select id="prioridad" data-field="prioridad">
+              <option>Media</option>
+              <option>Alta</option>
+              <option>Baja</option>
+              <option>Urgente</option>
+            </select>
+          </div>
+          <div class="form-group col-4">
+            <label for="lugar">Lugar</label>
+            <input id="lugar" data-field="lugar" placeholder="Ubicación" />
+          </div>
+          <div class="form-group col-4">
+            <label for="personalOperativo">¿Requiere personal operativo?</label>
+            <select id="personalOperativo" data-field="personalOperativo">
+              <option>Sí</option>
+              <option>No</option>
+              <option>Por confirmar</option>
+            </select>
+          </div>
+          <div class="form-group col-12">
+            <label for="descripcion">Descripción del proyecto</label>
+            <textarea id="descripcion" data-field="descripcion" maxlength="900" placeholder="Describa el proyecto o verificación"></textarea><div class="field-counter" data-counter-for="descripcion">0 / 900</div>
+          </div>
+          <div class="form-group col-4">
+            <label for="beneficiarios">Beneficiarios estimados</label>
+            <input id="beneficiarios" data-field="beneficiarios" placeholder="Ej. 120 personas" />
+          </div>
+          <div class="form-group col-4">
+            <label for="tiempoEstimado">Tiempo estimado de ejecución</label>
+            <input id="tiempoEstimado" data-field="tiempoEstimado" placeholder="Ej. 2 semanas" />
+          </div>
+          <div class="form-group col-4">
+            <label for="nivelRiesgo">Nivel de riesgo</label>
+            <select id="nivelRiesgo" data-field="nivelRiesgo">
+              <option>Bajo</option>
+              <option>Medio</option>
+              <option>Alto</option>
+            </select>
+          </div>
+          <div class="form-group col-12">
+            <label for="observaciones">Observaciones y pendientes</label>
+            <textarea id="observaciones" data-field="observaciones" maxlength="900" placeholder="Observaciones importantes"></textarea><div class="field-counter" data-counter-for="observaciones">0 / 900</div>
+          </div>
+        </div>
+
+        <div class="module" style="box-shadow:none; margin: 6px 0 18px;">
+          <div class="app-head">
+            <div>
+              <h2>Ficha técnica</h2>
+              <p>Materiales, herramientas o recursos necesarios. Seleccione la unidad de medida para evitar errores al exportar.</p>
+            </div>
+            <div class="actions">
+              <button class="btn-primary" type="button" id="addMaterialBtn">➕ Agregar material</button>
+              <button class="btn-warning" type="button" id="duplicateMaterialBtn">Duplicar último</button>
+              <button class="btn-danger" type="button" id="clearMaterialsBtn">Limpiar materiales</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cantidad</th>
+                  <th>Unidad</th>
+                  <th>Descripción</th>
+                  <th>Observación</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="materialsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-head">
+            <div>
+              <h3>Evidencia fotográfica</h3>
+              <p class="helper">Fotos generales de la visita o verificación. Se comprimen para que puedan guardarse mejor.</p>
+            </div>
+            <span class="pill" id="evidenciaCount">0 fotos</span>
+          </div>
+          <div class="photo-buttons">
+            <button class="btn-success" type="button" data-camera="evidencia">📷 Abrir cámara</button>
+            <label class="button-like btn-primary" for="evidenciaInput">⬆ Subir desde galería</label>
+            <input class="photo-input" id="evidenciaInput" type="file" accept="image/*" multiple data-photo-input="evidencia" />
+          </div>
+          <div id="evidenciaPreview" class="preview-grid"></div>
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-head">
+            <div>
+              <h3>Registro antes</h3>
+              <p class="helper">Fotos del estado inicial.</p>
+            </div>
+            <span class="pill" id="antesCount">0 fotos</span>
+          </div>
+          <div class="photo-buttons">
+            <button class="btn-success" type="button" data-camera="antes">📷 Abrir cámara</button>
+            <label class="button-like btn-primary" for="antesInput">⬆ Subir desde galería</label>
+            <input class="photo-input" id="antesInput" type="file" accept="image/*" multiple data-photo-input="antes" />
+          </div>
+          <div id="antesPreview" class="preview-grid"></div>
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-head">
+            <div>
+              <h3>Registro después</h3>
+              <p class="helper">Fotos del avance o resultado final.</p>
+            </div>
+            <span class="pill" id="despuesCount">0 fotos</span>
+          </div>
+          <div class="photo-buttons">
+            <button class="btn-success" type="button" data-camera="despues">📷 Abrir cámara</button>
+            <label class="button-like btn-primary" for="despuesInput">⬆ Subir desde galería</label>
+            <input class="photo-input" id="despuesInput" type="file" accept="image/*" multiple data-photo-input="despues" />
+          </div>
+          <div id="despuesPreview" class="preview-grid"></div>
+        </div>
+
+        <div class="actions no-print">
+          <button class="btn-primary" type="button" id="saveRecordBtnBottom">Guardar y volver al inicio</button>
+          <button class="btn-success" type="button" id="exportCurrentBtn">⬇ Exportar actual</button>
+          <button class="btn-warning" type="button" id="printCurrentBtn">⬇ Generar PDF</button>
+        </div>
+      </section>
+
+      <section id="summaryTab" class="module hidden">
+        <div class="app-head">
+          <div>
+            <h2>Resumen actual</h2>
+            <p>Vista previa del registro que está en el formulario.</p>
+          </div>
+          <div class="actions no-print">
+            <button class="btn-primary" type="button" id="saveFromSummaryBtn">Guardar</button>
+            <button class="btn-success" type="button" id="exportFromSummaryBtn">⬇ Exportar</button>
+            <button class="btn-warning" type="button" id="printFromSummaryBtn">⬇ Generar PDF</button>
+          </div>
+        </div>
+        <div id="summaryContent" class="summary-box"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="cameraModal" class="camera-modal hidden" role="dialog" aria-modal="true" aria-label="Cámara del dispositivo">
+    <div class="camera-modal-card">
+      <div class="camera-modal-head">
+        <div>
+          <h3>Cámara del dispositivo</h3>
+          <p class="helper">Autorice el permiso de cámara y capture la foto.</p>
+        </div>
+        <button id="closeCameraBtn" class="camera-close-btn" type="button">×</button>
+      </div>
+      <div class="camera-view-box">
+        <video id="cameraVideo" autoplay playsinline muted></video>
+        <div id="cameraStatus" class="camera-status">Preparando cámara...</div>
+      </div>
+      <div class="camera-modal-actions">
+        <button class="btn-success" type="button" id="captureBtn">Capturar foto</button>
+        <button class="btn-warning" type="button" id="cancelCameraBtn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    "use strict";
+
+    const STORAGE = {
+      users: "pv_users_v4_final",
+      records: "pv_records_v4_final",
+      session: "pv_session_v4_final",
+      draftPrefix: "pv_draft_v4_final_"
+    };
+
+    const emptyPhotos = () => ({ evidencia: [], antes: [], despues: [] });
+    const emptyMaterial = () => ({ cantidad: "", unidad: "", descripcion: "", observacion: "" });
+    const UNIT_OPTIONS = [
+      "Unidad",
+      "Pieza",
+      "Metro",
+      "Centímetro",
+      "Milímetro",
+      "Metro cuadrado",
+      "Metro cúbico",
+      "Litro",
+      "Galón",
+      "Kilogramo",
+      "Gramo",
+      "Libra",
+      "Caja",
+      "Paquete",
+      "Bolsa",
+      "Rollo",
+      "Lámina",
+      "Tubo",
+      "Par",
+      "Docena",
+      "Hora",
+      "Día",
+      "Servicio",
+      "Otro"
+    ];
+
+    let currentUser = null;
+    let materials = [emptyMaterial()];
+    let photos = emptyPhotos();
+    let cameraStream = null;
+    let cameraCategory = "evidencia";
+    let autoSaveTimer = null;
+
+    const $ = (id) => document.getElementById(id);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function safeParse(value, fallback) {
+      try { return value ? JSON.parse(value) : fallback; }
+      catch { return fallback; }
+    }
+
+    function cloneData(value) {
+      if (window.structuredClone) return structuredClone(value);
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function setLocalItem(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (error) {
+        console.error("No se pudo guardar en localStorage", error);
+        showAlert("appAlert", "No se pudo guardar. Es posible que el navegador se haya quedado sin espacio por demasiadas fotos. Elimine algunas imágenes o descargue un respaldo.", "error");
+        return false;
+      }
+    }
+
+    function loadUsers() { return safeParse(localStorage.getItem(STORAGE.users), []); }
+    function saveUsers(users) { return setLocalItem(STORAGE.users, users); }
+    function loadRecords() { return safeParse(localStorage.getItem(STORAGE.records), []); }
+    function saveRecords(records) { return setLocalItem(STORAGE.records, records); }
+    function getMyRecords() { return loadRecords().filter(record => record.userId === currentUser?.id); }
+
+    function normalizeUsername(username) {
+      return username.trim().toLowerCase();
+    }
+
+    function isValidUsername(username) {
+      return /^[a-z0-9._-]{3,30}$/.test(username);
+    }
+
+    function makeId(prefix = "id") {
+      if (window.crypto?.randomUUID) return crypto.randomUUID();
+      return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    }
+
+    async function sha256(text) {
+      if (window.crypto?.subtle) {
+        const data = new TextEncoder().encode(text);
+        const hash = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+      return btoa(unescape(encodeURIComponent(text)));
+    }
+
+    function showAlert(id, message, type = "ok") {
+      const el = $(id);
+      el.className = `alert show ${type}`;
+      el.textContent = message;
+    }
+
+    function clearAlert(id) {
+      const el = $(id);
+      el.className = "alert";
+      el.textContent = "";
+    }
+
+    function toast(message) {
+      const el = $("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.remove("show"), 3000);
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>'"]/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;"
+      }[ch]));
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+      const [year, month, day] = value.split("-");
+      if (!year || !month || !day) return value;
+      return `${day}/${month}/${year}`;
+    }
+
+    function today() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function updateGlobalStats() {
+      const users = loadUsers();
+      const records = loadRecords();
+      const photoCount = records.reduce((acc, r) => acc + countPhotos(r.photos), 0);
+      $("statUsers").textContent = users.length;
+      $("statGlobalRecords").textContent = records.length;
+      $("statGlobalPhotos").textContent = photoCount;
+    }
+
+    function countPhotos(photoObj) {
+      const p = photoObj || emptyPhotos();
+      return (p.evidencia?.length || 0) + (p.antes?.length || 0) + (p.despues?.length || 0);
+    }
+
+    function updateMyStats() {
+      if (!currentUser) return;
+      const myRecords = getMyRecords();
+      const finished = myRecords.filter(r => r.estadoProyecto === "Finalizado").length;
+      const pending = myRecords.length - finished;
+      const photoCount = myRecords.reduce((acc, r) => acc + countPhotos(r.photos), 0);
+      $("statMyRecords").textContent = myRecords.length;
+      $("statFinished").textContent = finished;
+      $("statPending").textContent = pending;
+      $("statMyPhotos").textContent = photoCount;
+    }
+
+    async function registerUser(event) {
+      event.preventDefault();
+      clearAlert("registerAlert");
+
+      const fullName = $("registerFullName").value.trim();
+      const username = normalizeUsername($("registerUsername").value);
+      const password = $("registerPassword").value;
+      const confirmPassword = $("registerPasswordConfirm").value;
+
+      if (!fullName || !username || !password || !confirmPassword) {
+        showAlert("registerAlert", "Complete todos los campos obligatorios para crear la cuenta.", "error");
+        return;
+      }
+      if (!isValidUsername(username)) {
+        showAlert("registerAlert", "El usuario debe tener mínimo 3 caracteres y solo puede usar letras, números, punto, guion o guion bajo.", "error");
+        return;
+      }
+      if (password.length < 4) {
+        showAlert("registerAlert", "La contraseña debe tener mínimo 4 caracteres.", "error");
+        return;
+      }
+      if (password !== confirmPassword) {
+        showAlert("registerAlert", "Las contraseñas no coinciden. Revise antes de continuar.", "error");
+        return;
+      }
+
+      const users = loadUsers();
+      if (users.some(user => user.username === username)) {
+        showAlert("registerAlert", "Ese usuario ya existe. Use otro nombre de usuario.", "error");
+        return;
+      }
+
+      const user = {
+        id: makeId("user"),
+        fullName,
+        username,
+        passwordHash: await sha256(`${username}:${password}`),
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(user);
+      if (!saveUsers(users)) return;
+      currentUser = user;
+      localStorage.setItem(STORAGE.session, user.id);
+      $("registerForm").reset();
+      updateGlobalStats();
+      showApp();
+      toast("Cuenta creada correctamente. Ya está en la página principal.");
+    }
+
+    function updateRegisterGuidance() {
+      const guidance = $("registerGuidance");
+      if (!guidance) return;
+      const username = normalizeUsername($("registerUsername").value);
+      const password = $("registerPassword").value;
+      const confirmPassword = $("registerPasswordConfirm").value;
+      const exists = username && loadUsers().some(user => user.username === username);
+      guidance.classList.remove("good", "bad");
+      if (exists) {
+        guidance.textContent = "Ese usuario ya existe. Pruebe con otro nombre.";
+        guidance.classList.add("bad");
+      } else if (username && !isValidUsername(username)) {
+        guidance.textContent = "Use mínimo 3 caracteres: letras, números, punto, guion o guion bajo.";
+        guidance.classList.add("bad");
+      } else if (password || confirmPassword) {
+        const ok = password.length >= 4 && password === confirmPassword;
+        guidance.textContent = ok ? "Listo. Al crear la cuenta ingresará automáticamente al panel." : "La contraseña debe tener mínimo 4 caracteres y coincidir.";
+        guidance.classList.add(ok ? "good" : "bad");
+      } else {
+        guidance.textContent = "Al crear la cuenta ingresará automáticamente al panel principal.";
+      }
+    }
+
+    async function loginUser(event) {
+      event.preventDefault();
+      clearAlert("loginAlert");
+
+      const username = normalizeUsername($("loginUsername").value);
+      const password = $("loginPassword").value;
+      const users = loadUsers();
+      const hash = await sha256(`${username}:${password}`);
+      const user = users.find(item => item.username === username && item.passwordHash === hash);
+
+      if (!user) {
+        showAlert("loginAlert", "Usuario o contraseña incorrectos.", "error");
+        return;
+      }
+
+      currentUser = user;
+      localStorage.setItem(STORAGE.session, user.id);
+      $("loginForm").reset();
+      showApp();
+      toast(`Bienvenido, ${user.fullName}`);
+    }
+
+    function restoreSession() {
+      const sessionId = localStorage.getItem(STORAGE.session);
+      if (!sessionId) return false;
+      const user = loadUsers().find(item => item.id === sessionId);
+      if (!user) return false;
+      currentUser = user;
+      showApp();
+      return true;
+    }
+
+    function logout() {
+      stopCamera();
+      currentUser = null;
+      localStorage.removeItem(STORAGE.session);
+      $("appScreen").classList.add("hidden");
+      $("topNav").classList.add("hidden");
+      $("authScreen").classList.remove("hidden");
+      updateGlobalStats();
+      toast("Sesión cerrada.");
+    }
+
+    function showApp() {
+      $("authScreen").classList.add("hidden");
+      $("appScreen").classList.remove("hidden");
+      $("topNav").classList.remove("hidden");
+      $("userNameLabel").textContent = currentUser.fullName;
+      $("userUsernameLabel").textContent = `@${currentUser.username}`;
+      $("userAvatar").textContent = currentUser.fullName.trim().slice(0,1).toUpperCase() || "U";
+      renderRecords();
+      updateMyStats();
+      openTab("records");
+      newRecord(false);
+      restoreDraft();
+    }
+
+    function openTab(name) {
+      const tabs = { records: "recordsTab", form: "formTab", summary: "summaryTab" };
+      Object.values(tabs).forEach(id => $(id).classList.add("hidden"));
+      $(tabs[name]).classList.remove("hidden");
+      $$(".tab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.openTab === name));
+      if (name === "summary") renderSummary();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+
+    function clearFilters() {
+      if ($("recordSearch")) $("recordSearch").value = "";
+      if ($("recordStatusFilter")) $("recordStatusFilter").value = "";
+      if ($("recordSort")) $("recordSort").value = "updated_desc";
+      renderRecords();
+      toast("Filtros limpiados.");
+    }
+
+    function renderRecords() {
+      const list = $("recordsList");
+      const query = ($("recordSearch")?.value || "").trim().toLowerCase();
+      const status = $("recordStatusFilter")?.value || "";
+      const sortMode = $("recordSort")?.value || "updated_desc";
+      let records = getMyRecords();
+
+      if (query) {
+        records = records.filter(record => [
+          record.nombreProyecto,
+          record.responsable,
+          record.solicitante,
+          record.lugar,
+          record.descripcion,
+          record.observaciones
+        ].join(" ").toLowerCase().includes(query));
+      }
+
+      if (status) records = records.filter(record => record.estadoProyecto === status);
+
+      records.sort((a,b) => {
+        if (sortMode === "fecha_desc") return String(b.fecha || "").localeCompare(String(a.fecha || ""));
+        if (sortMode === "fecha_asc") return String(a.fecha || "").localeCompare(String(b.fecha || ""));
+        if (sortMode === "nombre_asc") return String(a.nombreProyecto || "").localeCompare(String(b.nombreProyecto || ""));
+        return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+      });
+
+      if (!records.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <h3>No hay registros para mostrar</h3>
+            <p>${query || status ? "Cambie el filtro de búsqueda o cree un nuevo registro." : "Presione “Nuevo registro” para empezar."}</p>
+            <button class="btn-primary" type="button" id="emptyNewRecordBtn">Crear registro</button>
+          </div>`;
+        $("emptyNewRecordBtn")?.addEventListener("click", () => newRecord(true));
+        return;
+      }
+
+      list.innerHTML = records.map(record => `
+        <article class="record-card">
+          <div>
+            <h3>${escapeHTML(record.nombreProyecto || "Proyecto sin nombre")}</h3>
+            <div class="record-meta">
+              <span class="pill">📅 ${escapeHTML(formatDate(record.fecha))}</span>
+              <span class="pill">📌 ${escapeHTML(record.estadoProyecto || "Sin estado")}</span>
+              <span class="pill">⚠ ${escapeHTML(record.prioridad || "Media")}</span>
+              <span class="pill">📷 ${countPhotos(record.photos)} fotos</span>
+              <span class="pill">🕒 ${escapeHTML(formatDate((record.updatedAt || record.createdAt || "").slice(0,10)))}</span>
+            </div>
+            <p>${escapeHTML(record.descripcion || "Sin descripción")}</p>
+          </div>
+          <div class="actions">
+            <button class="btn-primary btn-small" type="button" data-edit="${record.id}">Editar</button>
+            <button class="btn-success btn-small" type="button" data-export="${record.id}">Excel</button>
+            <button class="btn-warning btn-small" type="button" data-pdf="${record.id}">PDF</button>
+            <button class="btn-small" type="button" data-duplicate="${record.id}">Duplicar</button>
+            <button class="btn-danger btn-small" type="button" data-delete="${record.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      $$('[data-edit]').forEach(btn => btn.addEventListener('click', () => editRecord(btn.dataset.edit)));
+      $$('[data-export]').forEach(btn => btn.addEventListener('click', () => exportRecordById(btn.dataset.export)));
+      $$('[data-pdf]').forEach(btn => btn.addEventListener('click', () => exportPdfById(btn.dataset.pdf))); 
+      $$('[data-duplicate]').forEach(btn => btn.addEventListener('click', () => duplicateRecord(btn.dataset.duplicate)));
+      $$('[data-delete]').forEach(btn => btn.addEventListener('click', () => deleteRecord(btn.dataset.delete)));
+    }
+
+    function newRecord(goToForm = true) {
+      $("recordId").value = "";
+      $("formTitle").textContent = "Nuevo registro";
+      $$('[data-field]').forEach(input => input.value = "");
+      $("fecha").value = today();
+      $("responsable").value = currentUser?.fullName || "";
+      $("tipoProyecto").value = "Municipal";
+      $("estadoProyecto").value = "En revisión";
+      $("prioridad").value = "Media";
+      $("personalOperativo").value = "Por confirmar";
+      $("nivelRiesgo").value = "Bajo";
+      materials = [emptyMaterial()];
+      photos = emptyPhotos();
+      renderMaterials();
+      renderAllPhotos();
+      updateFormProgress();
+      if (goToForm) openTab("form");
+    }
+
+    function editRecord(id) {
+      const record = getMyRecords().find(item => item.id === id);
+      if (!record) return;
+      $("recordId").value = record.id;
+      $("formTitle").textContent = "Editar registro";
+      $$('[data-field]').forEach(input => input.value = record[input.dataset.field] || "");
+      materials = Array.isArray(record.materials) && record.materials.length ? cloneData(record.materials) : [emptyMaterial()];
+      photos = record.photos ? cloneData(record.photos) : emptyPhotos();
+      renderMaterials();
+      renderAllPhotos();
+      updateFormProgress();
+      renderSummary();
+      openTab("form");
+    }
+
+    function collectRecordData() {
+      const record = {};
+      $$('[data-field]').forEach(input => record[input.dataset.field] = input.value.trim());
+      record.materials = materials.map(item => ({
+        cantidad: item.cantidad || "",
+        unidad: item.unidad || "",
+        descripcion: item.descripcion || "",
+        observacion: item.observacion || ""
+      })).filter(item => item.cantidad || item.unidad || item.descripcion || item.observacion);
+      record.photos = photos;
+      return record;
+    }
+
+    function validateRecord(record) {
+      const missing = [];
+      if (!record.fecha) missing.push("fecha");
+      if (!record.responsable) missing.push("responsable");
+      if (!record.nombreProyecto) missing.push("nombre del proyecto");
+      return missing;
+    }
+
+    function saveCurrentRecord(showMessage = true) {
+      const data = collectRecordData();
+      const missing = validateRecord(data);
+      if (missing.length) {
+        showAlert("appAlert", `Falta completar: ${missing.join(", ")}.`, "error");
+        openTab("form");
+        return null;
+      }
+
+      const records = loadRecords();
+      const now = new Date().toISOString();
+      const existingId = $("recordId").value;
+      let saved;
+
+      if (existingId) {
+        const index = records.findIndex(item => item.id === existingId && item.userId === currentUser.id);
+        if (index === -1) {
+          showAlert("appAlert", "No se pudo actualizar el registro porque no pertenece al usuario actual.", "error");
+          return null;
+        }
+        saved = { ...records[index], ...data, updatedAt: now };
+        records[index] = saved;
+      } else {
+        saved = { id: makeId("record"), userId: currentUser.id, ...data, createdAt: now, updatedAt: now };
+        records.push(saved);
+        $("recordId").value = saved.id;
+        $("formTitle").textContent = "Editar registro";
+      }
+
+      if (!saveRecords(records)) return null;
+      localStorage.removeItem(STORAGE.draftPrefix + currentUser.id);
+      renderRecords();
+      updateMyStats();
+      updateGlobalStats();
+      renderSummary();
+      clearAlert("appAlert");
+      if (showMessage) {
+        toast("Registro guardado correctamente. Regresó a la página principal.");
+        openTab("records");
+      }
+      return saved;
+    }
+
+
+    function duplicateRecord(id) {
+      const record = getMyRecords().find(item => item.id === id);
+      if (!record) return;
+      const records = loadRecords();
+      const now = new Date().toISOString();
+      const copy = cloneData(record);
+      copy.id = makeId("record");
+      copy.userId = currentUser.id;
+      copy.nombreProyecto = `${record.nombreProyecto || "Proyecto"} (copia)`;
+      copy.estadoProyecto = record.estadoProyecto || "En revisión";
+      copy.createdAt = now;
+      copy.updatedAt = now;
+      records.push(copy);
+      if (!saveRecords(records)) return;
+      renderRecords();
+      updateMyStats();
+      updateGlobalStats();
+      toast("Registro duplicado. Puede editar la copia cuando lo necesite.");
+    }
+
+    function deleteRecord(id) {
+      const record = getMyRecords().find(item => item.id === id);
+      if (!record) return;
+      const ok = confirm(`¿Eliminar el registro "${record.nombreProyecto || "sin nombre"}"? Esta acción no se puede deshacer.`);
+      if (!ok) return;
+      const records = loadRecords().filter(item => !(item.id === id && item.userId === currentUser.id));
+      if (!saveRecords(records)) return;
+      if ($("recordId").value === id) newRecord(false);
+      renderRecords();
+      updateMyStats();
+      updateGlobalStats();
+      toast("Registro eliminado.");
+    }
+
+    function buildUnitOptions(selectedUnit) {
+      const selected = selectedUnit || "Unidad";
+      const options = [...UNIT_OPTIONS];
+      if (selected && !options.includes(selected)) options.push(selected);
+      return options.map(unit => `<option value="${escapeHTML(unit)}" ${unit === selected ? "selected" : ""}>${escapeHTML(unit)}</option>`).join("");
+    }
+
+    function renderMaterials() {
+      const body = $("materialsBody");
+      body.innerHTML = materials.map((item, index) => `
+        <tr>
+          <td data-label="Cantidad"><input value="${escapeHTML(item.cantidad)}" data-material-index="${index}" data-material-field="cantidad" placeholder="Ej. 10" /></td>
+          <td data-label="Unidad"><select data-material-index="${index}" data-material-field="unidad" title="Seleccione unidad de medida">${buildUnitOptions(item.unidad)}</select></td>
+          <td data-label="Descripción"><textarea data-material-index="${index}" data-material-field="descripcion" placeholder="Descripción">${escapeHTML(item.descripcion)}</textarea></td>
+          <td data-label="Observación"><textarea data-material-index="${index}" data-material-field="observacion" placeholder="Observación">${escapeHTML(item.observacion)}</textarea></td>
+          <td data-label="Acción"><button class="btn-danger btn-small" type="button" data-remove-material="${index}">Quitar</button></td>
+        </tr>
+      `).join("");
+
+      $$('[data-material-field]').forEach(input => {
+        const eventName = input.tagName === 'SELECT' ? 'change' : 'input';
+        input.addEventListener(eventName, () => {
+          const index = Number(input.dataset.materialIndex);
+          const field = input.dataset.materialField;
+          materials[index][field] = input.value;
+          scheduleDraftSave();
+          renderSummary();
+          updateFormProgress();
+        });
+      });
+
+      $$('[data-remove-material]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = Number(btn.dataset.removeMaterial);
+          materials.splice(index, 1);
+          if (!materials.length) materials.push(emptyMaterial());
+          renderMaterials();
+          scheduleDraftSave();
+          renderSummary();
+        });
+      });
+    }
+
+    function addMaterial() {
+      materials.push(emptyMaterial());
+      renderMaterials();
+      scheduleDraftSave();
+    }
+
+    function duplicateLastMaterial() {
+      const last = materials[materials.length - 1] || emptyMaterial();
+      materials.push({ ...last });
+      renderMaterials();
+      scheduleDraftSave();
+    }
+
+    function clearMaterials() {
+      materials = [emptyMaterial()];
+      renderMaterials();
+      scheduleDraftSave();
+    }
+
+    async function handlePhotoFiles(category, files) {
+      const selected = Array.from(files || []).filter(file => file.type.startsWith("image/"));
+      if (!selected.length) return;
+      for (const file of selected) {
+        try {
+          const dataUrl = await compressImage(file, 1100, 0.75);
+          photos[category].push({ id: makeId("photo"), name: file.name, dataUrl, createdAt: new Date().toISOString() });
+        } catch (error) {
+          console.error(error);
+          toast(`No se pudo cargar ${file.name}`);
+        }
+      }
+      renderPhotos(category);
+      renderSummary();
+      scheduleDraftSave();
+    }
+
+    function compressImage(file, maxSize = 1100, quality = 0.75) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error);
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderAllPhotos() {
+      ["evidencia", "antes", "despues"].forEach(renderPhotos);
+    }
+
+    function renderPhotos(category) {
+      const preview = $(`${category}Preview`);
+      const count = $(`${category}Count`);
+      const items = photos[category] || [];
+      count.textContent = `${items.length} foto${items.length === 1 ? "" : "s"}`;
+      preview.innerHTML = items.map(photo => `
+        <div class="photo-card">
+          <img src="${photo.dataUrl}" alt="${escapeHTML(photo.name)}" />
+          <strong>${escapeHTML(photo.name)}</strong>
+          <span>${escapeHTML(formatPhotoCategory(category))}</span>
+          <button type="button" data-remove-photo="${photo.id}" data-photo-category="${category}" title="Eliminar foto">×</button>
+        </div>
+      `).join("");
+
+      preview.querySelectorAll('[data-remove-photo]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.dataset.photoCategory;
+          photos[cat] = photos[cat].filter(photo => photo.id !== btn.dataset.removePhoto);
+          renderPhotos(cat);
+          renderSummary();
+          updateFormProgress();
+          scheduleDraftSave();
+        });
+      });
+      updateFormProgress();
+    }
+
+    function formatPhotoCategory(category) {
+      return { evidencia: "Evidencia", antes: "Antes", despues: "Después" }[category] || category;
+    }
+
+    async function openCamera(category) {
+      cameraCategory = category;
+      $("cameraModal").classList.remove("hidden");
+      $("cameraStatus").textContent = "Solicitando permiso de cámara...";
+      try {
+        stopCamera();
+        if (!navigator.mediaDevices?.getUserMedia) {
+          throw new Error("El navegador no permite cámara directa en este contexto.");
+        }
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+        $("cameraVideo").srcObject = cameraStream;
+        $("cameraStatus").textContent = `Cámara lista. La foto se guardará en: ${formatPhotoCategory(category)}.`;
+      } catch (error) {
+        console.error(error);
+        $("cameraStatus").textContent = "No se pudo abrir la cámara. Revise permisos o use la opción de galería.";
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      $("cameraVideo").srcObject = null;
+    }
+
+    function closeCamera() {
+      stopCamera();
+      $("cameraModal").classList.add("hidden");
+    }
+
+    function capturePhoto() {
+      const video = $("cameraVideo");
+      if (!video.videoWidth || !video.videoHeight) {
+        toast("La cámara aún no está lista.");
+        return;
+      }
+      const canvas = document.createElement("canvas");
+      const maxSize = 1100;
+      const scale = Math.min(1, maxSize / Math.max(video.videoWidth, video.videoHeight));
+      canvas.width = Math.round(video.videoWidth * scale);
+      canvas.height = Math.round(video.videoHeight * scale);
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+      photos[cameraCategory].push({
+        id: makeId("photo"),
+        name: `${formatPhotoCategory(cameraCategory)}_${new Date().toISOString().replace(/[:.]/g, "-")}.jpg`,
+        dataUrl,
+        createdAt: new Date().toISOString()
+      });
+      renderPhotos(cameraCategory);
+      renderSummary();
+      scheduleDraftSave();
+      closeCamera();
+      toast("Foto agregada correctamente.");
+    }
+
+    function renderSummary() {
+      const record = collectRecordData();
+      const photoTotal = countPhotos(record.photos);
+      const materialsHtml = record.materials.length ? `
+        <div class="table-wrap" style="margin-top:14px;">
+          <table>
+            <thead><tr><th>Cantidad</th><th>Unidad</th><th>Descripción</th><th>Observación</th></tr></thead>
+            <tbody>
+              ${record.materials.map(item => `
+                <tr>
+                  <td>${escapeHTML(item.cantidad || "—")}</td>
+                  <td>${escapeHTML(item.unidad || "—")}</td>
+                  <td>${escapeHTML(item.descripcion || "—")}</td>
+                  <td>${escapeHTML(item.observacion || "—")}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>` : `<p>No se han agregado materiales.</p>`;
+
+      const galleryHtml = ["evidencia", "antes", "despues"].map(category => {
+        const items = record.photos[category] || [];
+        if (!items.length) return "";
+        return `
+          <h3 style="margin-top:18px;">${formatPhotoCategory(category)}</h3>
+          <div class="preview-grid">
+            ${items.map(photo => `
+              <div class="photo-card">
+                <img src="${photo.dataUrl}" alt="${escapeHTML(photo.name)}" />
+                <strong>${escapeHTML(photo.name)}</strong>
+                <span>${formatDate((photo.createdAt || "").slice(0,10))}</span>
+              </div>
+            `).join("")}
+          </div>`;
+      }).join("");
+
+      $("summaryContent").innerHTML = `
+        <h2>${escapeHTML(record.nombreProyecto || "Proyecto sin nombre")}</h2>
+        <p>${escapeHTML(record.descripcion || "Sin descripción")}</p>
+        <div class="summary-list">
+          <div><span>Fecha</span><strong>${escapeHTML(formatDate(record.fecha))}</strong></div>
+          <div><span>Responsable</span><strong>${escapeHTML(record.responsable || "—")}</strong></div>
+          <div><span>Solicitante</span><strong>${escapeHTML(record.solicitante || "—")}</strong></div>
+          <div><span>Tipo</span><strong>${escapeHTML(record.tipoProyecto || "—")}</strong></div>
+          <div><span>Estado</span><strong>${escapeHTML(record.estadoProyecto || "—")}</strong></div>
+          <div><span>Prioridad</span><strong>${escapeHTML(record.prioridad || "—")}</strong></div>
+          <div><span>Lugar</span><strong>${escapeHTML(record.lugar || "—")}</strong></div>
+          <div><span>Personal operativo</span><strong>${escapeHTML(record.personalOperativo || "—")}</strong></div>
+          <div><span>Beneficiarios</span><strong>${escapeHTML(record.beneficiarios || "—")}</strong></div>
+          <div><span>Tiempo estimado</span><strong>${escapeHTML(record.tiempoEstimado || "—")}</strong></div>
+          <div><span>Riesgo</span><strong>${escapeHTML(record.nivelRiesgo || "—")}</strong></div>
+          <div><span>Fotos</span><strong>${photoTotal}</strong></div>
+        </div>
+        <h3 style="margin-top:18px;">Observaciones</h3>
+        <p>${escapeHTML(record.observaciones || "Sin observaciones")}</p>
+        <h3 style="margin-top:18px;">Ficha técnica</h3>
+        ${materialsHtml}
+        ${galleryHtml || `<p style="margin-top:18px;">No se han agregado fotografías.</p>`}
+      `;
+    }
+
+    function updateFormProgress() {
+      const data = collectRecordData();
+      const checks = [
+        { label: "Datos obligatorios", done: !validateRecord(data).length },
+        { label: "Descripción", done: Boolean(data.descripcion) },
+        { label: "Ficha técnica", done: data.materials.length > 0 },
+        { label: "Evidencia", done: countPhotos(data.photos) > 0 }
+      ];
+      const done = checks.filter(item => item.done).length;
+      const percent = Math.round((done / checks.length) * 100);
+      if ($("formProgressBar")) $("formProgressBar").style.width = `${percent}%`;
+      if ($("formProgressText")) $("formProgressText").textContent = `Avance: ${percent}% · ${done} de ${checks.length} secciones completas`;
+      if ($("formChecklist")) {
+        $("formChecklist").innerHTML = checks.map(item => `<div class="check-item ${item.done ? "done" : ""}">${item.done ? "✅" : "○"} ${item.label}</div>`).join("");
+      }
+      const pending = checks.find(item => !item.done);
+      if ($("smartTip")) {
+        $("smartTip").textContent = pending
+          ? `Siguiente recomendado: complete ${pending.label.toLowerCase()}.`
+          : "Registro completo. Ya puede guardarlo, exportarlo a Excel o generar el PDF.";
+      }
+      updateCounters();
+    }
+
+    function updateCounters() {
+      $$('[data-counter-for]').forEach(counter => {
+        const input = $(counter.dataset.counterFor);
+        if (!input) return;
+        const max = input.getAttribute("maxlength") || "";
+        counter.textContent = max ? `${input.value.length} / ${max}` : `${input.value.length}`;
+      });
+    }
+
+    function restoreDraft() {
+      if (!currentUser) return;
+      const raw = localStorage.getItem(STORAGE.draftPrefix + currentUser.id);
+      if (!raw) return;
+      const draft = safeParse(raw, null);
+      if (!draft?.fields) return;
+      const useDraft = confirm("Hay un borrador sin guardar de este usuario. ¿Desea recuperarlo?");
+      if (!useDraft) {
+        localStorage.removeItem(STORAGE.draftPrefix + currentUser.id);
+        return;
+      }
+      $("recordId").value = draft.recordId || "";
+      $$('[data-field]').forEach(input => input.value = draft.fields[input.dataset.field] || "");
+      materials = Array.isArray(draft.fields.materials) && draft.fields.materials.length ? cloneData(draft.fields.materials) : [emptyMaterial()];
+      photos = draft.fields.photos ? cloneData(draft.fields.photos) : emptyPhotos();
+      $("formTitle").textContent = draft.recordId ? "Editar registro" : "Nuevo registro";
+      renderMaterials();
+      renderAllPhotos();
+      renderSummary();
+      updateFormProgress();
+      openTab("form");
+      toast("Borrador recuperado.");
+    }
+
+    function downloadBackup() {
+      const payload = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        user: { id: currentUser.id, username: currentUser.username, fullName: currentUser.fullName },
+        records: getMyRecords()
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `respaldo_${currentUser.username}_${today()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast("Respaldo descargado.");
+    }
+
+    async function restoreBackup(file) {
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const payload = JSON.parse(text);
+        const imported = Array.isArray(payload.records) ? payload.records : [];
+        if (!imported.length) {
+          toast("El respaldo no tiene registros.");
+          return;
+        }
+        const ok = confirm(`Se encontraron ${imported.length} registros. ¿Desea importarlos a su usuario actual?`);
+        if (!ok) return;
+        const records = loadRecords();
+        const now = new Date().toISOString();
+        const prepared = imported.map(record => ({
+          ...record,
+          id: makeId("record"),
+          userId: currentUser.id,
+          importedAt: now,
+          updatedAt: now
+        }));
+        records.push(...prepared);
+        if (!saveRecords(records)) return;
+        renderRecords();
+        updateMyStats();
+        updateGlobalStats();
+        toast("Respaldo restaurado correctamente.");
+      } catch (error) {
+        console.error(error);
+        showAlert("appAlert", "No se pudo restaurar el respaldo. Revise que sea un archivo JSON válido.", "error");
+      }
+    }
+
+    function scheduleDraftSave() {
+      if (!currentUser) return;
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => {
+        const draft = {
+          recordId: $("recordId").value,
+          fields: collectRecordData(),
+          savedAt: new Date().toISOString()
+        };
+        try {
+          localStorage.setItem(STORAGE.draftPrefix + currentUser.id, JSON.stringify(draft));
+        } catch (error) {
+          console.warn("No se pudo guardar borrador", error);
+        }
+      }, 500);
+    }
+
+    function currentRecordOrUnsaved() {
+      const saved = saveCurrentRecord(false);
+      if (saved) return saved;
+      return null;
+    }
+
+    async function exportRecordById(id) {
+      const record = getMyRecords().find(item => item.id === id);
+      if (record) await exportRecords([record], `registro_${slug(record.nombreProyecto || "proyecto")}.xlsx`);
+    }
+
+    async function exportPdfById(id) {
+      const record = getMyRecords().find(item => item.id === id);
+      if (record) await exportRecordPdf(record);
+    }
+
+    async function exportCurrent() {
+      const record = currentRecordOrUnsaved();
+      if (!record) return;
+      await exportRecords([record], `registro_${slug(record.nombreProyecto || "proyecto")}.xlsx`);
+    }
+
+    async function exportCurrentPdf() {
+      const record = currentRecordOrUnsaved();
+      if (!record) return;
+      await exportRecordPdf(record);
+    }
+
+    async function exportAll() {
+      const records = getMyRecords();
+      if (!records.length) {
+        toast("No hay registros para exportar.");
+        return;
+      }
+      await exportRecords(records, `mis_registros_${currentUser.username}.xlsx`);
+    }
+
+    function buildResumenRows(records) {
+      return records.map((record, index) => ({
+        No: index + 1,
+        ID_registro: record.id,
+        Usuario: currentUser?.username || "",
+        Nombre_usuario: currentUser?.fullName || "",
+        Nombre_proyecto: record.nombreProyecto || "",
+        Fecha: record.fecha || "",
+        Responsable: record.responsable || "",
+        Solicitante: record.solicitante || "",
+        Tipo_proyecto: record.tipoProyecto || "",
+        Estado: record.estadoProyecto || "",
+        Prioridad: record.prioridad || "",
+        Lugar: record.lugar || "",
+        Personal_operativo: record.personalOperativo || "",
+        Beneficiarios: record.beneficiarios || "",
+        Tiempo_estimado: record.tiempoEstimado || "",
+        Nivel_riesgo: record.nivelRiesgo || "",
+        Descripcion: record.descripcion || "",
+        Observaciones_pendientes: record.observaciones || "",
+        Total_materiales: record.materials?.length || 0,
+        Fotos_evidencia: record.photos?.evidencia?.length || 0,
+        Fotos_antes: record.photos?.antes?.length || 0,
+        Fotos_despues: record.photos?.despues?.length || 0,
+        Total_fotos: countPhotos(record.photos),
+        Creado: record.createdAt || "",
+        Actualizado: record.updatedAt || ""
+      }));
+    }
+
+    function buildMaterialRows(records) {
+      return records.flatMap(record => (record.materials || []).map((item, index) => ({
+        ID_registro: record.id,
+        Proyecto: record.nombreProyecto || "",
+        No_material: index + 1,
+        Cantidad: item.cantidad || "",
+        Unidad: item.unidad || "",
+        Descripcion: item.descripcion || "",
+        Observacion: item.observacion || ""
+      })));
+    }
+
+    function buildPhotoRows(records) {
+      return records.flatMap(record => {
+        const rows = [];
+        ["evidencia", "antes", "despues"].forEach(category => {
+          (record.photos?.[category] || []).forEach((photo, index) => rows.push({
+            ID_registro: record.id,
+            Proyecto: record.nombreProyecto || "",
+            Categoria: formatPhotoCategory(category),
+            No_foto: index + 1,
+            Nombre_archivo: photo.name || "foto.jpg",
+            Fecha_captura: photo.createdAt || "",
+            Imagen: "",
+            dataUrl: photo.dataUrl || ""
+          }));
+        });
+        return rows;
+      });
+    }
+
+    async function exportRecords(records, filename) {
+      const resumenVertical = buildResumenVerticalAoa(records);
+      const materialesVertical = buildMaterialesVerticalAoa(records);
+      const fotosVertical = buildFotosVerticalAoa(records);
+
+      if (window.ExcelJS) {
+        await exportRecordsWithExcelJS(records, filename);
+        return;
+      }
+
+      if (window.XLSX) {
+        const workbook = XLSX.utils.book_new();
+        const resumenSheet = XLSX.utils.aoa_to_sheet(resumenVertical);
+        resumenSheet["!cols"] = [{ wch: 28 }, { wch: 65 }];
+        XLSX.utils.book_append_sheet(workbook, resumenSheet, "Registro vertical");
+
+        const materialesSheet = XLSX.utils.aoa_to_sheet(materialesVertical);
+        materialesSheet["!cols"] = [{ wch: 28 }, { wch: 65 }];
+        XLSX.utils.book_append_sheet(workbook, materialesSheet, "Materiales vertical");
+
+        const fotosSheet = XLSX.utils.aoa_to_sheet(fotosVertical);
+        fotosSheet["!cols"] = [{ wch: 28 }, { wch: 65 }, { wch: 35 }];
+        XLSX.utils.book_append_sheet(workbook, fotosSheet, "Fotos");
+
+        XLSX.writeFile(workbook, filename);
+        toast("Excel generado con los títulos al lado izquierdo. Nota: las fotos completas requieren ExcelJS.");
+      } else {
+        downloadCSV(buildResumenRows(records), filename.replace(/\.xlsx$/i, ".csv"));
+        toast("No cargaron las librerías de Excel. Se descargó CSV como respaldo.");
+      }
+    }
+
+    async function exportRecordsWithExcelJS(records, filename) {
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = "Panel de Verificación";
+      workbook.created = new Date();
+      workbook.modified = new Date();
+      workbook.properties.date1904 = false;
+
+      const registrosSheet = workbook.addWorksheet("Registro vertical");
+      addVerticalRecordSheet(registrosSheet, records);
+
+      const materialesSheet = workbook.addWorksheet("Materiales vertical");
+      addVerticalMaterialSheet(materialesSheet, buildMaterialRows(records));
+
+      const fotosSheet = workbook.addWorksheet("Fotos");
+      addVerticalPhotoSheet(workbook, fotosSheet, buildPhotoRows(records));
+
+      workbook.eachSheet(sheet => {
+        sheet.views = [{ state: "frozen", ySplit: 1 }];
+        sheet.pageSetup = {
+          paperSize: 9,
+          orientation: sheet.name === "Fotos" ? "portrait" : "portrait",
+          fitToPage: true,
+          fitToWidth: 1,
+          fitToHeight: 0,
+          margins: { left: 0.25, right: 0.25, top: 0.35, bottom: 0.35, header: 0.2, footer: 0.2 }
+        };
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      downloadBlob(buffer, filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      toast("Excel generado en formato vertical: títulos a la izquierda y datos a la derecha.");
+    }
+
+    function buildResumenVerticalAoa(records) {
+      const rows = [["REPORTE DE REGISTROS", ""]];
+      if (!records.length) return rows.concat([["Aviso", "Sin registros guardados"]]);
+      buildResumenRows(records).forEach((record, index) => {
+        rows.push([], [`REGISTRO ${index + 1}: ${record.Nombre_proyecto || "Proyecto sin nombre"}`, ""]);
+        Object.entries(record).forEach(([key, value]) => rows.push([excelLabel(key), value ?? ""]));
+      });
+      return rows;
+    }
+
+    function buildMaterialesVerticalAoa(records) {
+      const rows = [["FICHA DE MATERIALES", ""]];
+      const materiales = buildMaterialRows(records);
+      if (!materiales.length) return rows.concat([["Aviso", "Sin materiales registrados"]]);
+      materiales.forEach((material, index) => {
+        rows.push([], [`MATERIAL ${index + 1}: ${material.Descripcion || "Sin descripción"}`, ""]);
+        Object.entries(material).forEach(([key, value]) => rows.push([excelLabel(key), value ?? ""]));
+      });
+      return rows;
+    }
+
+    function buildFotosVerticalAoa(records) {
+      const rows = [["EVIDENCIA FOTOGRÁFICA", "", ""]];
+      const fotos = buildPhotoRows(records);
+      if (!fotos.length) return rows.concat([["Aviso", "Sin fotografías registradas", ""]]);
+      fotos.forEach((foto, index) => {
+        rows.push([], [`FOTO ${index + 1}: ${foto.Categoria || "Evidencia"}`, "", ""]);
+        rows.push(["ID del registro", foto.ID_registro || "", ""]);
+        rows.push(["Proyecto", foto.Proyecto || "", ""]);
+        rows.push(["Categoría", foto.Categoria || "", ""]);
+        rows.push(["Número de foto", foto.No_foto || "", ""]);
+        rows.push(["Nombre de archivo", foto.Nombre_archivo || "", ""]);
+        rows.push(["Fecha de captura", foto.Fecha_captura || "", ""]);
+        rows.push(["Imagen", foto.dataUrl ? "Insertada con ExcelJS" : "Sin imagen", ""]);
+      });
+      return rows;
+    }
+
+    function addVerticalRecordSheet(sheet, records) {
+      sheet.columns = [
+        { key: "titulo", width: 28 },
+        { key: "dato", width: 65 }
+      ];
+      const titleRow = sheet.addRow(["REPORTE DE REGISTROS", ""]);
+      sheet.mergeCells(`A${titleRow.number}:B${titleRow.number}`);
+      styleMergedTitle(sheet, titleRow.number, 1, 2);
+
+      if (!records.length) {
+        addFieldRow(sheet, "Aviso", "Sin registros guardados");
+        return;
+      }
+
+      buildResumenRows(records).forEach((record, index) => {
+        sheet.addRow([]);
+        const sectionRow = sheet.addRow([`REGISTRO ${index + 1}: ${record.Nombre_proyecto || "Proyecto sin nombre"}`, ""]);
+        sheet.mergeCells(`A${sectionRow.number}:B${sectionRow.number}`);
+        styleMergedSection(sheet, sectionRow.number, 1, 2);
+        Object.entries(record).forEach(([key, value]) => addFieldRow(sheet, excelLabel(key), value ?? ""));
+      });
+    }
+
+    function addVerticalMaterialSheet(sheet, materialRows) {
+      sheet.columns = [
+        { key: "titulo", width: 28 },
+        { key: "dato", width: 65 }
+      ];
+      const titleRow = sheet.addRow(["FICHA DE MATERIALES", ""]);
+      sheet.mergeCells(`A${titleRow.number}:B${titleRow.number}`);
+      styleMergedTitle(sheet, titleRow.number, 1, 2);
+
+      if (!materialRows.length) {
+        addFieldRow(sheet, "Aviso", "Sin materiales registrados");
+        return;
+      }
+
+      materialRows.forEach((material, index) => {
+        sheet.addRow([]);
+        const sectionRow = sheet.addRow([`MATERIAL ${index + 1}: ${material.Descripcion || "Sin descripción"}`, ""]);
+        sheet.mergeCells(`A${sectionRow.number}:B${sectionRow.number}`);
+        styleMergedSection(sheet, sectionRow.number, 1, 2);
+        Object.entries(material).forEach(([key, value]) => addFieldRow(sheet, excelLabel(key), value ?? ""));
+      });
+    }
+
+    function addVerticalPhotoSheet(workbook, sheet, photoRows) {
+      sheet.columns = [
+        { key: "titulo", width: 24 },
+        { key: "dato", width: 42 },
+        { key: "imagen", width: 36 }
+      ];
+
+      const titleRow = sheet.addRow(["EVIDENCIA FOTOGRÁFICA", "", ""]);
+      sheet.mergeCells(`A${titleRow.number}:C${titleRow.number}`);
+      styleMergedTitle(sheet, titleRow.number, 1, 3);
+
+      if (!photoRows.length) {
+        addFieldRow(sheet, "Aviso", "Sin fotografías registradas", 3);
+        return;
+      }
+
+      photoRows.forEach((photo, index) => {
+        sheet.addRow([]);
+        const sectionRow = sheet.addRow([`FOTO ${index + 1}: ${photo.Categoria || "Evidencia"}`, "", ""]);
+        sheet.mergeCells(`A${sectionRow.number}:C${sectionRow.number}`);
+        styleMergedSection(sheet, sectionRow.number, 1, 3);
+        addFieldRow(sheet, "ID del registro", photo.ID_registro || "", 3);
+        addFieldRow(sheet, "Proyecto", photo.Proyecto || "", 3);
+        addFieldRow(sheet, "Categoría", photo.Categoria || "", 3);
+        addFieldRow(sheet, "Número de foto", photo.No_foto || "", 3);
+        addFieldRow(sheet, "Nombre de archivo", photo.Nombre_archivo || "", 3);
+        addFieldRow(sheet, "Fecha de captura", photo.Fecha_captura || "", 3);
+
+        const imageRow = sheet.addRow(["Imagen", photo.dataUrl ? "Fotografía insertada a la derecha" : "Sin imagen", ""]);
+        imageRow.height = photo.dataUrl ? 105 : 24;
+        styleFieldRow(sheet, imageRow.number, 3);
+
+        if (photo.dataUrl) {
+          try {
+            const imageId = workbook.addImage({ base64: photo.dataUrl, extension: photoExtension(photo.dataUrl) });
+            sheet.addImage(imageId, {
+              tl: { col: 2.08, row: imageRow.number - 0.82 },
+              ext: { width: 170, height: 105 }
+            });
+          } catch (error) {
+            console.warn("No se pudo insertar una imagen en Excel", error);
+            sheet.getCell(`C${imageRow.number}`).value = "Imagen no insertada";
+          }
+        }
+      });
+    }
+
+    function addFieldRow(sheet, title, value, totalCols = 2) {
+      const row = sheet.addRow([title, value]);
+      row.height = Math.max(22, String(value ?? "").length > 90 ? 42 : 22);
+      styleFieldRow(sheet, row.number, totalCols);
+    }
+
+    function styleFieldRow(sheet, rowNumber, totalCols = 2) {
+      for (let col = 1; col <= totalCols; col++) {
+        const cell = sheet.getCell(rowNumber, col);
+        styleBodyCell(cell);
+        cell.alignment = { vertical: "top", wrapText: true };
+      }
+      const labelCell = sheet.getCell(rowNumber, 1);
+      labelCell.font = { bold: true, color: { argb: "FF102A43" } };
+      labelCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEAF2FF" } };
+    }
+
+    function styleMergedTitle(sheet, rowNumber, startCol, endCol) {
+      sheet.getRow(rowNumber).height = 28;
+      for (let col = startCol; col <= endCol; col++) {
+        const cell = sheet.getCell(rowNumber, col);
+        cell.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 14 };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0F4C81" } };
+        cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+        cell.border = borderStyle();
+      }
+    }
+
+    function styleMergedSection(sheet, rowNumber, startCol, endCol) {
+      sheet.getRow(rowNumber).height = 24;
+      for (let col = startCol; col <= endCol; col++) {
+        const cell = sheet.getCell(rowNumber, col);
+        cell.font = { bold: true, color: { argb: "FF102A43" } };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFFF2CC" } };
+        cell.alignment = { vertical: "middle", horizontal: "left", wrapText: true };
+        cell.border = borderStyle();
+      }
+    }
+
+    function excelLabel(key) {
+      const labels = {
+        No: "No.",
+        ID_registro: "ID del registro",
+        Usuario: "Usuario",
+        Nombre_usuario: "Nombre del usuario",
+        Nombre_proyecto: "Nombre del proyecto",
+        Fecha: "Fecha",
+        Responsable: "Responsable",
+        Solicitante: "Solicitante",
+        Tipo_proyecto: "Tipo de proyecto",
+        Estado: "Estado",
+        Prioridad: "Prioridad",
+        Lugar: "Lugar",
+        Personal_operativo: "Personal operativo",
+        Beneficiarios: "Beneficiarios",
+        Tiempo_estimado: "Tiempo estimado",
+        Nivel_riesgo: "Nivel de riesgo",
+        Descripcion: "Descripción",
+        Observaciones_pendientes: "Observaciones pendientes",
+        Total_materiales: "Total de materiales",
+        Fotos_evidencia: "Fotos de evidencia",
+        Fotos_antes: "Fotos de antes",
+        Fotos_despues: "Fotos de después",
+        Total_fotos: "Total de fotos",
+        Creado: "Creado",
+        Actualizado: "Actualizado",
+        Proyecto: "Proyecto",
+        No_material: "No. de material",
+        Cantidad: "Cantidad",
+        Unidad: "Unidad",
+        Observacion: "Observación",
+        Categoria: "Categoría",
+        No_foto: "No. de foto",
+        Nombre_archivo: "Nombre de archivo",
+        Fecha_captura: "Fecha de captura"
+      };
+      return labels[key] || String(key).replace(/_/g, " ");
+    }
+
+    function excelTableName(sheetName) {
+      const base = String(sheetName || "Tabla")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^A-Za-z0-9_]/g, "_");
+      return `Tabla_${base}_${Date.now()}`.slice(0, 255);
+    }
+
+    function getExcelColumnWidth(key, rows) {
+      const sampleMax = rows.slice(0, 50).reduce((max, row) => {
+        const value = String(row[key] ?? "");
+        return Math.max(max, Math.min(55, value.length + 2));
+      }, key.length + 2);
+
+      const preferred = {
+        Descripcion: 45,
+        Observaciones_pendientes: 45,
+        Nombre_proyecto: 32,
+        Personal_operativo: 28,
+        Beneficiarios: 28,
+        Lugar: 28,
+        Nombre_archivo: 34
+      };
+
+      return Math.max(10, Math.min(55, preferred[key] || sampleMax));
+    }
+
+    function styleHeaderCell(cell) {
+      cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0F4C81" } };
+      cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+      cell.border = borderStyle();
+    }
+
+    function styleBodyCell(cell) {
+      cell.alignment = { vertical: "top", wrapText: true };
+      cell.border = borderStyle();
+    }
+
+    function borderStyle() {
+      return {
+        top: { style: "thin", color: { argb: "FFD9E2F2" } },
+        left: { style: "thin", color: { argb: "FFD9E2F2" } },
+        bottom: { style: "thin", color: { argb: "FFD9E2F2" } },
+        right: { style: "thin", color: { argb: "FFD9E2F2" } }
+      };
+    }
+
+    function photoExtension(dataUrl) {
+      return String(dataUrl).startsWith("data:image/png") ? "png" : "jpeg";
+    }
+
+    function downloadBlob(data, filename, type) {
+      const blob = data instanceof Blob ? data : new Blob([data], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function exportRecordPdf(record) {
+      const filename = `registro_${slug(record.nombreProyecto || "proyecto")}.pdf`;
+
+      if (!window.jspdf?.jsPDF) {
+        renderSummaryFromRecord(record);
+        window.print();
+        toast("No cargó la librería PDF. Se abrió la opción de imprimir/guardar PDF.");
+        return;
+      }
+
+      try {
+        const pdf = new jspdf.jsPDF("p", "mm", "a4");
+        const page = {
+          width: pdf.internal.pageSize.getWidth(),
+          height: pdf.internal.pageSize.getHeight(),
+          margin: 14,
+          bottom: 18
+        };
+        let y = 16;
+
+        const contentWidth = page.width - page.margin * 2;
+
+        const ensureSpace = (needed) => {
+          if (y + needed > page.height - page.bottom) {
+            pdf.addPage();
+            y = page.margin;
+          }
+        };
+
+        const clean = value => String(value || "—").replace(/\s+/g, " ").trim();
+
+        const sectionTitle = (title) => {
+          ensureSpace(13);
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(13);
+          pdf.setTextColor(15, 76, 129);
+          pdf.text(title, page.margin, y);
+          y += 3;
+          pdf.setDrawColor(15, 76, 129);
+          pdf.line(page.margin, y, page.width - page.margin, y);
+          y += 7;
+        };
+
+        const addWrappedText = (text, x, maxWidth, fontSize = 10, fontStyle = "normal", color = [23, 32, 51]) => {
+          pdf.setFont("helvetica", fontStyle);
+          pdf.setFontSize(fontSize);
+          pdf.setTextColor(...color);
+          const lines = pdf.splitTextToSize(clean(text), maxWidth);
+          const lineHeight = fontSize * 0.43;
+          ensureSpace(lines.length * lineHeight + 3);
+          pdf.text(lines, x, y);
+          y += lines.length * lineHeight + 3;
+        };
+
+        const addKeyValueGrid = (items) => {
+          const gap = 5;
+          const colWidth = (contentWidth - gap) / 2;
+          const labelHeight = 4;
+          const padding = 4;
+
+          for (let index = 0; index < items.length; index += 2) {
+            const pair = items.slice(index, index + 2);
+            const heights = pair.map(item => {
+              const lines = pdf.splitTextToSize(clean(item.value), colWidth - padding * 2);
+              return Math.max(17, padding * 2 + labelHeight + lines.length * 4.4);
+            });
+            const rowHeight = Math.max(...heights);
+            ensureSpace(rowHeight + 4);
+
+            pair.forEach((item, pairIndex) => {
+              const x = page.margin + pairIndex * (colWidth + gap);
+              pdf.setDrawColor(217, 226, 242);
+              pdf.setFillColor(248, 251, 255);
+              pdf.roundedRect(x, y, colWidth, rowHeight, 2.5, 2.5, "FD");
+              pdf.setFont("helvetica", "bold");
+              pdf.setFontSize(7.5);
+              pdf.setTextColor(102, 112, 133);
+              pdf.text(clean(item.label).toUpperCase(), x + padding, y + padding + 2);
+              pdf.setFont("helvetica", "bold");
+              pdf.setFontSize(9.5);
+              pdf.setTextColor(23, 32, 51);
+              const valueLines = pdf.splitTextToSize(clean(item.value), colWidth - padding * 2);
+              pdf.text(valueLines, x + padding, y + padding + 8);
+            });
+            y += rowHeight + 4;
+          }
+        };
+
+        const addTable = (headers, rows) => {
+          if (!rows.length) {
+            addWrappedText("Sin información registrada.", page.margin, contentWidth);
+            return;
+          }
+
+          const widths = [24, 24, 70, contentWidth - 118];
+          const rowPadding = 3;
+
+          const drawHeader = () => {
+            ensureSpace(10);
+            let x = page.margin;
+            pdf.setFillColor(15, 76, 129);
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(8.5);
+            headers.forEach((header, index) => {
+              pdf.rect(x, y, widths[index], 8, "F");
+              pdf.text(String(header), x + rowPadding, y + 5.4);
+              x += widths[index];
+            });
+            y += 8;
+          };
+
+          drawHeader();
+          rows.forEach(row => {
+            const cells = [row.cantidad || "—", row.unidad || "—", row.descripcion || "—", row.observacion || "—"];
+            const lineSets = cells.map((cell, index) => pdf.splitTextToSize(clean(cell), widths[index] - rowPadding * 2));
+            const rowHeight = Math.max(9, ...lineSets.map(lines => lines.length * 4.2 + rowPadding * 2));
+            if (y + rowHeight > page.height - page.bottom) {
+              pdf.addPage();
+              y = page.margin;
+              drawHeader();
+            }
+            let x = page.margin;
+            pdf.setDrawColor(217, 226, 242);
+            pdf.setTextColor(23, 32, 51);
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(8.3);
+            lineSets.forEach((lines, index) => {
+              pdf.rect(x, y, widths[index], rowHeight);
+              pdf.text(lines, x + rowPadding, y + 5.5);
+              x += widths[index];
+            });
+            y += rowHeight;
+          });
+          y += 5;
+        };
+
+        const addImageFit = async (dataUrl, x, yImage, boxWidth, boxHeight) => {
+          const dimensions = await getImageDimensions(dataUrl);
+          const scale = Math.min(boxWidth / dimensions.width, boxHeight / dimensions.height);
+          const drawWidth = dimensions.width * scale;
+          const drawHeight = dimensions.height * scale;
+          const imageX = x + (boxWidth - drawWidth) / 2;
+          const imageY = yImage + (boxHeight - drawHeight) / 2;
+          pdf.addImage(dataUrl, imageType(dataUrl), imageX, imageY, drawWidth, drawHeight, undefined, "FAST");
+        };
+
+        const addPhotos = async (category, photos) => {
+          if (!photos.length) return;
+          sectionTitle(formatPhotoCategory(category));
+
+          for (const photo of photos) {
+            const cardHeight = 84;
+            ensureSpace(cardHeight + 4);
+            pdf.setDrawColor(217, 226, 242);
+            pdf.setFillColor(248, 251, 255);
+            pdf.roundedRect(page.margin, y, contentWidth, cardHeight, 3, 3, "FD");
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(9);
+            pdf.setTextColor(23, 32, 51);
+            const caption = `${photo.name || "Foto"} · ${formatDate((photo.createdAt || "").slice(0,10))}`;
+            pdf.text(pdf.splitTextToSize(caption, contentWidth - 8), page.margin + 4, y + 7);
+
+            if (photo.dataUrl) {
+              try {
+                await addImageFit(photo.dataUrl, page.margin + 4, y + 12, contentWidth - 8, 66);
+              } catch (error) {
+                console.warn("No se pudo agregar una imagen al PDF", error);
+                pdf.setFont("helvetica", "normal");
+                pdf.setTextColor(180, 35, 24);
+                pdf.text("Imagen no insertada en el PDF.", page.margin + 4, y + 42);
+              }
+            } else {
+              pdf.setFont("helvetica", "normal");
+              pdf.setTextColor(102, 112, 133);
+              pdf.text("Sin imagen disponible.", page.margin + 4, y + 42);
+            }
+            y += cardHeight + 5;
+          }
+        };
+
+        pdf.setFillColor(15, 76, 129);
+        pdf.rect(0, 0, page.width, 28, "F");
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.setTextColor(255, 255, 255);
+        pdf.text(pdf.splitTextToSize(clean(record.nombreProyecto || "Proyecto sin nombre"), contentWidth), page.margin, 12);
+        pdf.setFontSize(9);
+        pdf.text(`Reporte generado: ${new Date().toLocaleString("es-GT")}`, page.margin, 22);
+        y = 36;
+
+        addWrappedText(record.descripcion || "Sin descripción", page.margin, contentWidth, 10.5, "normal");
+        addKeyValueGrid([
+          { label: "Fecha", value: formatDate(record.fecha) },
+          { label: "Responsable", value: record.responsable },
+          { label: "Solicitante", value: record.solicitante },
+          { label: "Tipo de proyecto", value: record.tipoProyecto },
+          { label: "Estado", value: record.estadoProyecto },
+          { label: "Prioridad", value: record.prioridad },
+          { label: "Lugar", value: record.lugar },
+          { label: "Personal operativo", value: record.personalOperativo },
+          { label: "Beneficiarios", value: record.beneficiarios },
+          { label: "Tiempo estimado", value: record.tiempoEstimado },
+          { label: "Nivel de riesgo", value: record.nivelRiesgo },
+          { label: "Total de fotos", value: countPhotos(record.photos) }
+        ]);
+
+        sectionTitle("Observaciones y pendientes");
+        addWrappedText(record.observaciones || "Sin observaciones", page.margin, contentWidth, 10);
+
+        sectionTitle("Ficha técnica y materiales");
+        addTable(["Cantidad", "Unidad", "Descripción", "Observación"], record.materials || []);
+
+        sectionTitle("Evidencia fotográfica");
+        if (!countPhotos(record.photos)) {
+          addWrappedText("No se agregaron fotografías en este registro.", page.margin, contentWidth, 10);
+        }
+        await addPhotos("evidencia", record.photos?.evidencia || []);
+        await addPhotos("antes", record.photos?.antes || []);
+        await addPhotos("despues", record.photos?.despues || []);
+
+        addPdfFooter(pdf, page, currentUser);
+        pdf.save(filename);
+        toast("PDF generado ordenado, con saltos de página controlados y fotografías.");
+      } catch (error) {
+        console.error(error);
+        renderSummaryFromRecord(record);
+        window.print();
+        toast("No se pudo generar el PDF automático. Se abrió la opción de imprimir/guardar PDF.");
+      }
+    }
+
+    function imageType(dataUrl) {
+      return String(dataUrl).startsWith("data:image/png") ? "PNG" : "JPEG";
+    }
+
+    function getImageDimensions(dataUrl) {
+      return new Promise(resolve => {
+        const image = new Image();
+        image.onload = () => resolve({ width: image.naturalWidth || 1, height: image.naturalHeight || 1 });
+        image.onerror = () => resolve({ width: 1, height: 1 });
+        image.src = dataUrl;
+      });
+    }
+
+    function addPdfFooter(pdf, page, user) {
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setDrawColor(217, 226, 242);
+        pdf.line(page.margin, page.height - 12, page.width - page.margin, page.height - 12);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(102, 112, 133);
+        pdf.text(`Panel de Verificación · ${user?.fullName || "Usuario"}`, page.margin, page.height - 7);
+        pdf.text(`Página ${i} de ${totalPages}`, page.width - page.margin, page.height - 7, { align: "right" });
+      }
+    }
+
+    function renderSummaryFromRecord(record) {
+      openTab("summary");
+      $("summaryContent").innerHTML = buildReportHtml(record, false);
+    }
+
+    function buildReportHtml(record, forExport = false) {
+      const photoTotal = countPhotos(record.photos);
+      const materialsHtml = (record.materials || []).length ? `
+        <table>
+          <thead><tr><th>Cantidad</th><th>Unidad</th><th>Descripción</th><th>Observación</th></tr></thead>
+          <tbody>
+            ${(record.materials || []).map(item => `
+              <tr>
+                <td>${escapeHTML(item.cantidad || "—")}</td>
+                <td>${escapeHTML(item.unidad || "—")}</td>
+                <td>${escapeHTML(item.descripcion || "—")}</td>
+                <td>${escapeHTML(item.observacion || "—")}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>` : `<p>No se han agregado materiales.</p>`;
+
+      const photoHtml = ["evidencia", "antes", "despues"].map(category => {
+        const items = record.photos?.[category] || [];
+        if (!items.length) return "";
+        return `
+          <h3>${formatPhotoCategory(category)}</h3>
+          <div class="${forExport ? "report-photos" : "preview-grid"}">
+            ${items.map(photo => `
+              <div class="${forExport ? "report-photo" : "photo-card"}">
+                <img src="${photo.dataUrl}" alt="${escapeHTML(photo.name || "Foto")}" />
+                <small><strong>${escapeHTML(photo.name || "Foto")}</strong><br>${escapeHTML(formatDate((photo.createdAt || "").slice(0,10)))}</small>
+              </div>
+            `).join("")}
+          </div>`;
+      }).join("") || `<p>No se han agregado fotografías.</p>`;
+
+      const wrapperClass = forExport ? "export-report" : "summary-box";
+      const itemClass = forExport ? "report-item" : "";
+      const gridClass = forExport ? "report-grid" : "summary-list";
+      return `
+        <div class="${wrapperClass}">
+          <div class="${forExport ? "report-head" : ""}">
+            <h1>${escapeHTML(record.nombreProyecto || "Proyecto sin nombre")}</h1>
+            <p>${escapeHTML(record.descripcion || "Sin descripción")}</p>
+            ${forExport ? `<p><strong>Reporte generado por:</strong> ${escapeHTML(currentUser.fullName)} (@${escapeHTML(currentUser.username)}) · <strong>Fecha:</strong> ${new Date().toLocaleString("es-GT")}</p>` : ""}
+          </div>
+          <div class="${gridClass}">
+            <div class="${itemClass}"><span>Fecha</span><strong>${escapeHTML(formatDate(record.fecha))}</strong></div>
+            <div class="${itemClass}"><span>Responsable</span><strong>${escapeHTML(record.responsable || "—")}</strong></div>
+            <div class="${itemClass}"><span>Solicitante</span><strong>${escapeHTML(record.solicitante || "—")}</strong></div>
+            <div class="${itemClass}"><span>Tipo</span><strong>${escapeHTML(record.tipoProyecto || "—")}</strong></div>
+            <div class="${itemClass}"><span>Estado</span><strong>${escapeHTML(record.estadoProyecto || "—")}</strong></div>
+            <div class="${itemClass}"><span>Prioridad</span><strong>${escapeHTML(record.prioridad || "—")}</strong></div>
+            <div class="${itemClass}"><span>Lugar</span><strong>${escapeHTML(record.lugar || "—")}</strong></div>
+            <div class="${itemClass}"><span>Personal operativo</span><strong>${escapeHTML(record.personalOperativo || "—")}</strong></div>
+            <div class="${itemClass}"><span>Beneficiarios</span><strong>${escapeHTML(record.beneficiarios || "—")}</strong></div>
+            <div class="${itemClass}"><span>Tiempo estimado</span><strong>${escapeHTML(record.tiempoEstimado || "—")}</strong></div>
+            <div class="${itemClass}"><span>Riesgo</span><strong>${escapeHTML(record.nivelRiesgo || "—")}</strong></div>
+            <div class="${itemClass}"><span>Fotos</span><strong>${photoTotal}</strong></div>
+          </div>
+          <h2>Observaciones y pendientes</h2>
+          <p>${escapeHTML(record.observaciones || "Sin observaciones")}</p>
+          <h2>Ficha técnica</h2>
+          ${materialsHtml}
+          <h2>Evidencia fotográfica</h2>
+          ${photoHtml}
+        </div>`;
+    }
+
+    function downloadCSV(rows, filename) {
+      const keys = Object.keys(rows[0] || { Nota: "Sin datos" });
+      const csv = [keys.join(","), ...rows.map(row => keys.map(key => `"${String(row[key] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function slug(text) {
+      return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "archivo";
+    }
+
+    function clearForm() {
+      const ok = confirm("¿Limpiar el formulario actual? Los registros ya guardados no se eliminan.");
+      if (ok) newRecord(true);
+    }
+
+    function bindEvents() {
+      $("registerForm").addEventListener("submit", registerUser);
+      ["registerUsername", "registerPassword", "registerPasswordConfirm"].forEach(id => $(id).addEventListener("input", updateRegisterGuidance));
+      $("loginForm").addEventListener("submit", loginUser);
+      $("logoutBtn").addEventListener("click", logout);
+      $("newRecordBtn").addEventListener("click", () => newRecord(true));
+      $("saveRecordBtn").addEventListener("click", () => saveCurrentRecord(true));
+      $("saveRecordBtnBottom").addEventListener("click", () => saveCurrentRecord(true));
+      $("saveFromSummaryBtn").addEventListener("click", () => saveCurrentRecord(true));
+      $("clearFormBtn").addEventListener("click", clearForm);
+      $("addMaterialBtn").addEventListener("click", addMaterial);
+      $("duplicateMaterialBtn").addEventListener("click", duplicateLastMaterial);
+      $("clearMaterialsBtn").addEventListener("click", clearMaterials);
+      $("exportCurrentBtn").addEventListener("click", exportCurrent);
+      $("exportFromSummaryBtn").addEventListener("click", exportCurrent);
+      $("exportAllBtn").addEventListener("click", exportAll);
+      $("backupBtn").addEventListener("click", downloadBackup);
+      $("restoreBackupInput").addEventListener("change", event => { restoreBackup(event.target.files[0]); event.target.value = ""; });
+      ["recordSearch", "recordStatusFilter", "recordSort"].forEach(id => $(id).addEventListener("input", renderRecords));
+      ["recordStatusFilter", "recordSort"].forEach(id => $(id).addEventListener("change", renderRecords));
+      $("clearFiltersBtn")?.addEventListener("click", clearFilters);
+      $("printCurrentBtn").addEventListener("click", exportCurrentPdf);
+      $("printFromSummaryBtn").addEventListener("click", exportCurrentPdf);
+      $("closeCameraBtn").addEventListener("click", closeCamera);
+      $("cancelCameraBtn").addEventListener("click", closeCamera);
+      $("captureBtn").addEventListener("click", capturePhoto);
+
+      $$('[data-open-tab]').forEach(btn => btn.addEventListener("click", () => {
+        if (btn.dataset.openTab === "form" && !$("recordId").value) newRecord(false);
+        openTab(btn.dataset.openTab);
+      }));
+
+      $$('[data-field]').forEach(input => {
+        input.addEventListener("input", () => { scheduleDraftSave(); renderSummary(); updateFormProgress(); });
+        input.addEventListener("change", () => { scheduleDraftSave(); renderSummary(); updateFormProgress(); });
+      });
+
+      $$('[data-photo-input]').forEach(input => {
+        input.addEventListener("change", () => {
+          handlePhotoFiles(input.dataset.photoInput, input.files);
+          input.value = "";
+        });
+      });
+
+      $$('[data-camera]').forEach(btn => btn.addEventListener("click", () => openCamera(btn.dataset.camera)));
+    }
+
+    function init() {
+      bindEvents();
+      updateGlobalStats();
+      renderMaterials();
+      renderAllPhotos();
+      updateFormProgress();
+      restoreSession();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
