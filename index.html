@@ -1503,6 +1503,421 @@
       }
     }
 
+
+
+    /* =========================================================
+       INICIO LIMPIO: solo muestra la portada y abre login/registro al elegir
+       ========================================================= */
+
+    #authScreen.auth-landing {
+      display: block;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    #welcomeCard {
+      min-height: min(560px, calc(100vh - 150px));
+      text-align: center;
+      align-items: center;
+      padding: clamp(28px, 5vw, 48px);
+    }
+
+    #welcomeCard .hero-title,
+    #welcomeCard .lead {
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #welcomeCard .landing-actions {
+      justify-content: center;
+      margin-top: 24px;
+      margin-bottom: 0;
+    }
+
+    #welcomeCard .landing-actions button {
+      min-width: 170px;
+      min-height: 48px;
+    }
+
+    #welcomeCard .simple-start {
+      display: none;
+    }
+
+    #authForms.auth-options {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    #authForms.auth-options.show {
+      display: block;
+      animation: fadeIn 0.25s ease both;
+    }
+
+    #authForms .auth-card {
+      width: 100%;
+    }
+
+    .auth-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .auth-card-head h2 {
+      margin-bottom: 6px;
+    }
+
+    .auth-card-head p {
+      margin: 0;
+    }
+
+    .auth-back-btn {
+      flex: 0 0 auto;
+      background: #eff6ff;
+      color: var(--primary);
+      border: 1px solid #bfdbfe;
+      box-shadow: none;
+      border-radius: 14px;
+      padding: 9px 12px;
+      min-height: 40px;
+    }
+
+    .auth-switch {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .auth-switch button {
+      margin-left: 6px;
+      padding: 0;
+      min-height: auto;
+      background: transparent;
+      color: var(--primary-2);
+      border-radius: 0;
+      box-shadow: none;
+      font-weight: 900;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 680px) {
+      #authScreen.auth-landing {
+        max-width: 100%;
+      }
+
+      #welcomeCard {
+        min-height: calc(100svh - 96px);
+        justify-content: center;
+      }
+
+      #welcomeCard .landing-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      #welcomeCard .landing-actions button {
+        width: 100%;
+      }
+
+      .auth-card-head {
+        flex-direction: column-reverse;
+      }
+
+      .auth-back-btn {
+        width: auto;
+        align-self: flex-start;
+      }
+    }
+
+
+    /* =========================================================
+       PORTADA INFORMATIVA: más útil sin mostrar aún login/registro
+       ========================================================= */
+
+    #authScreen.auth-landing {
+      max-width: 1060px;
+    }
+
+    #welcomeCard.landing-cover-card {
+      min-height: auto;
+      text-align: left;
+      align-items: stretch;
+      padding: clamp(22px, 4vw, 38px);
+    }
+
+    .landing-cover-card::before {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      left: -110px;
+      bottom: -130px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.15), transparent 72%);
+      pointer-events: none;
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 24px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-main {
+      padding: 10px 4px;
+    }
+
+    #welcomeCard .cover-main .hero-title,
+    #welcomeCard .cover-main .lead {
+      max-width: 640px;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    #welcomeCard .cover-main .hero-title {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    #welcomeCard .cover-main .lead {
+      font-size: 17px;
+    }
+
+    #welcomeCard .landing-actions {
+      justify-content: flex-start;
+      margin-top: 22px;
+      margin-bottom: 12px;
+    }
+
+    .cover-helper {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 540px;
+    }
+
+    .cover-info {
+      padding: 22px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(11, 116, 222, 0.14), transparent 35%),
+        linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .cover-info h2 {
+      margin: 0 0 6px;
+      color: #102a43;
+      font-size: 22px;
+    }
+
+    .cover-info p {
+      margin: 0 0 15px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .cover-function-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .cover-function {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 17px;
+      background: #ffffff;
+      border: 1px solid rgba(217, 226, 242, 0.95);
+    }
+
+    .cover-function > span {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-size: 20px;
+    }
+
+    .cover-function strong {
+      display: block;
+      color: #102a43;
+      margin-bottom: 3px;
+      font-size: 14px;
+    }
+
+    .cover-function small {
+      display: block;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 12.5px;
+    }
+
+    .cover-workflow {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .workflow-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      color: #102a43;
+      font-weight: 850;
+      min-height: 62px;
+    }
+
+    .workflow-step b {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary-2), var(--primary));
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .workflow-step span {
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .cover-note {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 22px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      box-shadow: 0 8px 20px rgba(15, 76, 129, 0.06);
+    }
+
+    .cover-note span {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: #eff6ff;
+      font-size: 18px;
+    }
+
+    .cover-note p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .cover-note strong {
+      color: #102a43;
+    }
+
+    @media (max-width: 900px) {
+      #authScreen.auth-landing {
+        max-width: 100%;
+      }
+
+      .cover-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cover-workflow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      #welcomeCard.landing-cover-card {
+        padding: 18px;
+      }
+
+      .cover-main,
+      #welcomeCard .cover-main .hero-title,
+      #welcomeCard .cover-main .lead,
+      .cover-helper {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #welcomeCard .landing-actions {
+        justify-content: center;
+      }
+
+      .cover-info {
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .cover-function {
+        grid-template-columns: 38px 1fr;
+        padding: 10px;
+      }
+
+      .cover-function > span {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+        font-size: 18px;
+      }
+
+      .cover-note {
+        margin-top: 16px;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .cover-note span {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+      }
+
+      .cover-workflow {
+        grid-template-columns: 1fr;
+        gap: 9px;
+        margin-top: 16px;
+        padding-top: 14px;
+      }
+    }
+
     @media print {
       header, .tabs, .actions, .auth-card, .records-list, .no-print, button { display: none !important; }
       body { background: white; }
@@ -1534,37 +1949,48 @@
 
   <main>
     <section id="authScreen" class="hero auth-landing">
-      <div class="panel welcome-card">
-        <span class="landing-kicker">✨ Panel interactivo de verificación</span>
-        <h1 class="hero-title">Panel de Verificación de Proyectos</h1>
-        <p class="lead">Registra proyectos, agrega evidencia fotográfica y genera reportes en Excel o PDF de forma ordenada y fácil de usar.</p>
-        <div class="landing-actions no-print">
-          <a class="button-like btn-primary" href="#loginForm">Ya tengo cuenta</a>
-          <a class="button-like btn-success" href="#registerForm">Crear cuenta</a>
+      <div id="welcomeCard" class="panel welcome-card landing-cover-card">
+        <div class="cover-grid">
+          <div class="cover-main">
+            <span class="landing-kicker">✨ Panel interactivo de verificación</span>
+            <h1 class="hero-title">Panel de Verificación de Proyectos</h1>
+            <p class="lead">Una herramienta para registrar proyectos, guardar evidencia fotográfica y generar reportes en Excel o PDF de forma ordenada.</p>
+            <div class="landing-actions no-print">
+              <button class="btn-primary" type="button" data-auth-choice="login">Ya tengo cuenta</button>
+              <button class="btn-success" type="button" data-auth-choice="register">Crear cuenta</button>
+            </div>
+            <p class="cover-helper">Seleccione una opción para continuar. Sus registros se guardan de forma local en este navegador.</p>
+          </div>
+
+          <div class="cover-info" aria-label="Funciones principales del sistema">
+            <h2>¿Para qué sirve?</h2>
+            <p>Permite llevar el control de una verificación desde el registro inicial hasta la entrega del reporte final.</p>
+            <div class="cover-function-list">
+              <div class="cover-function">
+                <span>📋</span>
+                <div><strong>Registrar información</strong><small>Fecha, responsable, estado, ubicación y descripción del proyecto.</small></div>
+              </div>
+              <div class="cover-function">
+                <span>🧰</span>
+                <div><strong>Agregar ficha técnica</strong><small>Materiales, cantidades, unidades de medida y observaciones.</small></div>
+              </div>
+              <div class="cover-function">
+                <span>📷</span>
+                <div><strong>Guardar evidencia</strong><small>Fotos generales, antes y después desde cámara o galería.</small></div>
+              </div>
+              <div class="cover-function">
+                <span>📄</span>
+                <div><strong>Exportar reportes</strong><small>Descarga Excel y PDF con datos importantes y fotografías.</small></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-list simple-start no-print" aria-label="Beneficios principales del sistema">
-          <div class="feature-item">
-            <div class="feature-icon">📋</div>
-            <div>
-              <strong>Registros ordenados</strong>
-              <span>Guarde la información del proyecto en un solo lugar.</span>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">📷</div>
-            <div>
-              <strong>Evidencia fotográfica</strong>
-              <span>Agregue fotos desde la cámara o desde la galería.</span>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">📄</div>
-            <div>
-              <strong>Reportes listos</strong>
-              <span>Exporte la información en Excel o genere PDF para entregar.</span>
-            </div>
-          </div>
+
+        <div class="cover-note no-print" aria-label="Información de uso">
+          <span>💡</span>
+          <p><strong>Empiece cuando esté listo:</strong> ingrese con su usuario o cree una cuenta para mantener sus proyectos separados. Después podrá guardar, editar y exportar cada registro desde el panel principal.</p>
         </div>
+
         <div class="stats landing-stats hidden" aria-hidden="true">
           <div class="stat"><span>Usuarios</span><strong id="statUsers">0</strong></div>
           <div class="stat"><span>Registros</span><strong id="statGlobalRecords">0</strong></div>
@@ -1573,10 +1999,15 @@
         </div>
       </div>
 
-      <div class="auth-grid auth-options">
-        <form id="loginForm" class="auth-card">
-          <h2>Iniciar sesión</h2>
-          <p>Entre para revisar sus registros guardados y crear nuevos reportes.</p>
+      <div id="authForms" class="auth-grid auth-options hidden">
+        <form id="loginForm" class="auth-card auth-pane hidden" data-auth-pane="login">
+          <div class="auth-card-head">
+            <div>
+              <h2>Iniciar sesión</h2>
+              <p>Entre para revisar sus registros guardados y crear nuevos reportes.</p>
+            </div>
+            <button class="auth-back-btn" type="button" data-auth-back>← Volver</button>
+          </div>
           <div id="loginAlert" class="alert"></div>
           <div class="form-group">
             <label for="loginUsername" class="required">Usuario</label>
@@ -1587,11 +2018,17 @@
             <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Contraseña" />
           </div>
           <button class="btn-primary" type="submit">Entrar al panel</button>
+          <div class="auth-switch">¿No tiene cuenta? <button type="button" data-auth-choice="register">Crear cuenta</button></div>
         </form>
 
-        <form id="registerForm" class="auth-card">
-          <h2>Crear cuenta</h2>
-          <p>Use una cuenta local para separar sus registros de otros usuarios.</p>
+        <form id="registerForm" class="auth-card auth-pane hidden" data-auth-pane="register">
+          <div class="auth-card-head">
+            <div>
+              <h2>Crear cuenta</h2>
+              <p>Use una cuenta local para separar sus registros de otros usuarios.</p>
+            </div>
+            <button class="auth-back-btn" type="button" data-auth-back>← Volver</button>
+          </div>
           <div id="registerAlert" class="alert"></div>
           <div class="form-group">
             <label for="registerFullName" class="required">Nombre completo</label>
@@ -1613,6 +2050,7 @@
             <div id="registerGuidance" class="helper">Al crear la cuenta ingresará automáticamente al panel principal.</div>
           </div>
           <button class="btn-success" type="submit">Crear cuenta e ingresar</button>
+          <div class="auth-switch">¿Ya tiene cuenta? <button type="button" data-auth-choice="login">Iniciar sesión</button></div>
         </form>
       </div>
     </section>
@@ -2219,6 +2657,7 @@
       $("appScreen").classList.add("hidden");
       $("topNav").classList.add("hidden");
       $("authScreen").classList.remove("hidden");
+      showAuthLanding();
       updateGlobalStats();
       toast("Sesión cerrada.");
     }
@@ -3621,7 +4060,42 @@
       if (ok) newRecord(true);
     }
 
+
+
+    function showAuthLanding() {
+      const welcome = $("welcomeCard");
+      const forms = $("authForms");
+      if (welcome) welcome.classList.remove("hidden");
+      if (forms) {
+        forms.classList.add("hidden");
+        forms.classList.remove("show");
+      }
+      $$('[data-auth-pane]').forEach(form => form.classList.add("hidden"));
+      clearAlert("loginAlert");
+      clearAlert("registerAlert");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showAuthPane(type) {
+      const welcome = $("welcomeCard");
+      const forms = $("authForms");
+      if (welcome) welcome.classList.add("hidden");
+      if (forms) {
+        forms.classList.remove("hidden");
+        forms.classList.add("show");
+      }
+      $$('[data-auth-pane]').forEach(form => {
+        form.classList.toggle("hidden", form.dataset.authPane !== type);
+      });
+      clearAlert("loginAlert");
+      clearAlert("registerAlert");
+      const focusTarget = type === "register" ? $("registerFullName") : $("loginUsername");
+      setTimeout(() => focusTarget?.focus(), 80);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     function bindEvents() {
+      $$('[data-auth-choice]').forEach(btn => btn.addEventListener("click", () => showAuthPane(btn.dataset.authChoice)));
+      $$('[data-auth-back]').forEach(btn => btn.addEventListener("click", showAuthLanding));
       $("registerForm").addEventListener("submit", registerUser);
       ["registerUsername", "registerPassword", "registerPasswordConfirm"].forEach(id => $(id).addEventListener("input", updateRegisterGuidance));
       $("loginForm").addEventListener("submit", loginUser);
@@ -3674,7 +4148,7 @@
       renderMaterials();
       renderAllPhotos();
       updateFormProgress();
-      restoreSession();
+      if (!restoreSession()) showAuthLanding();
     }
 
     document.addEventListener("DOMContentLoaded", init);
