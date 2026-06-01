@@ -3007,6 +3007,23 @@
       }
     }
 
+
+    /* =========================================================
+       MENÚ SUPERIOR PROTEGIDO
+       El menú Dashboard / Mis registros / Nuevo registro / Cerrar sesión
+       solo aparece cuando el usuario ya inició sesión correctamente.
+       ========================================================= */
+
+    body.auth-mode nav#topNav,
+    body:not(.app-ready) nav#topNav,
+    nav#topNav.hidden {
+      display: none !important;
+    }
+
+    body.app-ready nav#topNav:not(.hidden) {
+      display: flex !important;
+    }
+
     @media print {
       header, .tabs, .actions, .auth-card, .records-list, .no-print, button { display: none !important; }
       body { background: white; }
@@ -3018,7 +3035,7 @@
     }
   </style>
 </head>
-<body>
+<body class="auth-mode">
   <header>
     <div class="topbar">
       <div class="brand">
@@ -4068,6 +4085,8 @@
     function logout() {
       stopCamera();
       currentUser = null;
+      document.body.classList.remove("app-ready");
+      document.body.classList.add("auth-mode");
       localStorage.removeItem(STORAGE.session);
       $("appScreen").classList.add("hidden");
       $("topNav").classList.add("hidden");
@@ -4078,6 +4097,8 @@
     }
 
     function showApp() {
+      document.body.classList.remove("auth-mode");
+      document.body.classList.add("app-ready");
       $("authScreen").classList.add("hidden");
       $("appScreen").classList.remove("hidden");
       $("topNav").classList.remove("hidden");
@@ -5791,6 +5812,10 @@
 
 
     function showAuthLanding() {
+      document.body.classList.remove("app-ready");
+      document.body.classList.add("auth-mode");
+      $("topNav")?.classList.add("hidden");
+      $("appScreen")?.classList.add("hidden");
       const welcome = $("welcomeCard");
       const forms = $("authForms");
       if (welcome) welcome.classList.remove("hidden");
@@ -5805,6 +5830,9 @@
     }
 
     function showAuthPane(type) {
+      document.body.classList.remove("app-ready");
+      document.body.classList.add("auth-mode");
+      $("topNav")?.classList.add("hidden");
       const welcome = $("welcomeCard");
       const forms = $("authForms");
       if (welcome) welcome.classList.add("hidden");
@@ -5872,6 +5900,9 @@
     }
 
     function init() {
+      document.body.classList.add("auth-mode");
+      document.body.classList.remove("app-ready");
+      $("topNav")?.classList.add("hidden");
       bindEvents();
       updateGlobalStats();
       renderMaterials();
