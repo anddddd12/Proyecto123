@@ -1,0 +1,17 @@
+IMPORTANTE
+
+No abras el proyecto con "Launch Chrome against localhost" si no tienes un servidor encendido.
+
+Forma correcta para probarlo:
+1. Abre la carpeta del proyecto.
+2. Haz doble clic en ABRIR_SISTEMA.bat
+   o abre directamente index.html en el navegador.
+
+El unico login es index.html.
+Supervisor:
+Usuario: supervisor
+Contrasena: 1234
+
+Trabajador:
+Primero crea una cuenta de trabajador desde index.html > Crear cuenta.
+Luego inicia sesion desde index.html como trabajador.

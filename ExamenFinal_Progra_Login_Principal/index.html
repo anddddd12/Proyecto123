@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Acceso Principal - Sistema de Construcción</title>
+  <meta name="description" content="Login principal para ingresar como trabajador o supervisor al sistema de control de proyectos." />
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --primary: #0f4c81;
+      --primary-2: #0b74de;
+      --primary-3: #073763;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e2f2;
+      --shadow: 0 24px 60px rgba(15, 76, 129, 0.18);
+      --shadow-soft: 0 12px 28px rgba(15, 76, 129, 0.11);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(11, 116, 222, 0.23), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.17), transparent 30%),
+        linear-gradient(135deg, #eef4ff 0%, #f8fbff 55%, #e8f5ff 100%);
+    }
+
+    header {
+      color: white;
+      background: rgba(7, 37, 68, 0.94);
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar {
+      max-width: 1160px;
+      margin: auto;
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary-2), var(--accent));
+      font-size: 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: .2px;
+    }
+
+    .brand small { color: #dbeafe; }
+
+    main {
+      max-width: 1160px;
+      margin: auto;
+      padding: 34px 22px 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(217,226,242,0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .intro {
+      padding: 34px;
+      position: relative;
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .intro::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(15,76,129,0.95), rgba(11,116,222,0.88)),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.7), transparent 38%);
+      z-index: 0;
+    }
+
+    .intro > * { position: relative; z-index: 1; }
+
+    .badge {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .intro h2 {
+      color: white;
+      margin: 18px 0 10px;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: -1.2px;
+    }
+
+    .intro p {
+      color: #eaf3ff;
+      font-size: 17px;
+      line-height: 1.65;
+      margin: 0;
+      max-width: 650px;
+    }
+
+    .features {
+      display: grid;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: white;
+    }
+
+    .feature span {
+      min-width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(255,255,255,0.17);
+      font-size: 19px;
+    }
+
+    .feature strong { display: block; margin-bottom: 3px; }
+    .feature small { color: #dbeafe; line-height: 1.45; }
+
+    .login-panel { padding: 28px; }
+
+    .login-head h2 {
+      margin: 0 0 8px;
+      color: var(--primary-3);
+      font-size: 28px;
+    }
+
+    .login-head p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .role-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface-soft);
+      padding: 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .role-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+    .role-card.active {
+      background: linear-gradient(135deg, rgba(15,76,129,0.10), rgba(34,197,94,0.12));
+      border-color: rgba(11,116,222,0.55);
+      box-shadow: 0 12px 26px rgba(11,116,222,0.13);
+    }
+
+    .role-card .icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      font-size: 24px;
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .role-card strong { display: block; color: var(--primary-3); font-size: 16px; margin-bottom: 4px; }
+    .role-card small { color: var(--muted); line-height: 1.4; }
+
+    .auth-card {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      background: white;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .selected-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eef6ff;
+      color: var(--primary-3);
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .form-group { margin-bottom: 15px; }
+    label {
+      display: block;
+      font-weight: 800;
+      color: var(--primary-3);
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 13px 14px;
+      font: inherit;
+      color: var(--text);
+      background: #fbfdff;
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    input:focus {
+      border-color: rgba(11,116,222,0.8);
+      box-shadow: 0 0 0 4px rgba(11,116,222,0.12);
+    }
+
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font: inherit;
+      font-weight: 800;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 12px 25px rgba(15,76,129,0.25);
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+
+    .helper-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .helper-actions a {
+      color: var(--primary-2);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .alert {
+      display: none;
+      border-radius: 15px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .alert.show { display: block; }
+    .alert.error { background: #fff1f2; color: #991b1b; border: 1px solid #fecdd3; }
+    .alert.ok { background: #ecfdf3; color: #166534; border: 1px solid #bbf7d0; }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 17px;
+      background: #f8fbff;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .intro { min-height: auto; }
+    }
+
+    @media (max-width: 560px) {
+      .topbar { align-items: flex-start; }
+      .brand h1 { font-size: 17px; }
+      main { padding: 22px 14px 38px; }
+      .intro, .login-panel { padding: 22px; }
+      .role-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-icon">🏗️</div>
+        <div>
+          <h1>Sistema Empresarial de Construcción</h1>
+          <small>Acceso principal · trabajadores y supervisores</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="panel intro">
+        <div>
+          <span class="badge">🔐 Login principal</span>
+          <h2>Ingrese al panel correcto desde un solo lugar</h2>
+          <p>Seleccione si desea entrar como trabajador o como supervisor. Al validar sus datos, el sistema abrirá automáticamente el archivo que corresponde.</p>
+          <div class="features">
+            <div class="feature"><span>👷</span><div><strong>Trabajador</strong><small>Registra proyectos, evidencia fotográfica, ficha técnica y reportes.</small></div></div>
+            <div class="feature"><span>🧑‍💼</span><div><strong>Supervisor</strong><small>Revisa registros, aprueba, rechaza o solicita correcciones.</small></div></div>
+            <div class="feature"><span>💾</span><div><strong>Sin base de datos</strong><small>La información se conserva en el almacenamiento local del navegador.</small></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel login-panel">
+        <div class="login-head">
+          <h2>Iniciar sesión</h2>
+          <p>Primero elija el tipo de usuario y luego escriba sus credenciales.</p>
+        </div>
+
+        <div class="role-grid" aria-label="Seleccione tipo de cuenta">
+          <button class="role-card active" type="button" data-role="worker">
+            <div class="icon">👷</div>
+            <strong>Trabajador</strong>
+            <small>Entrar al panel de registros y evidencias.</small>
+          </button>
+          <button class="role-card" type="button" data-role="supervisor">
+            <div class="icon">🧑‍💼</div>
+            <strong>Supervisor</strong>
+            <small>Entrar al panel de revisión y control.</small>
+          </button>
+        </div>
+
+        <form id="mainLoginForm" class="auth-card" autocomplete="on">
+          <div id="selectedRole" class="selected-role">👷 Acceso como trabajador</div>
+          <div id="loginAlert" class="alert"></div>
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input id="username" autocomplete="username" placeholder="Ingrese su usuario" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" autocomplete="current-password" placeholder="Ingrese su contraseña" required />
+          </div>
+          <button id="submitBtn" class="btn" type="submit">Entrar como trabajador</button>
+        </form>
+
+        <div class="helper-actions">
+          <span>¿No tiene usuario de trabajador?</span>
+          <a href="Final trabajadores.html?auth=register">Crear cuenta</a>
+        </div>
+
+        <div id="roleNote" class="note">
+          Para ingresar como trabajador debe existir una cuenta creada previamente en el panel de trabajadores. Si aún no existe, use “Crear cuenta”.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    /* IMPORTANTE: este proyecto no usa localhost.
+       Abra este archivo directamente o use ABRIR_SISTEMA.bat. */
+
+    const STORAGE = {
+      workerUsers: "pv_users_v4_final",
+      workerSession: "pv_session_v4_final",
+      supervisorSession: "pv_supervisor_session_v1"
+    };
+
+    const ROUTES = {
+      worker: "Final trabajadores.html",
+      supervisor: "supervisor(13).html?access=supervisor"
+    };
+
+    const DEFAULT_SUPERVISOR = { username: "supervisor", password: "1234", name: "Supervisor" };
+    let selectedRole = "worker";
+
+    const $ = (id) => document.getElementById(id);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function readLocal(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+      catch { return fallback; }
+    }
+
+    function normalizeUsername(username) {
+      return String(username || "").trim().toLowerCase();
+    }
+
+    async function sha256(text) {
+      if (window.crypto?.subtle) {
+        const data = new TextEncoder().encode(text);
+        const hash = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+      return btoa(unescape(encodeURIComponent(text)));
+    }
+
+    function showAlert(message, type = "error") {
+      const alert = $("loginAlert");
+      alert.className = `alert show ${type}`;
+      alert.textContent = message;
+    }
+
+    function clearAlert() {
+      const alert = $("loginAlert");
+      alert.className = "alert";
+      alert.textContent = "";
+    }
+
+    function updateRoleView() {
+      $$("[data-role]").forEach(button => button.classList.toggle("active", button.dataset.role === selectedRole));
+      const isWorker = selectedRole === "worker";
+      $("selectedRole").textContent = isWorker ? "👷 Acceso como trabajador" : "🧑‍💼 Acceso como supervisor";
+      $("submitBtn").textContent = isWorker ? "Entrar como trabajador" : "Entrar como supervisor";
+      $("username").placeholder = isWorker ? "Ej. fcardona" : "Ej. supervisor";
+      $("roleNote").innerHTML = isWorker
+        ? "Para ingresar como trabajador debe existir una cuenta creada previamente en el panel de trabajadores. Si aún no existe, use “Crear cuenta”."
+        : "Credenciales de demostración del supervisor: <strong>supervisor</strong> / <strong>1234</strong>.";
+      clearAlert();
+      $("username").focus();
+    }
+
+    async function loginWorker(username, password) {
+      const users = readLocal(STORAGE.workerUsers, []);
+      const cleanUsername = normalizeUsername(username);
+      const hash = await sha256(`${cleanUsername}:${password}`);
+      const user = users.find(item => item.username === cleanUsername && item.passwordHash === hash);
+
+      if (!user) {
+        showAlert("Usuario o contraseña de trabajador incorrectos. Si aún no tiene cuenta, use la opción Crear cuenta.", "error");
+        return;
+      }
+
+      localStorage.setItem(STORAGE.workerSession, user.id);
+      showAlert(`Acceso correcto. Bienvenido, ${user.fullName}.`, "ok");
+      window.location.href = ROUTES.worker;
+    }
+
+    function loginSupervisor(username, password) {
+      const cleanUsername = normalizeUsername(username);
+      const cleanPassword = String(password || "").trim();
+
+      if (cleanUsername !== DEFAULT_SUPERVISOR.username || cleanPassword !== DEFAULT_SUPERVISOR.password) {
+        showAlert("Usuario o contraseña de supervisor incorrectos.", "error");
+        return;
+      }
+
+      localStorage.setItem(STORAGE.supervisorSession, JSON.stringify({
+        loggedIn: true,
+        username: DEFAULT_SUPERVISOR.username,
+        name: DEFAULT_SUPERVISOR.name,
+        loginAt: new Date().toISOString()
+      }));
+      showAlert("Acceso correcto. Abriendo panel del supervisor.", "ok");
+      window.location.href = ROUTES.supervisor;
+    }
+
+    function bindEvents() {
+      $$("[data-role]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedRole = button.dataset.role;
+          updateRoleView();
+        });
+      });
+
+      $("mainLoginForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearAlert();
+        const username = $("username").value;
+        const password = $("password").value;
+
+        if (!username.trim() || !password) {
+          showAlert("Complete usuario y contraseña para continuar.", "error");
+          return;
+        }
+
+        if (selectedRole === "worker") {
+          await loginWorker(username, password);
+        } else {
+          loginSupervisor(username, password);
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      bindEvents();
+      updateRoleView();
+    });
+  </script>
+</body>
+</html>
