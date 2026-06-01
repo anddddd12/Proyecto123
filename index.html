@@ -334,7 +334,8 @@
 
     .photo-section-head h3 { margin: 0; color: #102a43; }
     .photo-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-    .photo-input { display: none; }
+    .photo-input,
+    .backup-file { display: none; }
 
     .preview-grid {
       display: grid;
@@ -1060,6 +1061,388 @@
     .backup-box h3 {
       margin-top: 0;
       color: #102a43;
+    }
+
+
+    /* =========================================================
+       DASHBOARD EJECUTIVO: indicadores, gráficos y alertas
+       ========================================================= */
+
+    .dashboard-module {
+      overflow: hidden;
+    }
+
+    .dashboard-focus {
+      margin-bottom: 18px;
+    }
+
+    .dashboard-kicker {
+      display: inline-flex;
+      width: fit-content;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .dashboard-progress {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .dashboard-focus .helper {
+      color: #dbeafe;
+      font-weight: 850;
+    }
+
+    .metric-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      right: -35px;
+      top: -35px;
+      border-radius: 999px;
+      background: rgba(11, 116, 222, 0.10);
+    }
+
+    .metric-card small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .chart-card,
+    .insight-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .chart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .chart-head h3 {
+      margin: 0;
+      color: #102a43;
+      font-size: 17px;
+    }
+
+    .chart-head span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-row-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: #e4ebf7;
+      overflow: hidden;
+      border: 1px solid #d4e0f3;
+    }
+
+    .bar-fill {
+      height: 100%;
+      min-width: 3px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary-2), var(--accent));
+    }
+
+
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .decision-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+      min-height: 230px;
+    }
+
+    .decision-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .decision-number {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--primary-2), var(--primary));
+      color: white;
+      font-weight: 900;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .decision-card h3 {
+      margin: 0 0 4px;
+      color: #102a43;
+      font-size: 17px;
+    }
+
+    .decision-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+
+    .decision-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+    }
+
+    .decision-row strong {
+      color: #102a43;
+      font-size: 13px;
+    }
+
+    .decision-row span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .decision-value {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 900;
+      border: 1px solid #bfdbfe;
+      font-size: 13px;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .action-item {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 11px;
+      border-radius: 16px;
+      background: #fffbeb;
+      border: 1px solid #fedf89;
+    }
+
+    .action-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #fffaeb;
+      color: #b54708;
+      font-weight: 900;
+    }
+
+    .action-item strong {
+      display: block;
+      color: #102a43;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    .action-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .action-item button {
+      box-shadow: none;
+      border: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .quality-score {
+      margin-top: 12px;
+      padding: 13px;
+      border-radius: 16px;
+      background: #ecfdf3;
+      color: #087443;
+      border: 1px solid #abefc6;
+      font-weight: 850;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .dashboard-lower-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .insight-list,
+    .recent-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .insight-item,
+    .recent-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+    }
+
+    .insight-icon,
+    .recent-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .insight-item strong,
+    .recent-item strong {
+      display: block;
+      color: #102a43;
+      margin-bottom: 3px;
+    }
+
+    .insight-item span,
+    .recent-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    .recent-item {
+      grid-template-columns: 38px 1fr auto;
+      align-items: center;
+    }
+
+    .recent-item button {
+      box-shadow: none;
+      border: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    @media (max-width: 900px) {
+      .metric-grid,
+      .analytics-grid,
+      .decision-grid,
+      .dashboard-lower-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .decision-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .metric-grid,
+      .analytics-grid,
+      .decision-grid,
+      .dashboard-lower-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-head,
+      .recent-item,
+      .action-item {
+        grid-template-columns: 1fr;
+      }
+
+      .recent-item {
+        align-items: start;
+      }
     }
 
 
@@ -1918,6 +2301,712 @@
       }
     }
 
+
+    /* =========================================================
+       ADAPTACIÓN RESPONSIVA AVANZADA: zoom, laptops, tablets y móviles
+       ========================================================= */
+
+    :root {
+      --page-max: 1220px;
+      --page-gutter: clamp(10px, 2.4vw, 28px);
+      --card-padding: clamp(14px, 2.1vw, 24px);
+      --section-gap: clamp(12px, 1.8vw, 18px);
+      --fluid-title: clamp(24px, 4.2vw, 48px);
+      --fluid-subtitle: clamp(20px, 2.8vw, 32px);
+      --touch-target: 44px;
+    }
+
+    html {
+      font-size: clamp(14px, 0.72vw + 11px, 16px);
+    }
+
+    body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    main,
+    .topbar {
+      width: min(var(--page-max), calc(100vw - (var(--page-gutter) * 2)));
+    }
+
+    main {
+      padding-top: clamp(14px, 2.4vw, 28px);
+      padding-bottom: clamp(36px, 5vw, 60px);
+    }
+
+    .panel,
+    .module,
+    .auth-card,
+    .chart-card,
+    .insight-card,
+    .decision-card,
+    .photo-section,
+    .backup-box,
+    .summary-box {
+      padding: var(--card-padding);
+    }
+
+    .hero-title {
+      font-size: var(--fluid-title);
+      overflow-wrap: anywhere;
+    }
+
+    .dashboard-hero h2,
+    .cover-info h2,
+    .module h2,
+    .panel h2 {
+      font-size: var(--fluid-subtitle);
+      overflow-wrap: anywhere;
+    }
+
+    button,
+    .button-like,
+    input,
+    select,
+    textarea {
+      min-height: var(--touch-target);
+    }
+
+    button,
+    .button-like {
+      white-space: normal;
+      line-height: 1.2;
+    }
+
+    .topbar,
+    .app-head,
+    .photo-section-head,
+    .chart-head,
+    .dashboard-hero,
+    .cover-grid,
+    .record-card {
+      min-width: 0;
+    }
+
+    .brand,
+    .user-chip,
+    .record-card > div,
+    .dashboard-hero > div,
+    .cover-main,
+    .cover-info,
+    .chart-card,
+    .decision-card,
+    .insight-card,
+    .summary-box {
+      min-width: 0;
+    }
+
+    .stats,
+    .metric-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
+      gap: var(--section-gap);
+    }
+
+    .analytics-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+      gap: var(--section-gap);
+    }
+
+    .decision-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      gap: var(--section-gap);
+    }
+
+    .dashboard-lower-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+      gap: var(--section-gap);
+    }
+
+    .toolbar {
+      grid-template-columns: minmax(220px, 1.4fr) minmax(170px, 0.8fr) minmax(170px, 0.8fr) minmax(140px, auto);
+    }
+
+    .tabs,
+    nav,
+    .actions,
+    .photo-buttons,
+    .landing-actions {
+      max-width: 100%;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+    }
+
+    .tab-btn,
+    nav button {
+      width: 100%;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), max-content));
+      justify-content: start;
+    }
+
+    .photo-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+    }
+
+    .preview-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(155px, 100%), 1fr));
+    }
+
+    .action-item,
+    .recent-item {
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+    }
+
+    .action-item {
+      background: #fffbeb;
+    }
+
+    .decision-row,
+    .bar-row-top,
+    .record-meta,
+    .pill,
+    .summary-list strong,
+    .summary-list p,
+    td,
+    th {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .table-wrap {
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      min-width: min(760px, 100%);
+    }
+
+    .camera-modal-card {
+      width: min(760px, calc(100vw - 24px));
+      max-height: min(92vh, 900px);
+    }
+
+    #cameraVideo {
+      max-height: min(58vh, 520px);
+    }
+
+    @media (min-width: 1500px) {
+      :root { --page-max: 1380px; }
+      .preview-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+      .photo-card img { height: 135px; }
+    }
+
+    @media (max-width: 1120px) {
+      .topbar {
+        align-items: stretch;
+      }
+
+      nav {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(155px, 100%), 1fr));
+        width: 100%;
+      }
+
+      .toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --page-gutter: 10px;
+        --card-padding: 14px;
+      }
+
+      main,
+      .topbar {
+        width: calc(100vw - (var(--page-gutter) * 2));
+      }
+
+      .topbar,
+      .app-head,
+      .photo-section-head,
+      .dashboard-hero,
+      .cover-grid,
+      .record-card,
+      .chart-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .dashboard-hero,
+      .cover-grid,
+      .toolbar,
+      .analytics-grid,
+      .decision-grid,
+      .dashboard-lower-grid,
+      .summary-list,
+      .mini-help,
+      .step-guide,
+      .checklist,
+      .auth-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .actions,
+      .record-card .actions,
+      .photo-buttons,
+      .landing-actions,
+      nav,
+      .tabs {
+        grid-template-columns: 1fr !important;
+        width: 100%;
+      }
+
+      .actions button,
+      .actions .button-like,
+      .photo-buttons button,
+      .photo-buttons .button-like,
+      .landing-actions button,
+      .tab-btn,
+      nav button {
+        width: 100%;
+      }
+
+      .action-item,
+      .recent-item {
+        grid-template-columns: 38px minmax(0, 1fr);
+      }
+
+      .action-item button,
+      .recent-item button {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+
+      .decision-row {
+        grid-template-columns: 1fr;
+      }
+
+      .decision-value {
+        width: fit-content;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html { font-size: 14px; }
+      :root {
+        --page-gutter: 8px;
+        --card-padding: 12px;
+        --touch-target: 46px;
+      }
+
+      .brand-icon,
+      .avatar,
+      .decision-number,
+      .action-icon,
+      .insight-icon,
+      .recent-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+      }
+
+      .brand h1 {
+        font-size: 15px;
+      }
+
+      .stat strong {
+        font-size: clamp(20px, 7vw, 28px);
+      }
+
+      .metric-card small,
+      .helper,
+      .cover-helper,
+      .decision-card p,
+      .insight-item span,
+      .recent-item span,
+      .action-item span {
+        font-size: 12px;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-card img {
+        height: 180px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .brand small { display: none; }
+      .stat,
+      .decision-card,
+      .chart-card,
+      .insight-card,
+      .photo-section {
+        border-radius: 14px;
+      }
+      .pill {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+
+
+    /* =========================================================
+       CORRECCIÓN RESPONSIVA: zoom y encabezado como versión anterior
+       Mantiene el menú superior horizontal en escritorio/laptop y solo
+       compacta en pantallas realmente pequeñas.
+       ========================================================= */
+
+    :root {
+      --page-max: 1220px;
+      --page-gutter: clamp(12px, 2vw, 28px);
+      --card-padding: clamp(16px, 1.8vw, 24px);
+      --section-gap: clamp(12px, 1.6vw, 18px);
+      --touch-target: 42px;
+    }
+
+    html {
+      font-size: clamp(14px, 0.35vw + 12px, 16px);
+    }
+
+    body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    main {
+      width: min(var(--page-max), calc(100vw - (var(--page-gutter) * 2))) !important;
+      padding-top: clamp(18px, 2.2vw, 28px);
+      padding-bottom: clamp(40px, 5vw, 60px);
+    }
+
+    .topbar {
+      width: min(var(--page-max), calc(100vw - (var(--page-gutter) * 2))) !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: clamp(14px, 2vw, 22px);
+      padding: 14px 0 !important;
+    }
+
+    .brand {
+      flex: 0 1 auto;
+      min-width: 220px;
+      width: auto !important;
+    }
+
+    .brand h1 {
+      font-size: clamp(16px, 1.2vw, 18px);
+    }
+
+    nav#topNav {
+      flex: 1 1 auto;
+      width: auto !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      gap: 8px !important;
+      flex-wrap: wrap !important;
+      overflow: visible !important;
+    }
+
+    nav#topNav button {
+      width: auto !important;
+      min-width: clamp(112px, 10vw, 150px);
+      min-height: 38px;
+      padding: 9px 13px;
+      font-size: clamp(12px, 0.9vw, 14px);
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .panel,
+    .module,
+    .auth-card,
+    .chart-card,
+    .insight-card,
+    .decision-card,
+    .photo-section,
+    .backup-box,
+    .summary-box {
+      padding: var(--card-padding);
+      min-width: 0;
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 3.6vw, 48px) !important;
+      overflow-wrap: anywhere;
+    }
+
+    .app-head,
+    .dashboard-hero,
+    .photo-section-head,
+    .record-card,
+    .chart-head {
+      min-width: 0;
+    }
+
+    .dashboard-stats.metric-grid,
+    .metric-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+      gap: var(--section-gap) !important;
+    }
+
+    .analytics-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+      gap: var(--section-gap) !important;
+    }
+
+    .decision-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+      gap: var(--section-gap) !important;
+    }
+
+    .dashboard-lower-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+      gap: var(--section-gap) !important;
+    }
+
+    .tabs {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+      gap: 10px !important;
+    }
+
+    .tab-btn {
+      width: 100% !important;
+      min-height: 40px;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      display: grid !important;
+      grid-template-columns: minmax(220px, 1.4fr) minmax(160px, 0.8fr) minmax(160px, 0.8fr) minmax(130px, auto) !important;
+      gap: 14px !important;
+    }
+
+    .actions {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 10px !important;
+      align-items: center;
+    }
+
+    .photo-buttons {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 10px !important;
+    }
+
+    .photo-buttons button,
+    .photo-buttons .button-like,
+    .actions button,
+    .actions .button-like {
+      width: auto !important;
+    }
+
+    .preview-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    }
+
+    .table-wrap {
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      min-width: min(760px, 100%);
+    }
+
+    .record-meta,
+    .pill,
+    .summary-list strong,
+    .summary-list p,
+    td,
+    th {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .action-item,
+    .recent-item {
+      grid-template-columns: 38px minmax(0, 1fr) auto !important;
+    }
+
+    @media (min-width: 1500px) {
+      :root { --page-max: 1380px; }
+      .photo-card img { height: 135px; }
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        flex-wrap: wrap !important;
+        align-items: center !important;
+      }
+
+      .brand {
+        flex: 1 1 260px;
+      }
+
+      nav#topNav {
+        flex: 2 1 420px;
+        justify-content: flex-end !important;
+      }
+
+      nav#topNav button {
+        min-width: 120px;
+      }
+
+      .toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+    }
+
+    @media (max-width: 700px) {
+      :root {
+        --page-gutter: 10px;
+        --card-padding: 14px;
+        --touch-target: 44px;
+      }
+
+      header {
+        position: static;
+      }
+
+      .topbar {
+        width: calc(100vw - 20px) !important;
+        padding: 12px 0 !important;
+        gap: 10px;
+      }
+
+      .brand {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+
+      nav#topNav {
+        flex: 1 1 100%;
+        justify-content: flex-start !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        padding-bottom: 4px;
+        scrollbar-width: thin;
+      }
+
+      nav#topNav button {
+        flex: 0 0 auto;
+        min-width: 128px;
+      }
+
+      main {
+        width: calc(100vw - 20px) !important;
+      }
+
+      .app-head,
+      .photo-section-head,
+      .record-card,
+      .chart-head {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+
+      .dashboard-hero,
+      .cover-grid,
+      .toolbar,
+      .analytics-grid,
+      .decision-grid,
+      .dashboard-lower-grid,
+      .summary-list,
+      .mini-help,
+      .step-guide,
+      .checklist,
+      .auth-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .actions,
+      .photo-buttons {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .actions button,
+      .actions .button-like,
+      .photo-buttons button,
+      .photo-buttons .button-like {
+        width: 100% !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html { font-size: 14px; }
+
+      :root {
+        --page-gutter: 8px;
+        --card-padding: 12px;
+      }
+
+      main,
+      .topbar {
+        width: calc(100vw - 16px) !important;
+      }
+
+      .tabs,
+      .actions,
+      .photo-buttons {
+        grid-template-columns: 1fr !important;
+      }
+
+      .hero-title {
+        font-size: 26px !important;
+      }
+
+      .brand h1 {
+        font-size: 15px;
+      }
+
+      .brand small {
+        font-size: 11px;
+      }
+
+      .action-item,
+      .recent-item {
+        grid-template-columns: 38px minmax(0, 1fr) !important;
+      }
+
+      .action-item button,
+      .recent-item button {
+        grid-column: 1 / -1;
+        width: 100% !important;
+      }
+
+      .photo-card img {
+        height: 170px;
+      }
+    }
+
     @media print {
       header, .tabs, .actions, .auth-card, .records-list, .no-print, button { display: none !important; }
       body { background: white; }
@@ -1940,6 +3029,7 @@
         </div>
       </div>
       <nav id="topNav" class="hidden">
+        <button class="btn-ghost" type="button" data-open-tab="dashboard">Dashboard</button>
         <button class="btn-ghost" type="button" data-open-tab="records">Mis registros</button>
         <button class="btn-ghost" type="button" data-open-tab="form">Nuevo registro</button>
         <button class="btn-ghost" type="button" id="logoutBtn">Cerrar sesión</button>
@@ -2072,29 +3162,115 @@
 
       <div id="appAlert" class="alert"></div>
 
-      <div class="dashboard-hero no-print">
-        <div>
-          <h2>Comience aquí</h2>
-          <p>Use el botón principal para crear un registro. Después podrá agregar ficha técnica, evidencia fotográfica, Excel y PDF.</p>
-        </div>
-        <div class="dashboard-actions">
-          <button class="btn-success" type="button" data-open-tab="form">➕ Crear nuevo registro</button>
-          <button class="btn-ghost" type="button" data-open-tab="records">Ver mis registros</button>
-        </div>
-      </div>
-
-      <div class="stats dashboard-stats">
-        <div class="stat"><span>Mis registros</span><strong id="statMyRecords">0</strong></div>
-        <div class="stat"><span>Finalizados</span><strong id="statFinished">0</strong></div>
-        <div class="stat"><span>Pendientes</span><strong id="statPending">0</strong></div>
-        <div class="stat"><span>Fotos</span><strong id="statMyPhotos">0</strong></div>
-      </div>
-
       <div class="tabs no-print">
-        <button class="tab-btn active" type="button" data-open-tab="records">Mis registros</button>
+        <button class="tab-btn active" type="button" data-open-tab="dashboard">Dashboard</button>
+        <button class="tab-btn" type="button" data-open-tab="records">Mis registros</button>
         <button class="tab-btn" type="button" data-open-tab="form">Nuevo registro</button>
         <button class="tab-btn" type="button" data-open-tab="summary">Resumen</button>
       </div>
+
+      <section id="dashboardTab" class="module dashboard-module">
+        <div class="app-head">
+          <div>
+            <h2>Dashboard ejecutivo</h2>
+            <p>Vista general para medir avance, resultados, evidencias y puntos que necesitan atención antes de entregar el reporte.</p>
+          </div>
+          <div class="actions no-print">
+            <button class="btn-success" type="button" data-open-tab="form">➕ Nuevo registro</button>
+            <button class="btn-primary" type="button" id="dashboardExportBtn">⬇ Exportar reporte</button>
+          </div>
+        </div>
+
+        <div class="dashboard-hero dashboard-focus no-print">
+          <div>
+            <span class="dashboard-kicker">Resumen inteligente</span>
+            <h2>Estado general de verificaciones</h2>
+            <p id="dashboardNarrative">Cuando registre proyectos, aquí verá el avance general, aprobaciones, pendientes y evidencia recopilada.</p>
+            <div class="progress-wrap dashboard-progress" aria-label="Avance general de registros"><div id="dashboardCompletionBar" class="progress-bar"></div></div>
+            <p class="helper" id="dashboardCompletionText">Avance general: 0%</p>
+          </div>
+          <div class="dashboard-actions">
+            <button class="btn-success" type="button" data-open-tab="form">Crear verificación</button>
+            <button class="btn-ghost" type="button" data-open-tab="records">Revisar registros</button>
+          </div>
+        </div>
+
+        <div class="stats dashboard-stats metric-grid">
+          <div class="stat metric-card"><span>Mis registros</span><strong id="statMyRecords">0</strong><small>Total guardado</small></div>
+          <div class="stat metric-card"><span>Finalizados</span><strong id="statFinished">0</strong><small>Con estado finalizado</small></div>
+          <div class="stat metric-card"><span>Pendientes</span><strong id="statPending">0</strong><small>Por completar</small></div>
+          <div class="stat metric-card"><span>Aprobados</span><strong id="statApproved">0</strong><small>Resultado favorable</small></div>
+          <div class="stat metric-card"><span>Correcciones</span><strong id="statCorrection">0</strong><small>Requieren revisión</small></div>
+          <div class="stat metric-card"><span>Riesgo alto</span><strong id="statHighRisk">0</strong><small>Atención prioritaria</small></div>
+          <div class="stat metric-card"><span>Materiales</span><strong id="statMaterials">0</strong><small>Recursos registrados</small></div>
+          <div class="stat metric-card"><span>Fotos</span><strong id="statMyPhotos">0</strong><small>Evidencia total</small></div>
+        </div>
+
+        <div class="analytics-grid">
+          <article class="chart-card">
+            <div class="chart-head"><h3>Proyectos por estado</h3><span id="stateChartTotal">0 registros</span></div>
+            <div id="stateChartBars" class="bar-list"></div>
+          </article>
+          <article class="chart-card">
+            <div class="chart-head"><h3>Resultado de verificación</h3><span id="resultChartTotal">0 registros</span></div>
+            <div id="resultChartBars" class="bar-list"></div>
+          </article>
+          <article class="chart-card">
+            <div class="chart-head"><h3>Nivel de riesgo</h3><span id="riskChartTotal">0 registros</span></div>
+            <div id="riskChartBars" class="bar-list"></div>
+          </article>
+          <article class="chart-card">
+            <div class="chart-head"><h3>Evidencia fotográfica</h3><span id="photoChartTotal">0 fotos</span></div>
+            <div id="photoChartBars" class="bar-list"></div>
+          </article>
+        </div>
+
+
+
+        <div class="decision-grid" aria-label="Control, evaluación y acción del dashboard">
+          <article class="decision-card">
+            <div class="decision-card-header">
+              <div class="decision-number">1</div>
+              <div>
+                <h3>Control</h3>
+                <p>Resumen para saber cuántos registros existen y en qué estado se encuentran.</p>
+              </div>
+            </div>
+            <div id="dashboardControlPanel" class="decision-list"></div>
+          </article>
+          <article class="decision-card">
+            <div class="decision-card-header">
+              <div class="decision-number">2</div>
+              <div>
+                <h3>Evaluación</h3>
+                <p>Clasifica los registros por aprobación, rechazo y pendientes de revisión.</p>
+              </div>
+            </div>
+            <div id="dashboardEvaluationPanel" class="decision-list"></div>
+          </article>
+          <article class="decision-card">
+            <div class="decision-card-header">
+              <div class="decision-number">3</div>
+              <div>
+                <h3>Acción</h3>
+                <p>Indica qué registros deben corregirse o completarse antes de entregar.</p>
+              </div>
+            </div>
+            <div id="dashboardActionPanel" class="action-list"></div>
+          </article>
+        </div>
+
+        <div class="dashboard-lower-grid">
+          <article class="insight-card">
+            <div class="chart-head"><h3>Alertas y recomendaciones</h3><span>Para mejorar entrega</span></div>
+            <div id="dashboardInsights" class="insight-list"></div>
+          </article>
+          <article class="insight-card">
+            <div class="chart-head"><h3>Últimos registros</h3><span>Actividad reciente</span></div>
+            <div id="recentRecords" class="recent-list"></div>
+          </article>
+        </div>
+      </section>
 
       <section id="recordsTab" class="module">
         <div class="app-head">
@@ -2110,7 +3286,7 @@
         <div class="toolbar no-print">
           <div class="form-group">
             <label for="recordSearch">Buscar registro</label>
-            <input id="recordSearch" placeholder="Buscar por proyecto, lugar, responsable o solicitante" />
+            <input id="recordSearch" placeholder="Buscar por proyecto, lugar, responsable, solicitante, resultado o aprobación" />
           </div>
           <div class="form-group">
             <label for="recordStatusFilter">Filtrar por estado</label>
@@ -2214,6 +3390,23 @@
               <option>Finalizado</option>
               <option>Con pendientes</option>
             </select>
+          </div>
+          <div class="form-group col-4">
+            <label for="resultadoVerificacion">Resultado de verificación</label>
+            <select id="resultadoVerificacion" data-field="resultadoVerificacion">
+              <option>En revisión</option>
+              <option>Aprobado</option>
+              <option>Aprobado con observaciones</option>
+              <option>Requiere corrección</option>
+              <option>Rechazado</option>
+              <option>Pendiente de aprobación</option>
+            </select>
+            <div class="helper">Indica la conclusión final o el estado de aprobación del registro.</div>
+          </div>
+          <div class="form-group col-4">
+            <label for="aprobadoPor">Nombre de quien aprueba</label>
+            <input id="aprobadoPor" data-field="aprobadoPor" placeholder="Ej. Supervisor o encargado" />
+            <div class="helper">Completar cuando el registro ya fue revisado o aprobado.</div>
           </div>
           <div class="form-group col-4">
             <label for="prioridad">Prioridad</label>
@@ -2533,16 +3726,238 @@
       return (p.evidencia?.length || 0) + (p.antes?.length || 0) + (p.despues?.length || 0);
     }
 
+    function setTextIfExists(id, value) {
+      const el = $(id);
+      if (el) el.textContent = value;
+    }
+
     function updateMyStats() {
       if (!currentUser) return;
       const myRecords = getMyRecords();
       const finished = myRecords.filter(r => r.estadoProyecto === "Finalizado").length;
       const pending = myRecords.length - finished;
+      const approved = myRecords.filter(isApprovedRecord).length;
+      const correction = myRecords.filter(r => r.resultadoVerificacion === "Requiere corrección").length;
+      const highRisk = myRecords.filter(r => r.nivelRiesgo === "Alto").length;
       const photoCount = myRecords.reduce((acc, r) => acc + countPhotos(r.photos), 0);
-      $("statMyRecords").textContent = myRecords.length;
-      $("statFinished").textContent = finished;
-      $("statPending").textContent = pending;
-      $("statMyPhotos").textContent = photoCount;
+      const materialCount = myRecords.reduce((acc, r) => acc + (r.materials?.length || 0), 0);
+      setTextIfExists("statMyRecords", myRecords.length);
+      setTextIfExists("statFinished", finished);
+      setTextIfExists("statPending", pending);
+      setTextIfExists("statApproved", approved);
+      setTextIfExists("statCorrection", correction);
+      setTextIfExists("statHighRisk", highRisk);
+      setTextIfExists("statMaterials", materialCount);
+      setTextIfExists("statMyPhotos", photoCount);
+    }
+
+    function countBy(records, field, fallback = "Sin dato") {
+      return records.reduce((acc, record) => {
+        const key = record[field] || fallback;
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function renderBarChart(containerId, data, total, emptyMessage = "Sin datos para mostrar") {
+      const container = $(containerId);
+      if (!container) return;
+      const entries = Object.entries(data).filter(([, value]) => value > 0);
+      if (!entries.length) {
+        container.innerHTML = `<div class="empty-state" style="padding:16px;">${escapeHTML(emptyMessage)}</div>`;
+        return;
+      }
+      container.innerHTML = entries.map(([label, value]) => {
+        const percent = total ? Math.round((value / total) * 100) : 0;
+        return `
+          <div class="bar-row">
+            <div class="bar-row-top"><span>${escapeHTML(label)}</span><span>${value} · ${percent}%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.max(percent, 4)}%"></div></div>
+          </div>`;
+      }).join("");
+    }
+
+    function renderDashboard() {
+      if (!currentUser) return;
+      const records = getMyRecords();
+      const total = records.length;
+      const finished = records.filter(r => r.estadoProyecto === "Finalizado").length;
+      const approved = records.filter(isApprovedRecord).length;
+      const correction = records.filter(r => r.resultadoVerificacion === "Requiere corrección").length;
+      const highRisk = records.filter(r => r.nivelRiesgo === "Alto").length;
+      const noPhotos = records.filter(r => countPhotos(r.photos) === 0).length;
+      const missingApprovalName = records.filter(r => isApprovedRecord(r) && !r.aprobadoPor).length;
+      const totalPhotos = records.reduce((acc, record) => acc + countPhotos(record.photos), 0);
+      const totalMaterials = records.reduce((acc, record) => acc + (record.materials?.length || 0), 0);
+      const completion = total ? Math.round(((finished + approved) / (total * 2)) * 100) : 0;
+
+      updateMyStats();
+      setTextIfExists("stateChartTotal", `${total} registro${total === 1 ? "" : "s"}`);
+      setTextIfExists("resultChartTotal", `${total} registro${total === 1 ? "" : "s"}`);
+      setTextIfExists("riskChartTotal", `${total} registro${total === 1 ? "" : "s"}`);
+      setTextIfExists("photoChartTotal", `${totalPhotos} foto${totalPhotos === 1 ? "" : "s"}`);
+
+      const bar = $("dashboardCompletionBar");
+      if (bar) bar.style.width = `${completion}%`;
+      setTextIfExists("dashboardCompletionText", `Avance general: ${completion}% · ${finished} finalizados · ${approved} aprobados`);
+      setTextIfExists("dashboardNarrative", total
+        ? `Tiene ${total} registro${total === 1 ? "" : "s"}, ${approved} aprobado${approved === 1 ? "" : "s"}, ${correction} con corrección y ${totalPhotos} foto${totalPhotos === 1 ? "" : "s"} de evidencia.`
+        : "Cree el primer registro para activar métricas, gráficos, alertas y actividad reciente del sistema."
+      );
+
+      renderBarChart("stateChartBars", countBy(records, "estadoProyecto", "Sin estado"), total, "Aún no hay estados registrados.");
+      renderBarChart("resultChartBars", countBy(records, "resultadoVerificacion", "Sin resultado"), total, "Aún no hay resultados registrados.");
+      renderBarChart("riskChartBars", countBy(records, "nivelRiesgo", "Sin riesgo"), total, "Aún no hay riesgos registrados.");
+      renderBarChart("photoChartBars", {
+        "Evidencia": records.reduce((acc, r) => acc + (r.photos?.evidencia?.length || 0), 0),
+        "Antes": records.reduce((acc, r) => acc + (r.photos?.antes?.length || 0), 0),
+        "Después": records.reduce((acc, r) => acc + (r.photos?.despues?.length || 0), 0)
+      }, totalPhotos, "Aún no hay fotografías registradas.");
+
+      const rejected = records.filter(r => r.resultadoVerificacion === "Rechazado").length;
+      const pendingApproval = records.filter(r => ["Pendiente de aprobación", "En revisión", ""].includes(r.resultadoVerificacion || "")).length;
+      renderDashboardDecisionPanels(records, { total, finished, approved, correction, rejected, pendingApproval, highRisk, noPhotos, missingApprovalName, totalMaterials, totalPhotos });
+      renderDashboardInsights({ total, approved, correction, rejected, pendingApproval, highRisk, noPhotos, missingApprovalName, totalMaterials, totalPhotos });
+      renderRecentRecords(records);
+    }
+
+    function renderDashboardDecisionPanels(records, info) {
+      renderControlPanel(records, info);
+      renderEvaluationPanel(info);
+      renderActionPanel(records);
+    }
+
+    function renderControlPanel(records, info) {
+      const container = $("dashboardControlPanel");
+      if (!container) return;
+      const active = Math.max(0, info.total - info.finished);
+      const withEvidence = info.total - info.noPhotos;
+      const rows = [
+        ["Total de registros", "Registros guardados por el usuario actual.", info.total],
+        ["Finalizados", "Registros con estado Finalizado.", info.finished],
+        ["En proceso", "Registros que aún no están finalizados.", active],
+        ["Con evidencia", "Registros que ya tienen al menos una fotografía.", withEvidence]
+      ];
+      container.innerHTML = rows.map(([title, desc, value]) => `
+        <div class="decision-row">
+          <div><strong>${escapeHTML(title)}</strong><br><span>${escapeHTML(desc)}</span></div>
+          <div class="decision-value">${escapeHTML(value)}</div>
+        </div>`).join("");
+    }
+
+    function renderEvaluationPanel(info) {
+      const container = $("dashboardEvaluationPanel");
+      if (!container) return;
+      const quality = info.total ? Math.round(((info.approved + Math.max(0, info.total - info.noPhotos) + Math.max(0, info.total - info.missingApprovalName)) / (info.total * 3)) * 100) : 0;
+      const rows = [
+        ["Aprobados", "Resultado Aprobado o Aprobado con observaciones.", info.approved],
+        ["Rechazados", "Registros que no fueron aceptados.", info.rejected],
+        ["Pendientes", "Registros en revisión o pendientes de aprobación.", info.pendingApproval],
+        ["Correcciones", "Registros que requieren corrección.", info.correction]
+      ];
+      container.innerHTML = rows.map(([title, desc, value]) => `
+        <div class="decision-row">
+          <div><strong>${escapeHTML(title)}</strong><br><span>${escapeHTML(desc)}</span></div>
+          <div class="decision-value">${escapeHTML(value)}</div>
+        </div>`).join("") + `
+        <div class="quality-score">Calidad estimada del control: ${quality}%. ${quality >= 80 ? "Buen nivel para presentar." : "Conviene completar evidencia, aprobación y resultados."}</div>`;
+    }
+
+    function getActionReasons(record) {
+      const reasons = [];
+      if (record.resultadoVerificacion === "Requiere corrección") reasons.push("Requiere corrección");
+      if (record.resultadoVerificacion === "Rechazado") reasons.push("Rechazado");
+      if (["Pendiente de aprobación", "En revisión", ""].includes(record.resultadoVerificacion || "")) reasons.push("Pendiente de aprobación");
+      if (record.nivelRiesgo === "Alto") reasons.push("Riesgo alto");
+      if (countPhotos(record.photos) === 0) reasons.push("Sin evidencia fotográfica");
+      if (!record.materials?.length) reasons.push("Sin ficha técnica");
+      if (isApprovedRecord(record) && !record.aprobadoPor) reasons.push("Falta nombre de quien aprueba");
+      if (!record.descripcion) reasons.push("Falta descripción");
+      return reasons;
+    }
+
+    function actionPriority(record) {
+      let score = 0;
+      if (record.resultadoVerificacion === "Requiere corrección") score += 40;
+      if (record.resultadoVerificacion === "Rechazado") score += 35;
+      if (record.nivelRiesgo === "Alto") score += 25;
+      if (countPhotos(record.photos) === 0) score += 20;
+      if (!record.materials?.length) score += 15;
+      if (isApprovedRecord(record) && !record.aprobadoPor) score += 15;
+      if (["Pendiente de aprobación", "En revisión", ""].includes(record.resultadoVerificacion || "")) score += 10;
+      if (!record.descripcion) score += 10;
+      return score;
+    }
+
+    function renderActionPanel(records) {
+      const container = $("dashboardActionPanel");
+      if (!container) return;
+      const actions = records
+        .map(record => ({ record, reasons: getActionReasons(record), priority: actionPriority(record) }))
+        .filter(item => item.reasons.length)
+        .sort((a, b) => b.priority - a.priority || new Date(b.record.updatedAt || b.record.createdAt || 0) - new Date(a.record.updatedAt || a.record.createdAt || 0))
+        .slice(0, 5);
+
+      if (!actions.length) {
+        container.innerHTML = `
+          <div class="insight-item">
+            <div class="insight-icon">✅</div>
+            <div><strong>Sin acciones críticas</strong><span>Los registros principales están completos para revisión y exportación.</span></div>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = actions.map(({ record, reasons }) => `
+        <div class="action-item">
+          <div class="action-icon">!</div>
+          <div>
+            <strong>${escapeHTML(record.nombreProyecto || "Proyecto sin nombre")}</strong>
+            <span>${escapeHTML(reasons.slice(0, 3).join(" · "))}${reasons.length > 3 ? "..." : ""}</span>
+          </div>
+          <button class="btn-small" type="button" data-dashboard-action-edit="${record.id}">Corregir</button>
+        </div>`).join("");
+      container.querySelectorAll("[data-dashboard-action-edit]").forEach(btn => btn.addEventListener("click", () => editRecord(btn.dataset.dashboardActionEdit)));
+    }
+
+    function renderDashboardInsights(info) {
+      const container = $("dashboardInsights");
+      if (!container) return;
+      const items = [];
+      if (!info.total) {
+        items.push(["🟦", "Cree un registro de prueba", "Para la presentación, agregue un proyecto con material, evidencia antes/después y resultado de verificación."]);
+      } else {
+        if (info.noPhotos) items.push(["📷", "Agregue evidencia faltante", `${info.noPhotos} registro${info.noPhotos === 1 ? "" : "s"} no tiene${info.noPhotos === 1 ? "" : "n"} fotografías.`]);
+        if (info.correction) items.push(["🛠", "Revise correcciones", `${info.correction} registro${info.correction === 1 ? "" : "s"} requiere${info.correction === 1 ? "" : "n"} corrección.`]);
+        if (info.highRisk) items.push(["⚠", "Priorice riesgos altos", `${info.highRisk} proyecto${info.highRisk === 1 ? "" : "s"} aparece${info.highRisk === 1 ? "" : "n"} con nivel de riesgo alto.`]);
+        if (info.missingApprovalName) items.push(["👤", "Complete aprobación", `${info.missingApprovalName} registro${info.missingApprovalName === 1 ? "" : "s"} aprobado${info.missingApprovalName === 1 ? "" : "s"} no tiene${info.missingApprovalName === 1 ? "" : "n"} nombre de quien aprueba.`]);
+        if (!info.totalMaterials) items.push(["🧰", "Agregue ficha técnica", "Los materiales ayudan a que el reporte final se vea más completo y defendible."]);
+        if (!items.length) items.push(["✅", "Panel listo para entregar", "Los registros tienen buen nivel de avance, evidencia y control de aprobación."]);
+      }
+      container.innerHTML = items.map(([icon, title, description]) => `
+        <div class="insight-item">
+          <div class="insight-icon">${icon}</div>
+          <div><strong>${escapeHTML(title)}</strong><span>${escapeHTML(description)}</span></div>
+        </div>`).join("");
+    }
+
+    function renderRecentRecords(records) {
+      const container = $("recentRecords");
+      if (!container) return;
+      const recent = [...records].sort((a,b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)).slice(0, 5);
+      if (!recent.length) {
+        container.innerHTML = `<div class="empty-state" style="padding:16px;">No hay actividad reciente. Cree un registro para comenzar.</div>`;
+        return;
+      }
+      container.innerHTML = recent.map(record => `
+        <div class="recent-item">
+          <div class="recent-icon">${escapeHTML((record.nombreProyecto || "P").slice(0,1).toUpperCase())}</div>
+          <div>
+            <strong>${escapeHTML(record.nombreProyecto || "Proyecto sin nombre")}</strong>
+            <span>${escapeHTML(formatDate(record.fecha))} · ${escapeHTML(record.estadoProyecto || "Sin estado")} · ${escapeHTML(record.resultadoVerificacion || "Sin resultado")}</span>
+          </div>
+          <button class="btn-small" type="button" data-dashboard-edit="${record.id}">Abrir</button>
+        </div>`).join("");
+      container.querySelectorAll("[data-dashboard-edit]").forEach(btn => btn.addEventListener("click", () => editRecord(btn.dataset.dashboardEdit)));
     }
 
     async function registerUser(event) {
@@ -2671,17 +4086,19 @@
       $("userAvatar").textContent = currentUser.fullName.trim().slice(0,1).toUpperCase() || "U";
       renderRecords();
       updateMyStats();
-      openTab("records");
       newRecord(false);
+      renderDashboard();
+      openTab("dashboard");
       restoreDraft();
     }
 
     function openTab(name) {
-      const tabs = { records: "recordsTab", form: "formTab", summary: "summaryTab" };
+      const tabs = { dashboard: "dashboardTab", records: "recordsTab", form: "formTab", summary: "summaryTab" };
       Object.values(tabs).forEach(id => $(id).classList.add("hidden"));
       $(tabs[name]).classList.remove("hidden");
       $$(".tab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.openTab === name));
       if (name === "summary") renderSummary();
+      if (name === "dashboard") renderDashboard();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -2707,6 +4124,8 @@
           record.responsable,
           record.solicitante,
           record.lugar,
+          record.resultadoVerificacion,
+          record.aprobadoPor,
           record.descripcion,
           record.observaciones
         ].join(" ").toLowerCase().includes(query));
@@ -2739,6 +4158,8 @@
             <div class="record-meta">
               <span class="pill">📅 ${escapeHTML(formatDate(record.fecha))}</span>
               <span class="pill">📌 ${escapeHTML(record.estadoProyecto || "Sin estado")}</span>
+              <span class="pill">✅ ${escapeHTML(record.resultadoVerificacion || "Sin resultado")}</span>
+              ${record.aprobadoPor ? `<span class="pill">👤 Aprueba: ${escapeHTML(record.aprobadoPor)}</span>` : ""}
               <span class="pill">⚠ ${escapeHTML(record.prioridad || "Media")}</span>
               <span class="pill">📷 ${countPhotos(record.photos)} fotos</span>
               <span class="pill">🕒 ${escapeHTML(formatDate((record.updatedAt || record.createdAt || "").slice(0,10)))}</span>
@@ -2770,6 +4191,8 @@
       $("responsable").value = currentUser?.fullName || "";
       $("tipoProyecto").value = "Municipal";
       $("estadoProyecto").value = "En revisión";
+      $("resultadoVerificacion").value = "En revisión";
+      $("aprobadoPor").value = "";
       $("prioridad").value = "Media";
       $("personalOperativo").value = "Por confirmar";
       $("nivelRiesgo").value = "Bajo";
@@ -2851,6 +4274,7 @@
       renderRecords();
       updateMyStats();
       updateGlobalStats();
+      renderDashboard();
       renderSummary();
       clearAlert("appAlert");
       if (showMessage) {
@@ -2878,6 +4302,7 @@
       renderRecords();
       updateMyStats();
       updateGlobalStats();
+      renderDashboard();
       toast("Registro duplicado. Puede editar la copia cuando lo necesite.");
     }
 
@@ -2892,6 +4317,7 @@
       renderRecords();
       updateMyStats();
       updateGlobalStats();
+      renderDashboard();
       toast("Registro eliminado.");
     }
 
@@ -3134,6 +4560,8 @@
           <div><span>Solicitante</span><strong>${escapeHTML(record.solicitante || "—")}</strong></div>
           <div><span>Tipo</span><strong>${escapeHTML(record.tipoProyecto || "—")}</strong></div>
           <div><span>Estado</span><strong>${escapeHTML(record.estadoProyecto || "—")}</strong></div>
+          <div><span>Resultado</span><strong>${escapeHTML(record.resultadoVerificacion || "—")}</strong></div>
+          <div><span>Aprueba</span><strong>${escapeHTML(record.aprobadoPor || "Pendiente")}</strong></div>
           <div><span>Prioridad</span><strong>${escapeHTML(record.prioridad || "—")}</strong></div>
           <div><span>Lugar</span><strong>${escapeHTML(record.lugar || "—")}</strong></div>
           <div><span>Personal operativo</span><strong>${escapeHTML(record.personalOperativo || "—")}</strong></div>
@@ -3250,6 +4678,7 @@
         renderRecords();
         updateMyStats();
         updateGlobalStats();
+        renderDashboard();
         toast("Respaldo restaurado correctamente.");
       } catch (error) {
         console.error(error);
@@ -3323,6 +4752,8 @@
         Solicitante: record.solicitante || "",
         Tipo_proyecto: record.tipoProyecto || "",
         Estado: record.estadoProyecto || "",
+        Resultado_verificacion: record.resultadoVerificacion || "",
+        Aprobado_por: record.aprobadoPor || "",
         Prioridad: record.prioridad || "",
         Lugar: record.lugar || "",
         Personal_operativo: record.personalOperativo || "",
@@ -3373,10 +4804,6 @@
     }
 
     async function exportRecords(records, filename) {
-      const resumenVertical = buildResumenVerticalAoa(records);
-      const materialesVertical = buildMaterialesVerticalAoa(records);
-      const fotosVertical = buildFotosVerticalAoa(records);
-
       if (window.ExcelJS) {
         await exportRecordsWithExcelJS(records, filename);
         return;
@@ -3384,20 +4811,14 @@
 
       if (window.XLSX) {
         const workbook = XLSX.utils.book_new();
-        const resumenSheet = XLSX.utils.aoa_to_sheet(resumenVertical);
-        resumenSheet["!cols"] = [{ wch: 28 }, { wch: 65 }];
-        XLSX.utils.book_append_sheet(workbook, resumenSheet, "Registro vertical");
-
-        const materialesSheet = XLSX.utils.aoa_to_sheet(materialesVertical);
-        materialesSheet["!cols"] = [{ wch: 28 }, { wch: 65 }];
-        XLSX.utils.book_append_sheet(workbook, materialesSheet, "Materiales vertical");
-
-        const fotosSheet = XLSX.utils.aoa_to_sheet(fotosVertical);
-        fotosSheet["!cols"] = [{ wch: 28 }, { wch: 65 }, { wch: 35 }];
-        XLSX.utils.book_append_sheet(workbook, fotosSheet, "Fotos");
-
+        const reporteSheet = XLSX.utils.aoa_to_sheet(buildReporteCompletoAoa(records));
+        reporteSheet["!cols"] = [
+          { wch: 22 }, { wch: 32 }, { wch: 16 }, { wch: 24 },
+          { wch: 24 }, { wch: 24 }, { wch: 24 }, { wch: 30 }
+        ];
+        XLSX.utils.book_append_sheet(workbook, reporteSheet, "Reporte completo");
         XLSX.writeFile(workbook, filename);
-        toast("Excel generado con los títulos al lado izquierdo. Nota: las fotos completas requieren ExcelJS.");
+        toast("Excel generado en una sola hoja. Nota: para insertar fotos dentro del archivo debe cargar ExcelJS.");
       } else {
         downloadCSV(buildResumenRows(records), filename.replace(/\.xlsx$/i, ".csv"));
         toast("No cargaron las librerías de Excel. Se descargó CSV como respaldo.");
@@ -3411,30 +4832,329 @@
       workbook.modified = new Date();
       workbook.properties.date1904 = false;
 
-      const registrosSheet = workbook.addWorksheet("Registro vertical");
-      addVerticalRecordSheet(registrosSheet, records);
-
-      const materialesSheet = workbook.addWorksheet("Materiales vertical");
-      addVerticalMaterialSheet(materialesSheet, buildMaterialRows(records));
-
-      const fotosSheet = workbook.addWorksheet("Fotos");
-      addVerticalPhotoSheet(workbook, fotosSheet, buildPhotoRows(records));
-
-      workbook.eachSheet(sheet => {
-        sheet.views = [{ state: "frozen", ySplit: 1 }];
-        sheet.pageSetup = {
+      const sheet = workbook.addWorksheet("Reporte completo", {
+        views: [{ state: "frozen", ySplit: 6 }],
+        pageSetup: {
           paperSize: 9,
-          orientation: sheet.name === "Fotos" ? "portrait" : "portrait",
+          orientation: "landscape",
           fitToPage: true,
           fitToWidth: 1,
           fitToHeight: 0,
           margins: { left: 0.25, right: 0.25, top: 0.35, bottom: 0.35, header: 0.2, footer: 0.2 }
-        };
+        }
       });
+
+      await addCompleteReportSheet(workbook, sheet, records);
 
       const buffer = await workbook.xlsx.writeBuffer();
       downloadBlob(buffer, filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-      toast("Excel generado en formato vertical: títulos a la izquierda y datos a la derecha.");
+      toast("Excel generado en una sola hoja con resumen, registros, materiales, detalle y fotografías.");
+    }
+
+    function buildReporteCompletoAoa(records) {
+      const photoRows = buildPhotoRows(records);
+      const materialRows = buildMaterialRows(records);
+      const resumenRows = buildResumenRows(records);
+      const finished = records.filter(record => record.estadoProyecto === "Finalizado").length;
+      const approved = records.filter(isApprovedRecord).length;
+      const pending = Math.max(0, records.length - finished);
+      const totalPhotos = records.reduce((acc, record) => acc + countPhotos(record.photos), 0);
+
+      const rows = [
+        ["PANEL DE VERIFICACIÓN - REPORTE COMPLETO", "", "", "", "", "", "", ""],
+        [],
+        ["Usuario que exporta", currentUser?.fullName || "", "Usuario", currentUser?.username ? `@${currentUser.username}` : "", "Fecha de exportación", new Date().toLocaleString("es-GT"), "Registros", records.length],
+        ["Finalizados", finished, "Pendientes", pending, "Aprobados", approved, "Total fotos", totalPhotos],
+        ["Total materiales", materialRows.length, "Formato", "Una sola hoja", "Incluye fotos", photoRows.length ? "Sí, con ExcelJS" : "Sin fotos", "Sistema", "Panel de Verificación"],
+        [],
+        ["REGISTROS EN TABLA", "", "", "", "", "", "", ""],
+        ["No.", "Proyecto", "Fecha", "Responsable", "Estado", "Resultado", "Aprobado por", "Fotos"]
+      ];
+
+      if (resumenRows.length) {
+        resumenRows.forEach(record => rows.push([
+          record.No,
+          record.Nombre_proyecto,
+          record.Fecha,
+          record.Responsable,
+          record.Estado,
+          record.Resultado_verificacion,
+          record.Aprobado_por,
+          record.Total_fotos
+        ]));
+      } else {
+        rows.push(["Sin registros", "", "", "", "", "", "", ""]);
+      }
+
+      rows.push([], ["MATERIALES", "", "", "", "", "", "", ""], ["Proyecto", "No.", "Cantidad", "Unidad", "Descripción", "Observación", "Estado", "Resultado"]);
+      if (materialRows.length) {
+        materialRows.forEach(material => {
+          const record = records.find(item => item.id === material.ID_registro) || {};
+          rows.push([material.Proyecto, material.No_material, material.Cantidad, material.Unidad, material.Descripcion, material.Observacion, record.estadoProyecto || "", record.resultadoVerificacion || ""]);
+        });
+      } else {
+        rows.push(["Sin materiales registrados", "", "", "", "", "", "", ""]);
+      }
+
+      rows.push([], ["EVIDENCIA FOTOGRÁFICA", "", "", "", "", "", "", ""], ["Proyecto", "Categoría", "No.", "Nombre de archivo", "Fecha", "Imagen", "", ""]);
+      if (photoRows.length) {
+        photoRows.forEach(photo => rows.push([photo.Proyecto, photo.Categoria, photo.No_foto, photo.Nombre_archivo, photo.Fecha_captura, photo.dataUrl ? "Foto insertada con ExcelJS" : "Sin imagen", "", ""]));
+      } else {
+        rows.push(["Sin fotografías registradas", "", "", "", "", "", "", ""]);
+      }
+
+      rows.push([], ["DETALLE VERTICAL DEL REGISTRO", "", "", "", "", "", "", ""]);
+      resumenRows.forEach(record => {
+        rows.push([], [`REGISTRO ${record.No}: ${record.Nombre_proyecto || "Proyecto sin nombre"}`, "", "", "", "", "", ""]);
+        Object.entries(record).forEach(([key, value]) => rows.push([excelLabel(key), value ?? "", "", "", "", "", "", ""]));
+      });
+
+      return rows;
+    }
+
+    async function addCompleteReportSheet(workbook, sheet, records) {
+      sheet.columns = [
+        { key: "col1", width: 22 },
+        { key: "col2", width: 32 },
+        { key: "col3", width: 16 },
+        { key: "col4", width: 24 },
+        { key: "col5", width: 24 },
+        { key: "col6", width: 24 },
+        { key: "col7", width: 24 },
+        { key: "col8", width: 30 }
+      ];
+      sheet.properties.defaultRowHeight = 20;
+
+      const titleRow = sheet.addRow(["PANEL DE VERIFICACIÓN - REPORTE COMPLETO", "", "", "", "", "", "", ""]);
+      mergeAndStyleTitle(sheet, titleRow.number, "PANEL DE VERIFICACIÓN - REPORTE COMPLETO", 1, 8);
+      titleRow.height = 30;
+
+      addExcelSummaryBlock(sheet, records);
+      addExcelRecordsTable(sheet, records);
+      addExcelMaterialsTable(sheet, records);
+      await addExcelPhotosTable(workbook, sheet, records);
+      addExcelVerticalDetail(sheet, records);
+    }
+
+    function addExcelSummaryBlock(sheet, records) {
+      const totalPhotos = records.reduce((acc, record) => acc + countPhotos(record.photos), 0);
+      const totalMaterials = records.reduce((acc, record) => acc + (record.materials?.length || 0), 0);
+      const finished = records.filter(record => record.estadoProyecto === "Finalizado").length;
+      const approved = records.filter(isApprovedRecord).length;
+      const pending = Math.max(0, records.length - finished);
+
+      const rows = [
+        ["Usuario que exporta", currentUser?.fullName || "Usuario", "Usuario", currentUser?.username ? `@${currentUser.username}` : "", "Fecha de exportación", new Date().toLocaleString("es-GT"), "Registros", records.length],
+        ["Finalizados", finished, "Pendientes", pending, "Aprobados", approved, "Total fotos", totalPhotos],
+        ["Total materiales", totalMaterials, "Formato", "Una sola hoja", "Incluye fotos", "Sí", "Sistema", "Panel de Verificación"]
+      ];
+
+      rows.forEach(values => {
+        const row = sheet.addRow(values);
+        row.height = 24;
+        for (let col = 1; col <= 8; col++) {
+          const cell = sheet.getCell(row.number, col);
+          styleBodyCell(cell);
+          cell.alignment = { vertical: "middle", wrapText: true };
+          if ([1, 3, 5, 7].includes(col)) {
+            cell.font = { bold: true, color: { argb: "FF102A43" } };
+            cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEAF2FF" } };
+          }
+        }
+      });
+    }
+
+    function addExcelRecordsTable(sheet, records) {
+      addReportSection(sheet, "REGISTROS EN TABLA");
+      const headers = ["No.", "Proyecto", "Fecha", "Responsable", "Estado", "Resultado", "Aprobado por", "Fotos"];
+      const header = sheet.addRow(headers);
+      styleReportHeaderRow(sheet, header.number, 8);
+
+      const rows = buildResumenRows(records);
+      if (!rows.length) {
+        addMergedInfoRow(sheet, "Sin registros guardados.");
+        return;
+      }
+
+      rows.forEach(record => {
+        const row = sheet.addRow([
+          record.No,
+          record.Nombre_proyecto || "—",
+          formatDate(record.Fecha),
+          record.Responsable || "—",
+          record.Estado || "—",
+          record.Resultado_verificacion || "—",
+          record.Aprobado_por || "—",
+          record.Total_fotos || 0
+        ]);
+        row.height = 28;
+        styleReportBodyRow(sheet, row.number, 8);
+      });
+    }
+
+    function addExcelMaterialsTable(sheet, records) {
+      addReportSection(sheet, "MATERIALES");
+      const headers = ["Proyecto", "No.", "Cantidad", "Unidad", "Descripción", "Observación", "Estado", "Resultado"];
+      const header = sheet.addRow(headers);
+      styleReportHeaderRow(sheet, header.number, 8);
+
+      const materials = buildMaterialRows(records);
+      if (!materials.length) {
+        addMergedInfoRow(sheet, "Sin materiales registrados.");
+        return;
+      }
+
+      materials.forEach(material => {
+        const record = records.find(item => item.id === material.ID_registro) || {};
+        const row = sheet.addRow([
+          material.Proyecto || "—",
+          material.No_material || "—",
+          material.Cantidad || "—",
+          material.Unidad || "—",
+          material.Descripcion || "—",
+          material.Observacion || "—",
+          record.estadoProyecto || "—",
+          record.resultadoVerificacion || "—"
+        ]);
+        row.height = Math.max(24, String(material.Descripcion || "").length > 60 || String(material.Observacion || "").length > 60 ? 42 : 24);
+        styleReportBodyRow(sheet, row.number, 8);
+      });
+    }
+
+    async function addExcelPhotosTable(workbook, sheet, records) {
+      addReportSection(sheet, "EVIDENCIA FOTOGRÁFICA");
+      const header = sheet.addRow(["Proyecto", "Categoría", "No.", "Nombre de archivo", "Fecha", "Fotografía", "", ""]);
+      sheet.mergeCells(`F${header.number}:H${header.number}`);
+      styleReportHeaderRow(sheet, header.number, 8);
+
+      const photoRows = buildPhotoRows(records);
+      if (!photoRows.length) {
+        addMergedInfoRow(sheet, "Sin fotografías registradas.");
+        return;
+      }
+
+      for (const photo of photoRows) {
+        const row = sheet.addRow([
+          photo.Proyecto || "—",
+          photo.Categoria || "—",
+          photo.No_foto || "—",
+          photo.Nombre_archivo || "foto.jpg",
+          formatDate((photo.Fecha_captura || "").slice(0, 10)),
+          photo.dataUrl ? "" : "Sin imagen disponible",
+          "",
+          ""
+        ]);
+        sheet.mergeCells(`F${row.number}:H${row.number}`);
+        row.height = photo.dataUrl ? 105 : 28;
+        styleReportBodyRow(sheet, row.number, 8);
+        sheet.getCell(`F${row.number}`).alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+
+        if (photo.dataUrl) {
+          await addImageToSheetFit(workbook, sheet, photo.dataUrl, row.number, 6, 8, 290, 102);
+        }
+      }
+    }
+
+    function addExcelVerticalDetail(sheet, records) {
+      addReportSection(sheet, "DETALLE VERTICAL DEL REGISTRO");
+      const rows = buildResumenRows(records);
+      if (!rows.length) {
+        addMergedInfoRow(sheet, "Sin detalle para mostrar.");
+        return;
+      }
+
+      rows.forEach(record => {
+        sheet.addRow([]);
+        const section = sheet.addRow([`REGISTRO ${record.No}: ${record.Nombre_proyecto || "Proyecto sin nombre"}`, "", "", "", "", "", "", ""]);
+        mergeAndStyleSection(sheet, section.number, `REGISTRO ${record.No}: ${record.Nombre_proyecto || "Proyecto sin nombre"}`, 1, 8);
+
+        Object.entries(record).forEach(([key, value]) => {
+          const row = sheet.addRow([excelLabel(key), value ?? "", "", "", "", "", "", ""]);
+          sheet.mergeCells(`B${row.number}:H${row.number}`);
+          row.height = Math.max(22, String(value ?? "").length > 95 ? 42 : 22);
+          styleFieldRow(sheet, row.number, 8);
+        });
+      });
+    }
+
+    function isApprovedRecord(record) {
+      return ["Aprobado", "Aprobado con observaciones"].includes(record.resultadoVerificacion || "");
+    }
+
+    function addReportSection(sheet, title) {
+      sheet.addRow([]);
+      const row = sheet.addRow([title, "", "", "", "", "", "", ""]);
+      mergeAndStyleSection(sheet, row.number, title, 1, 8);
+      return row.number;
+    }
+
+    function addMergedInfoRow(sheet, message) {
+      const row = sheet.addRow([message, "", "", "", "", "", "", ""]);
+      sheet.mergeCells(`A${row.number}:H${row.number}`);
+      row.height = 24;
+      styleReportBodyRow(sheet, row.number, 8);
+      sheet.getCell(`A${row.number}`).alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+      sheet.getCell(`A${row.number}`).font = { italic: true, color: { argb: "FF667085" } };
+    }
+
+    function mergeAndStyleTitle(sheet, rowNumber, text, startCol, endCol) {
+      const range = `${excelColumnLetter(startCol)}${rowNumber}:${excelColumnLetter(endCol)}${rowNumber}`;
+      sheet.getCell(rowNumber, startCol).value = text;
+      sheet.mergeCells(range);
+      styleMergedTitle(sheet, rowNumber, startCol, endCol);
+    }
+
+    function mergeAndStyleSection(sheet, rowNumber, text, startCol, endCol) {
+      const range = `${excelColumnLetter(startCol)}${rowNumber}:${excelColumnLetter(endCol)}${rowNumber}`;
+      sheet.getCell(rowNumber, startCol).value = text;
+      sheet.mergeCells(range);
+      styleMergedSection(sheet, rowNumber, startCol, endCol);
+    }
+
+    function excelColumnLetter(index) {
+      let result = "";
+      let value = index;
+      while (value > 0) {
+        const mod = (value - 1) % 26;
+        result = String.fromCharCode(65 + mod) + result;
+        value = Math.floor((value - mod) / 26);
+      }
+      return result;
+    }
+
+    function styleReportHeaderRow(sheet, rowNumber, totalCols = 8) {
+      const row = sheet.getRow(rowNumber);
+      row.height = 24;
+      for (let col = 1; col <= totalCols; col++) {
+        const cell = sheet.getCell(rowNumber, col);
+        styleHeaderCell(cell);
+      }
+    }
+
+    function styleReportBodyRow(sheet, rowNumber, totalCols = 8) {
+      for (let col = 1; col <= totalCols; col++) {
+        const cell = sheet.getCell(rowNumber, col);
+        styleBodyCell(cell);
+        cell.alignment = { vertical: "top", wrapText: true };
+      }
+    }
+
+    async function addImageToSheetFit(workbook, sheet, dataUrl, rowNumber, startCol, endCol, maxWidth, maxHeight) {
+      try {
+        const dimensions = await getImageDimensions(dataUrl);
+        const scale = Math.min(maxWidth / dimensions.width, maxHeight / dimensions.height, 1);
+        const width = Math.max(70, dimensions.width * scale);
+        const height = Math.max(55, dimensions.height * scale);
+        const imageId = workbook.addImage({ base64: dataUrl, extension: photoExtension(dataUrl) });
+        sheet.addImage(imageId, {
+          tl: { col: startCol - 1 + 0.16, row: rowNumber - 1 + 0.12 },
+          ext: { width, height }
+        });
+        sheet.getCell(rowNumber, startCol).value = "";
+      } catch (error) {
+        console.warn("No se pudo insertar una imagen en Excel", error);
+        sheet.getCell(rowNumber, startCol).value = "Imagen no insertada";
+      }
     }
 
     function buildResumenVerticalAoa(records) {
@@ -3619,6 +5339,8 @@
         Solicitante: "Solicitante",
         Tipo_proyecto: "Tipo de proyecto",
         Estado: "Estado",
+        Resultado_verificacion: "Resultado de verificación",
+        Aprobado_por: "Nombre de quien aprueba",
         Prioridad: "Prioridad",
         Lugar: "Lugar",
         Personal_operativo: "Personal operativo",
@@ -3664,6 +5386,8 @@
       const preferred = {
         Descripcion: 45,
         Observaciones_pendientes: 45,
+        Resultado_verificacion: 30,
+        Aprobado_por: 30,
         Nombre_proyecto: 32,
         Personal_operativo: 28,
         Beneficiarios: 28,
@@ -3908,6 +5632,8 @@
           { label: "Solicitante", value: record.solicitante },
           { label: "Tipo de proyecto", value: record.tipoProyecto },
           { label: "Estado", value: record.estadoProyecto },
+          { label: "Resultado de verificación", value: record.resultadoVerificacion },
+          { label: "Nombre de quien aprueba", value: record.aprobadoPor || "Pendiente" },
           { label: "Prioridad", value: record.prioridad },
           { label: "Lugar", value: record.lugar },
           { label: "Personal operativo", value: record.personalOperativo },
@@ -4022,6 +5748,8 @@
             <div class="${itemClass}"><span>Solicitante</span><strong>${escapeHTML(record.solicitante || "—")}</strong></div>
             <div class="${itemClass}"><span>Tipo</span><strong>${escapeHTML(record.tipoProyecto || "—")}</strong></div>
             <div class="${itemClass}"><span>Estado</span><strong>${escapeHTML(record.estadoProyecto || "—")}</strong></div>
+            <div class="${itemClass}"><span>Resultado</span><strong>${escapeHTML(record.resultadoVerificacion || "—")}</strong></div>
+            <div class="${itemClass}"><span>Aprueba</span><strong>${escapeHTML(record.aprobadoPor || "Pendiente")}</strong></div>
             <div class="${itemClass}"><span>Prioridad</span><strong>${escapeHTML(record.prioridad || "—")}</strong></div>
             <div class="${itemClass}"><span>Lugar</span><strong>${escapeHTML(record.lugar || "—")}</strong></div>
             <div class="${itemClass}"><span>Personal operativo</span><strong>${escapeHTML(record.personalOperativo || "—")}</strong></div>
@@ -4111,6 +5839,7 @@
       $("exportCurrentBtn").addEventListener("click", exportCurrent);
       $("exportFromSummaryBtn").addEventListener("click", exportCurrent);
       $("exportAllBtn").addEventListener("click", exportAll);
+      $("dashboardExportBtn")?.addEventListener("click", exportAll);
       $("backupBtn").addEventListener("click", downloadBackup);
       $("restoreBackupInput").addEventListener("change", event => { restoreBackup(event.target.files[0]); event.target.value = ""; });
       ["recordSearch", "recordStatusFilter", "recordSort"].forEach(id => $(id).addEventListener("input", renderRecords));
