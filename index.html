@@ -3007,23 +3007,6 @@
       }
     }
 
-
-    /* =========================================================
-       MENÚ SUPERIOR PROTEGIDO
-       El menú Dashboard / Mis registros / Nuevo registro / Cerrar sesión
-       solo aparece cuando el usuario ya inició sesión correctamente.
-       ========================================================= */
-
-    body.auth-mode nav#topNav,
-    body:not(.app-ready) nav#topNav,
-    nav#topNav.hidden {
-      display: none !important;
-    }
-
-    body.app-ready nav#topNav:not(.hidden) {
-      display: flex !important;
-    }
-
     @media print {
       header, .tabs, .actions, .auth-card, .records-list, .no-print, button { display: none !important; }
       body { background: white; }
@@ -3035,7 +3018,7 @@
     }
   </style>
 </head>
-<body class="auth-mode">
+<body>
   <header>
     <div class="topbar">
       <div class="brand">
@@ -3111,20 +3094,22 @@
           <div class="auth-card-head">
             <div>
               <h2>Iniciar sesión</h2>
-              <p>Entre para revisar sus registros guardados y crear nuevos reportes.</p>
+              <p>Entre escribiendo su nombre y apellido. También funciona con el usuario automático si ya lo conoce.</p>
             </div>
             <button class="auth-back-btn" type="button" data-auth-back>← Volver</button>
           </div>
           <div id="loginAlert" class="alert"></div>
           <div class="form-group">
-            <label for="loginUsername" class="required">Usuario</label>
-            <input id="loginUsername" autocomplete="username" required placeholder="Ej. fcardona" />
+            <label for="loginUsername" class="required">Nombre y apellido o usuario</label>
+            <input id="loginUsername" autocomplete="name" required placeholder="Ej. Fredy Cardona" />
+            <div class="helper">Ya no necesita recordar un usuario inventado. Puede escribir su nombre completo.</div>
           </div>
           <div class="form-group">
-            <label for="loginPassword" class="required">Contraseña</label>
-            <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Contraseña" />
+            <label for="loginPassword" class="required">Contraseña numérica</label>
+            <input id="loginPassword" type="password" inputmode="numeric" autocomplete="current-password" required placeholder="Solo números" />
           </div>
           <button class="btn-primary" type="submit">Entrar al panel</button>
+          <div class="auth-switch">¿Olvidó su contraseña? <button type="button" data-auth-choice="reset">Restablecer</button></div>
           <div class="auth-switch">¿No tiene cuenta? <button type="button" data-auth-choice="register">Crear cuenta</button></div>
         </form>
 
@@ -3132,32 +3117,69 @@
           <div class="auth-card-head">
             <div>
               <h2>Crear cuenta</h2>
-              <p>Use una cuenta local para separar sus registros de otros usuarios.</p>
+              <p>Ingrese la palabra secreta, nombre, apellido y una contraseña con números. El sistema genera el usuario automáticamente.</p>
             </div>
             <button class="auth-back-btn" type="button" data-auth-back>← Volver</button>
           </div>
           <div id="registerAlert" class="alert"></div>
           <div class="form-group">
-            <label for="registerFullName" class="required">Nombre completo</label>
+            <label for="registerSecret" class="required">Palabra secreta</label>
+            <input id="registerSecret" type="password" autocomplete="off" required placeholder="Ingrese la palabra secreta" />
+            <div class="helper">Solo quien conozca esta palabra podrá crear una cuenta.</div>
+          </div>
+          <div class="form-group">
+            <label for="registerFullName" class="required">Nombre y apellido</label>
             <input id="registerFullName" autocomplete="name" required placeholder="Ej. Fredy Cardona" />
+            <div class="helper">Con este dato podrá iniciar sesión después.</div>
           </div>
           <div class="form-group">
-            <label for="registerUsername" class="required">Usuario único</label>
-            <input id="registerUsername" autocomplete="username" required placeholder="Ej. fcardona" />
-            <div class="helper">Use letras, números, puntos, guiones o guion bajo. Mínimo 3 caracteres.</div>
+            <label for="registerUsername">Usuario automático</label>
+            <input id="registerUsername" autocomplete="username" readonly placeholder="Se genera automáticamente" />
+            <div class="helper">Este usuario se guarda internamente, pero la persona puede entrar con su nombre y apellido.</div>
           </div>
           <div class="form-group">
-            <label for="registerPassword" class="required">Contraseña</label>
-            <input id="registerPassword" type="password" autocomplete="new-password" required placeholder="Mínimo 4 caracteres" />
-            <div class="helper">Consejo: use una contraseña fácil de recordar para la demostración.</div>
+            <label for="registerPassword" class="required">Contraseña numérica</label>
+            <input id="registerPassword" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" required placeholder="Ej. 1234" />
+            <div class="helper">Use solo números. Mínimo 4 dígitos.</div>
           </div>
           <div class="form-group">
             <label for="registerPasswordConfirm" class="required">Confirmar contraseña</label>
-            <input id="registerPasswordConfirm" type="password" autocomplete="new-password" required placeholder="Repita la contraseña" />
-            <div id="registerGuidance" class="helper">Al crear la cuenta ingresará automáticamente al panel principal.</div>
+            <input id="registerPasswordConfirm" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" required placeholder="Repita los números" />
+            <div id="registerGuidance" class="helper">Al escribir el nombre se mostrará el usuario automático.</div>
           </div>
           <button class="btn-success" type="submit">Crear cuenta e ingresar</button>
           <div class="auth-switch">¿Ya tiene cuenta? <button type="button" data-auth-choice="login">Iniciar sesión</button></div>
+        </form>
+
+        <form id="resetForm" class="auth-card auth-pane hidden" data-auth-pane="reset">
+          <div class="auth-card-head">
+            <div>
+              <h2>Restablecer contraseña</h2>
+              <p>Ingrese la palabra secreta y el nombre registrado para crear una nueva contraseña numérica.</p>
+            </div>
+            <button class="auth-back-btn" type="button" data-auth-back>← Volver</button>
+          </div>
+          <div id="resetAlert" class="alert"></div>
+          <div class="form-group">
+            <label for="resetSecret" class="required">Palabra secreta</label>
+            <input id="resetSecret" type="password" autocomplete="off" required placeholder="Ingrese la palabra secreta" />
+            <div class="helper">Se pide para evitar que cualquier persona cambie contraseñas.</div>
+          </div>
+          <div class="form-group">
+            <label for="resetFullName" class="required">Nombre y apellido</label>
+            <input id="resetFullName" autocomplete="name" required placeholder="Ej. Fredy Cardona" />
+          </div>
+          <div class="form-group">
+            <label for="resetPassword" class="required">Nueva contraseña numérica</label>
+            <input id="resetPassword" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" required placeholder="Ej. 1234" />
+            <div class="helper">Use solo números. Mínimo 4 dígitos.</div>
+          </div>
+          <div class="form-group">
+            <label for="resetPasswordConfirm" class="required">Confirmar nueva contraseña</label>
+            <input id="resetPasswordConfirm" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" required placeholder="Repita los números" />
+          </div>
+          <button class="btn-warning" type="submit">Guardar nueva contraseña</button>
+          <div class="auth-switch">¿Ya la recordó? <button type="button" data-auth-choice="login">Iniciar sesión</button></div>
         </form>
       </div>
     </section>
@@ -3604,6 +3626,8 @@
       draftPrefix: "pv_draft_v4_final_"
     };
 
+    const SECRET_PHRASE = "sepa o no sepa";
+
     const emptyPhotos = () => ({ evidencia: [], antes: [], despues: [] });
     const emptyMaterial = () => ({ cantidad: "", unidad: "", descripcion: "", observacion: "" });
     const UNIT_OPTIONS = [
@@ -3676,6 +3700,73 @@
 
     function isValidUsername(username) {
       return /^[a-z0-9._-]{3,30}$/.test(username);
+    }
+
+    function normalizeFullName(name) {
+      return String(name || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9ñ\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function getNameParts(fullName) {
+      return normalizeFullName(fullName).split(" ").filter(Boolean);
+    }
+
+    function buildUsernameBase(fullName) {
+      const parts = getNameParts(fullName);
+      if (!parts.length) return "";
+      const first = parts[0] || "usuario";
+      const last = parts.length > 1 ? parts[parts.length - 1] : "local";
+      let base = `${first}.${last}`.replace(/[^a-z0-9._-]/g, "");
+      if (base.length < 3) base = `${base}.user`;
+      return base.slice(0, 24);
+    }
+
+    function makeUniqueUsername(fullName, users) {
+      const base = buildUsernameBase(fullName);
+      if (!base) return "";
+      let username = base;
+      let counter = 2;
+      while (users.some(user => user.username === username)) {
+        username = `${base}${counter}`.slice(0, 30);
+        counter += 1;
+      }
+      return username;
+    }
+
+    function isNumericPassword(password) {
+      return /^\d{4,12}$/.test(String(password || ""));
+    }
+
+    function normalizeSecret(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function isValidSecret(value) {
+      return normalizeSecret(value) === normalizeSecret(SECRET_PHRASE);
+    }
+
+    function findLoginCandidates(loginValue, users) {
+      const usernameValue = normalizeUsername(loginValue);
+      const fullNameValue = normalizeFullName(loginValue);
+      return users.filter(user =>
+        user.username === usernameValue ||
+        normalizeFullName(user.fullName) === fullNameValue
+      );
+    }
+
+    function findUserByFullName(fullName, users) {
+      const fullNameValue = normalizeFullName(fullName);
+      return users.find(user => normalizeFullName(user.fullName) === fullNameValue);
     }
 
     function makeId(prefix = "id") {
@@ -3981,31 +4072,40 @@
       event.preventDefault();
       clearAlert("registerAlert");
 
+      const secret = $("registerSecret").value;
       const fullName = $("registerFullName").value.trim();
-      const username = normalizeUsername($("registerUsername").value);
       const password = $("registerPassword").value;
       const confirmPassword = $("registerPasswordConfirm").value;
+      const users = loadUsers();
+      const username = makeUniqueUsername(fullName, users);
+      $("registerUsername").value = username;
 
-      if (!fullName || !username || !password || !confirmPassword) {
-        showAlert("registerAlert", "Complete todos los campos obligatorios para crear la cuenta.", "error");
+      if (!secret || !fullName || !password || !confirmPassword) {
+        showAlert("registerAlert", "Complete palabra secreta, nombre, apellido y contraseña para crear la cuenta.", "error");
         return;
       }
-      if (!isValidUsername(username)) {
-        showAlert("registerAlert", "El usuario debe tener mínimo 3 caracteres y solo puede usar letras, números, punto, guion o guion bajo.", "error");
+      if (!isValidSecret(secret)) {
+        showAlert("registerAlert", "Palabra secreta incorrecta. No se puede crear la cuenta.", "error");
         return;
       }
-      if (password.length < 4) {
-        showAlert("registerAlert", "La contraseña debe tener mínimo 4 caracteres.", "error");
+      if (getNameParts(fullName).length < 2) {
+        showAlert("registerAlert", "Ingrese nombre y apellido para generar el usuario automático.", "error");
+        return;
+      }
+      if (!username || !isValidUsername(username)) {
+        showAlert("registerAlert", "No se pudo generar el usuario automático. Revise el nombre y apellido.", "error");
+        return;
+      }
+      if (findUserByFullName(fullName, users)) {
+        showAlert("registerAlert", "Ya existe una cuenta con ese nombre y apellido. Inicie sesión o restablezca la contraseña.", "error");
+        return;
+      }
+      if (!isNumericPassword(password)) {
+        showAlert("registerAlert", "La contraseña debe tener solo números y mínimo 4 dígitos.", "error");
         return;
       }
       if (password !== confirmPassword) {
         showAlert("registerAlert", "Las contraseñas no coinciden. Revise antes de continuar.", "error");
-        return;
-      }
-
-      const users = loadUsers();
-      if (users.some(user => user.username === username)) {
-        showAlert("registerAlert", "Ese usuario ya existe. Use otro nombre de usuario.", "error");
         return;
       }
 
@@ -4022,31 +4122,41 @@
       currentUser = user;
       localStorage.setItem(STORAGE.session, user.id);
       $("registerForm").reset();
+      $("registerUsername").value = "";
       updateGlobalStats();
       showApp();
-      toast("Cuenta creada correctamente. Ya está en la página principal.");
+      toast("Cuenta creada correctamente. Después podrá entrar con su nombre y apellido.");
     }
 
     function updateRegisterGuidance() {
       const guidance = $("registerGuidance");
-      if (!guidance) return;
-      const username = normalizeUsername($("registerUsername").value);
+      const usernameInput = $("registerUsername");
+      if (!guidance || !usernameInput) return;
+      const fullName = $("registerFullName").value.trim();
       const password = $("registerPassword").value;
       const confirmPassword = $("registerPasswordConfirm").value;
-      const exists = username && loadUsers().some(user => user.username === username);
+      const users = loadUsers();
+      const generatedUsername = makeUniqueUsername(fullName, users);
+      usernameInput.value = generatedUsername;
       guidance.classList.remove("good", "bad");
-      if (exists) {
-        guidance.textContent = "Ese usuario ya existe. Pruebe con otro nombre.";
+
+      if (fullName && getNameParts(fullName).length < 2) {
+        guidance.textContent = "Escriba nombre y apellido para generar el usuario automático.";
         guidance.classList.add("bad");
-      } else if (username && !isValidUsername(username)) {
-        guidance.textContent = "Use mínimo 3 caracteres: letras, números, punto, guion o guion bajo.";
+      } else if (fullName && findUserByFullName(fullName, users)) {
+        guidance.textContent = "Ya existe una cuenta con ese nombre. Puede iniciar sesión o restablecer la contraseña.";
         guidance.classList.add("bad");
-      } else if (password || confirmPassword) {
-        const ok = password.length >= 4 && password === confirmPassword;
-        guidance.textContent = ok ? "Listo. Al crear la cuenta ingresará automáticamente al panel." : "La contraseña debe tener mínimo 4 caracteres y coincidir.";
+      } else if (generatedUsername && password && confirmPassword) {
+        const ok = isNumericPassword(password) && password === confirmPassword;
+        guidance.textContent = ok
+          ? `Listo. Usuario automático: ${generatedUsername}. Podrá entrar con su nombre y apellido.`
+          : "La contraseña debe tener solo números, mínimo 4 dígitos y coincidir.";
         guidance.classList.add(ok ? "good" : "bad");
+      } else if (generatedUsername) {
+        guidance.textContent = `Usuario automático: ${generatedUsername}. Ahora escriba una contraseña numérica.`;
+        guidance.classList.add("good");
       } else {
-        guidance.textContent = "Al crear la cuenta ingresará automáticamente al panel principal.";
+        guidance.textContent = "Al escribir el nombre se mostrará el usuario automático.";
       }
     }
 
@@ -4054,14 +4164,22 @@
       event.preventDefault();
       clearAlert("loginAlert");
 
-      const username = normalizeUsername($("loginUsername").value);
+      const loginValue = $("loginUsername").value.trim();
       const password = $("loginPassword").value;
       const users = loadUsers();
-      const hash = await sha256(`${username}:${password}`);
-      const user = users.find(item => item.username === username && item.passwordHash === hash);
+      const candidates = findLoginCandidates(loginValue, users);
+      let user = null;
+
+      for (const candidate of candidates) {
+        const hash = await sha256(`${candidate.username}:${password}`);
+        if (candidate.passwordHash === hash) {
+          user = candidate;
+          break;
+        }
+      }
 
       if (!user) {
-        showAlert("loginAlert", "Usuario o contraseña incorrectos.", "error");
+        showAlert("loginAlert", "Nombre/usuario o contraseña incorrectos. Si no recuerda la contraseña, use Restablecer.", "error");
         return;
       }
 
@@ -4070,6 +4188,46 @@
       $("loginForm").reset();
       showApp();
       toast(`Bienvenido, ${user.fullName}`);
+    }
+
+    async function resetPassword(event) {
+      event.preventDefault();
+      clearAlert("resetAlert");
+
+      const secret = $("resetSecret").value;
+      const fullName = $("resetFullName").value.trim();
+      const password = $("resetPassword").value;
+      const confirmPassword = $("resetPasswordConfirm").value;
+      const users = loadUsers();
+      const userIndex = users.findIndex(user => normalizeFullName(user.fullName) === normalizeFullName(fullName));
+
+      if (!secret || !fullName || !password || !confirmPassword) {
+        showAlert("resetAlert", "Complete palabra secreta, nombre, apellido y nueva contraseña.", "error");
+        return;
+      }
+      if (!isValidSecret(secret)) {
+        showAlert("resetAlert", "Palabra secreta incorrecta. No se puede restablecer la contraseña.", "error");
+        return;
+      }
+      if (userIndex === -1) {
+        showAlert("resetAlert", "No se encontró una cuenta con ese nombre y apellido.", "error");
+        return;
+      }
+      if (!isNumericPassword(password)) {
+        showAlert("resetAlert", "La nueva contraseña debe tener solo números y mínimo 4 dígitos.", "error");
+        return;
+      }
+      if (password !== confirmPassword) {
+        showAlert("resetAlert", "Las contraseñas no coinciden.", "error");
+        return;
+      }
+
+      users[userIndex].passwordHash = await sha256(`${users[userIndex].username}:${password}`);
+      users[userIndex].passwordUpdatedAt = new Date().toISOString();
+      if (!saveUsers(users)) return;
+      $("resetForm").reset();
+      showAlert("loginAlert", "Contraseña restablecida. Ahora puede iniciar sesión con su nombre y apellido.", "ok");
+      showAuthPane("login");
     }
 
     function restoreSession() {
@@ -4085,8 +4243,6 @@
     function logout() {
       stopCamera();
       currentUser = null;
-      document.body.classList.remove("app-ready");
-      document.body.classList.add("auth-mode");
       localStorage.removeItem(STORAGE.session);
       $("appScreen").classList.add("hidden");
       $("topNav").classList.add("hidden");
@@ -4097,8 +4253,6 @@
     }
 
     function showApp() {
-      document.body.classList.remove("auth-mode");
-      document.body.classList.add("app-ready");
       $("authScreen").classList.add("hidden");
       $("appScreen").classList.remove("hidden");
       $("topNav").classList.remove("hidden");
@@ -5812,10 +5966,6 @@
 
 
     function showAuthLanding() {
-      document.body.classList.remove("app-ready");
-      document.body.classList.add("auth-mode");
-      $("topNav")?.classList.add("hidden");
-      $("appScreen")?.classList.add("hidden");
       const welcome = $("welcomeCard");
       const forms = $("authForms");
       if (welcome) welcome.classList.remove("hidden");
@@ -5826,13 +5976,11 @@
       $$('[data-auth-pane]').forEach(form => form.classList.add("hidden"));
       clearAlert("loginAlert");
       clearAlert("registerAlert");
+      clearAlert("resetAlert");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showAuthPane(type) {
-      document.body.classList.remove("app-ready");
-      document.body.classList.add("auth-mode");
-      $("topNav")?.classList.add("hidden");
       const welcome = $("welcomeCard");
       const forms = $("authForms");
       if (welcome) welcome.classList.add("hidden");
@@ -5845,7 +5993,9 @@
       });
       clearAlert("loginAlert");
       clearAlert("registerAlert");
-      const focusTarget = type === "register" ? $("registerFullName") : $("loginUsername");
+      clearAlert("resetAlert");
+      updateRegisterGuidance();
+      const focusTarget = type === "register" ? $("registerFullName") : (type === "reset" ? $("resetFullName") : $("loginUsername"));
       setTimeout(() => focusTarget?.focus(), 80);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -5853,8 +6003,9 @@
       $$('[data-auth-choice]').forEach(btn => btn.addEventListener("click", () => showAuthPane(btn.dataset.authChoice)));
       $$('[data-auth-back]').forEach(btn => btn.addEventListener("click", showAuthLanding));
       $("registerForm").addEventListener("submit", registerUser);
-      ["registerUsername", "registerPassword", "registerPasswordConfirm"].forEach(id => $(id).addEventListener("input", updateRegisterGuidance));
+      ["registerFullName", "registerPassword", "registerPasswordConfirm"].forEach(id => $(id).addEventListener("input", updateRegisterGuidance));
       $("loginForm").addEventListener("submit", loginUser);
+      $("resetForm").addEventListener("submit", resetPassword);
       $("logoutBtn").addEventListener("click", logout);
       $("newRecordBtn").addEventListener("click", () => newRecord(true));
       $("saveRecordBtn").addEventListener("click", () => saveCurrentRecord(true));
@@ -5900,9 +6051,6 @@
     }
 
     function init() {
-      document.body.classList.add("auth-mode");
-      document.body.classList.remove("app-ready");
-      $("topNav")?.classList.add("hidden");
       bindEvents();
       updateGlobalStats();
       renderMaterials();
